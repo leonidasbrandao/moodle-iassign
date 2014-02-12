@@ -1,18 +1,3 @@
-/**
- * @author Patricia Alves Rodrigues
- * @author Leônidas O. Brandão
- * @author Luciano Oliveira Borges
- * @version 2.1.54 2014/02/12
- * @package mod_iassign
- * @since 2010/09/27
- * @copyright iMatica (<a href="http://www.matematica.br">iMath</a>) - Computer Science Dep. of IME-USP (Brazil)
- * 
- * <b>License</b> 
- *  - http://opensource.org/licenses/gpl-license.php GNU Public License
- */
-/**
-
-
 iAssign version 2.1.54 dev
 ------------------------
 
