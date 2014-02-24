@@ -279,6 +279,11 @@ class mod_iassign_form extends moodleform {
         			$choices = explode(", ", $iassign_ilm_config->param_value);
         			$choices = array_combine($choices, $choices);
         			$mform->addElement('select', 'param_'.$iassign_ilm_config->id, $iassign_ilm_config->param_name.$link_help, $choices);
+        		} else if($iassign_ilm_config->param_type == 'multiple') {
+        			$choices = explode(", ", $iassign_ilm_config->param_value);
+        			$choices = array_combine($choices, $choices);
+        			$select = $mform->addElement('select', 'param_'.$iassign_ilm_config->id, $iassign_ilm_config->param_name.$link_help, $choices, true);
+        			$select->setMultiple(true);
         		}
         	}
         }

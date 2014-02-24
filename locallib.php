@@ -3,6 +3,9 @@
  * This class provides all the functionality for an ia (interactive activities).
  * 
  * Release Notes:
+ * - v 4.5 2014/02/24 
+ * 		+ Fix bugs in params.
+ * 		+ Insert new param type.
  * - v 4.4 2014/01/24
  * 		+ Allow select type of params.
  * 		+ Insert the use of applet params specific for activities.
@@ -2846,6 +2849,8 @@ class activity {
 				} // if ($iassign_submission_currents)
 			}
 			
+			$delete_iassign_statement_config = $DB->delete_records ( 'iassign_statement_config', array ('iassign_statementid' => $this->activity->id) );
+			
 			$this->delete_calendar ( $this->activity->id );
 			$delete_iassign_current = $DB->delete_records ( 'iassign_statement', array ('id' => $this->activity->id ) );
 			iassign::update_grade_iassign ( $this->activity->iassignid );
@@ -2956,7 +2961,7 @@ class activity {
 						$newentry->iassign_statementid = $id;
 						$newentry->iassign_ilm_configid = $iassign_ilm_config->id;
 						$newentry->param_name = $iassign_ilm_config->param_name;
-						$newentry->param_value = $param->{'param_'.$iassign_ilm_config->id};
+						$newentry->param_value = (is_array($param->{'param_'.$iassign_ilm_config->id}) ? implode(",", $param->{'param_'.$iassign_ilm_config->id}) : $param->{'param_'.$iassign_ilm_config->id});
 						
 						if (!$DB->insert_record ( "iassign_statement_config", $newentry ))
 							print_error ( 'error_add_param', 'iassign' );
@@ -3135,7 +3140,7 @@ class activity {
 			foreach ($iassign_statement_configs as $iassign_statement_config) {
 				$newentry = new stdClass ();
 				$newentry->id = $iassign_statement_config->id;
-				$newentry->param_value = $param->{'param_'.$iassign_statement_config->iassign_ilm_configid};
+				$newentry->param_value = (is_array($param->{'param_'.$iassign_statement_config->iassign_ilm_configid}) ? implode(",", $param->{'param_'.$iassign_statement_config->iassign_ilm_configid}) : $param->{'param_'.$iassign_statement_config->iassign_ilm_configid});
 				
 				if (!$DB->update_record ( "iassign_statement_config", $newentry ))
 					print_error ( 'error_edit_param', 'iassign' );
@@ -3442,6 +3447,13 @@ class ilm_settings {
 				switch($options['type']){
 					case "view":
 						$html .= '<param name="MA_PARAM_notSEND" value="true"/>' . chr ( 13 );
+						$iassign_ilm_config = $DB->get_records('iassign_ilm_config', array ('iassign_ilmid' => $ilm_id ));
+						foreach ($iassign_ilm_config as $ilm_config) {
+							if(array_key_exists($ilm_config->param_name, $options)) {
+								$ilm_config->param_value = $options[$ilm_config->param_name];
+								$html .= '<param name="'.$ilm_config->param_name.'" value="'.$ilm_config->param_value.'"/>' . chr ( 13 );
+							}
+						}
 						break;
 					case "activity":
 						$html .= '<param name="MA_PARAM_PropositionURL" value="true"/>' . chr ( 13 );
@@ -3477,8 +3489,8 @@ class ilm_settings {
 				
 				$iassign_ilm_config = $DB->get_records('iassign_ilm_config', array ('iassign_ilmid' => $ilm_id, 'visible' => 1, 'param_type' => 'static' ));
 				foreach ($iassign_ilm_config as $ilm_config) {
-					if(array_key_exists($ilm_config->param_name, $options))
-						$ilm_config->param_value = $options[$ilm_config->param_name];
+					//if(array_key_exists($ilm_config->param_name, $options))
+						//$ilm_config->param_value = $options[$ilm_config->param_name];
 					$html .= '<param name="'.$ilm_config->param_name.'" value="'.$ilm_config->param_value.'"/>' . chr ( 13 );
 				}
 				$html .= '</applet> <br/>';
@@ -4315,6 +4327,12 @@ class ilm_settings {
 	static function view_ilm($ilmid, $from) {
 		global $CFG, $DB;
 		
+		$param_enable = optional_param_array('enable', array(), PARAM_TEXT);
+		$param_value = (empty($_POST['value']) ? array() : $_POST['value']);
+		
+		//print_r($param_enable);
+		//print_r($param_value);
+		
 		$url = new moodle_url ( '/admin/settings.php', array ('section' => 'modsettingiassign' ) );
 		$iassign_ilm = $DB->get_record ( 'iassign_ilm', array ('id' => $ilmid ) );
 		
@@ -4378,8 +4396,112 @@ class ilm_settings {
 			
 			
 			if (! empty ( $iassign_ilm->file_jar )) {
+				
+				$options = array("type" => "view");
+				foreach($param_enable as $key => $value) {
+					$param_options = (!empty($param_value[$key]) ? $param_value[$key] : '0');
+					$param_options = (is_array($param_options) ? implode(",", $param_options) : $param_options);
+					$options[$key] = $param_options;
+				}
+				
+				//print_r($options);
+				
 				$str .= '<tr class=\'cell c0 actvity\'><td  colspan=3 align=center bgcolor="#F5F5F5">';
-				$str .= ilm_settings::applet_ilm($iassign_ilm->id, array("type" => "view"));				
+				$str .= ilm_settings::applet_ilm($iassign_ilm->id, $options);		
+				
+				
+				$conditions = array ('iassign_ilmid' => $iassign_ilm->id );
+				if($from != 'admin')
+					$conditions['visible'] = '1';
+				
+				$iassign_ilm_config = $DB->get_records('iassign_ilm_config', $conditions);
+				
+				if($iassign_ilm_config) {
+				
+					$str .= '<form  method="POST">';
+						
+					$str .= '<table width="100%" class="generaltable boxaligncenter" >';
+					$str .= '<tr>' . chr ( 13 );
+					$str .= '<th colspan=5><center><strong>' . get_string ( 'config_param', 'iassign' ) . '</strong></center></th>';
+					$str .= '</tr>' . chr ( 13 );
+						
+					$str .= '<tr>' . chr ( 13 );
+					$str .= '<td width="5%"><strong>' . get_string ( 'enable', 'iassign' ) . '</strong></td>';
+					$str .= '<td width="5%"><strong>' . get_string ( 'choose_type_param', 'iassign' ) . '</strong></td>';
+					$str .= '<td width="10%"><strong>' . get_string ( 'config_param_name', 'iassign' ) . '</strong></td>';
+					$str .= '<td width="20%"><strong>' . get_string ( 'config_param_value', 'iassign' ) . '</strong></td>';
+					$str .= '<td><strong>' . get_string ( 'config_param_description', 'iassign' ) . '</strong></td>';
+					$str .= '</tr>' . chr ( 13 );
+						
+					
+					foreach ($iassign_ilm_config as $ilm_config) {
+					
+						$selected = '';
+						if(!empty($param_enable))
+						if(array_key_exists($ilm_config->param_name, $param_enable))
+							$selected = ' checked';
+							
+						$value = $ilm_config->param_value;
+						if(!empty($param_value))
+							if(array_key_exists($ilm_config->param_name, $param_enable))
+								$value = (!empty($param_value[$ilm_config->param_name]) ? $param_value[$ilm_config->param_name] : '0');
+					
+						$str .= '<tr>' . chr ( 13 );
+						if($ilm_config->param_type != 'static')
+							$str .= '<td><center><input type="checkbox" name="enable['.$ilm_config->param_name.']" '.$selected.'/></center></td>';
+						else if($from == 'admin')
+							$str .= '<td><center>-</center></td>';
+						if($from == 'admin' || $ilm_config->param_type != 'static') {
+							$str .= '<td>' . get_string ( 'param_type_'.$ilm_config->param_type, 'iassign' ) . '</td>';
+							$str .= '<td>' . $ilm_config->param_name . '</td>';
+						}
+						if($ilm_config->param_type == 'static' && $from == 'admin')
+							$str .= '<td>' . $ilm_config->param_value . '</td>';
+						else if($ilm_config->param_type == 'value') {
+							$default = ' <b>('.get_string ( 'param_default', 'iassign' ).' '.$ilm_config->param_value.')</b>';
+							$str .= '<td><input type="text" name="value['.$ilm_config->param_name.']" size="5" value="' . $value . '"/>'.$default.'</td>';
+						} else if($ilm_config->param_type == 'boolean') {
+							$default = ' <b>('.get_string ( 'param_default', 'iassign' ).' '.($ilm_config->param_value == '1' ? get_string('yes'): get_string('no')).')</b>';
+							$str .= '<td><input type="checkbox" name="value['.$ilm_config->param_name.']" value="1"'. ($value == '1' ? ' checked' : '') . '/>'.$default.'</td>';
+						} else if($ilm_config->param_type == 'choice') {
+							
+							$str .= '<td><select name="value['.$ilm_config->param_name.']">';
+							$options = explode(", ", $ilm_config->param_value);
+							$default = ' <b>('.get_string ( 'param_default', 'iassign' ).' '.$options[0].')</b>';
+							foreach ($options as $option) {
+								$selected = '';
+								if($option == $value)
+									$selected = ' selected';
+								$str .= '<option value="' . $option . '"'.$selected.'>'.$option.'</option>';
+							}
+							$str .= '</select>'.$default.'</td>';
+						} else if($ilm_config->param_type == 'multiple') {
+							
+							$value = array();
+							if(!empty($param_value))
+								if(array_key_exists($ilm_config->param_name, $param_enable))
+									$value = $param_value[$ilm_config->param_name];
+							
+							$str .= '<td><select name="value['.$ilm_config->param_name.'][]" multiple style="width:100%">';
+							$options = explode(", ", $ilm_config->param_value);
+							foreach ($options as $option) {
+								$selected = '';
+								if(in_array($option, $value))
+									$selected = ' selected';
+								$str .= '<option value="' . $option . '"'.$selected.'>'.$option.'</option>';
+							}
+							$str .= '</select></td>';
+						}
+						if($from == 'admin' || $ilm_config->param_type != 'static')
+							$str .= '<td>' . $ilm_config->description . '</td>';
+						$str .= '</tr>' . chr ( 13 );
+					}
+						
+					$str .= '<tr><td colspan=5><input type="submit" value="Atualizar"/></td></tr>';
+						
+					$str .= '</form>';
+				}
+				
 			} else {
 				
 				$str .= '<tr class=\'cell c0 actvity\'>';
@@ -4388,6 +4510,10 @@ class ilm_settings {
 				$str .= '</tr>';
 			}
 			$str .= '</td></tr>';
+			
+			$str .= '</td>' . chr ( 13 );
+			$str .= '</tr>';
+			
 		}
 		
 		$str .= '</table>';
@@ -4427,7 +4553,7 @@ class ilm_settings {
 				$param->iassign_ilmid = $iassign_ilm_config->iassign_ilmid;
 				$param->param_type = $type;
 				$param->param_name = $iassign_ilm_config->param_name;
-				if($type != 'choice')
+				if($type != 'choice' && $type != 'multiple')
 					$param->param_value = $iassign_ilm_config->param_value;
 				else
 					$param->param_value = str_replace(", ", "\n", $iassign_ilm_config->param_value);
@@ -4440,7 +4566,7 @@ class ilm_settings {
 				$param->iassign_ilmid = $iassign_ilm_config->iassign_ilmid;
 				$param->param_type = $type;
 				$param->param_name = $iassign_ilm_config->param_name;
-				if($type != 'choice')
+				if($type != 'choice' && $type != 'multiple')
 					$param->param_value = $iassign_ilm_config->param_value;
 				else
 					$param->param_value = str_replace(", ", "\n", $iassign_ilm_config->param_value);
@@ -4478,11 +4604,11 @@ class ilm_settings {
 		$newentry = new stdClass ();
 		$newentry->iassign_ilmid = $param->iassign_ilmid;
 		$newentry->param_type = $param->param_type;
-		$newentry->param_name = $param->param_name;
-		if($newentry->param_type != 'choice')
+		$newentry->param_name = utils::format_filename($param->param_name);
+		if($newentry->param_type != 'choice' && $newentry->param_type != 'multiple')
 			$newentry->param_value = $param->param_value;
 		else
-			$newentry->param_value = str_replace("\n", ", ", $param->param_value);
+			$newentry->param_value = str_replace("\r\n", ", ", $param->param_value);
 		$newentry->description = $param->description;
 		$newentry->visible = $param->visible;
 	
@@ -4502,11 +4628,11 @@ class ilm_settings {
 		$updentry->id = $param->id;
 		$updentry->iassign_ilmid = $param->iassign_ilmid;
 		$updentry->param_type = $param->param_type;
-		$updentry->param_name = $param->param_name;
-		if($updentry->param_type != 'choice')
+		$updentry->param_name = utils::format_filename($param->param_name);
+		if($updentry->param_type != 'choice' && $updentry->param_type != 'multiple')
 			$updentry->param_value = $param->param_value;
 		else
-			$updentry->param_value = str_replace("\n", ", ", $param->param_value);
+			$updentry->param_value = str_replace("\r\n", ", ", $param->param_value);
 		$updentry->description = $param->description;
 		$updentry->visible = $param->visible;
 	
@@ -4524,11 +4650,11 @@ class ilm_settings {
 		$newentry = new stdClass ();
 		$newentry->iassign_ilmid = $param->iassign_ilmid;
 		$newentry->param_type = $param->param_type;
-		$newentry->param_name = $param->param_name;
-		if($newentry->param_type != 'choice')
+		$newentry->param_name = utils::format_filename($param->param_name);
+		if($newentry->param_type != 'choice' && $newentry->param_type != 'multiple')
 			$newentry->param_value = $param->param_value;
 		else
-			$newentry->param_value = str_replace("\n", ", ", $param->param_value);
+			$newentry->param_value = str_replace("\r\n", ", ", $param->param_value);
 		$newentry->description = $param->description;
 		$newentry->visible = $param->visible;
 	

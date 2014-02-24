@@ -3,13 +3,15 @@
  * Settings iLM params manager.
  * 
  * Release Notes:
+ * - v 1.2 2014/02/24
+ * 		+ Fix bugs in help. 
  * - v 1.1 2014/01/24
  * 		+ Insert help view in params.
  * 
  * @author Patricia Alves Rodrigues
  * @author Leônidas O. Brandão
  * @author Luciano Oliveira Borges
- * @version v 1.1 2014/01/24
+ * @version v 1.2 2014/02/24
  * @package mod_iassign_settings
  * @since 2013/09/11
  * @copyright iMatica (<a href="http://www.matematica.br">iMath</a>) - Computer Science Dep. of IME-USP (Brazil)
@@ -152,9 +154,9 @@ if ($action == 'help') {
 		$param_value = $tmp[0];
 	}
 	
-	if($iassign_ilm_config->param_type != 'static')
+	if($iassign_ilm_config->param_type != 'multiple' && $iassign_ilm_config->param_type != 'static')
 		echo '<font size="-1" color="#cccccc">'.get_string('param_default', 'iassign').$param_value.'</font>';
-	else 
+	else if($iassign_ilm_config->param_type == 'static')
 		echo '<font size="-1" color="#cccccc">'.get_string('param_default_static', 'iassign').'</font>';
 	
 	echo $OUTPUT->footer();

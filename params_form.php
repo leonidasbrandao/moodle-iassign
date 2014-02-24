@@ -3,13 +3,15 @@
  * Form to add and edit iLM params.
  * 
  * Release Notes:
+ * - v1.2 2014/02/24
+ * 		+ Insert new type in params.
  * - v 1.1 2014/01/24
  * 		+ Allow select type of params.
  * 
  * @author Patricia Alves Rodrigues
  * @author Leônidas O. Brandão
  * @author Luciano Oliveira Borges
- * @version v 1.1 2014/01/24
+ * @version v 1.2 2014/02/24
  * @package mod_iassign_settings
  * @since 2010/09/11
  * @copyright iMatica (<a href="http://www.matematica.br">iMath</a>) - Computer Science Dep. of IME-USP (Brazil)
@@ -62,7 +64,8 @@ class param_ilm_form extends moodleform {
         $param_type = array('static' => get_string('param_type_static', 'iassign'), 
         					'value' => get_string('param_type_value', 'iassign'), 
         					'boolean' => get_string('param_type_boolean', 'iassign'),
-        					'choice' => get_string('param_type_choice', 'iassign'));
+        					'choice' => get_string('param_type_choice', 'iassign'),
+        					'multiple' => get_string('param_type_multiple', 'iassign'));
         
         $mform->addElement('select', 'param_type', get_string('choose_type_param', 'iassign'), $param_type, array('onChange' => 'select_type(this.value);'));
         $mform->setDefault('param_type', $type);
@@ -71,6 +74,7 @@ class param_ilm_form extends moodleform {
         $mform->addElement('text', 'param_name', get_string('config_param_name', 'iassign'), array('size' => '55'));
         $mform->setType('param_name', PARAM_TEXT);
         $mform->addRule('param_name', get_string('required', 'iassign'), 'required');
+        $mform->addHelpButton('param_name', 'name_param', 'iassign');
         
         if($type == 'static'){
         	$mform->addElement('text', 'param_value', get_string('config_param_value', 'iassign'), array('size' => '55'));
@@ -89,6 +93,9 @@ class param_ilm_form extends moodleform {
         } else if($type == 'choice'){
         	$mform->addElement('textarea', 'param_value', get_string('config_param_value', 'iassign'), 'rows="4" cols="30"');
         	$mform->addHelpButton('param_value', 'param_type_choice', 'iassign');
+        } else if($type == 'multiple'){
+        	$mform->addElement('textarea', 'param_value', get_string('config_param_value', 'iassign'), 'rows="4" cols="30"');
+        	$mform->addHelpButton('param_value', 'param_type_multiple', 'iassign');
         }
         
         $mform->addElement('htmleditor', 'description', get_string('config_param_description', 'iassign'));

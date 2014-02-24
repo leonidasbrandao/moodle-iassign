@@ -3,6 +3,9 @@
  * This php script contains all the stuff to interactive Learning Module (iLM).
  * 
  * Release Notes:
+ * - v 2.1 2014/02/24
+ * 		+ Fix bugs in new params.
+ * 		+ View paam tye in table of params.
  * - v 2.0 2014/01/23
  * 		+ Insert function for move activities for other iLM.
  * - v 1.9 2013/12/12
@@ -23,7 +26,7 @@
  * @author Patricia Alves Rodrigues
  * @author Leônidas O. Brandão
  * @author Luciano Oliveira Borges
- * @version v 2.0 2014/01/23
+ * @version v 2.1 2014/02/24
  * @package mod_iassign_settings
  * @since 2010/09/27
  * @copyright iMatica (<a href="http://www.matematica.br">iMath</a>) - Computer Science Dep. of IME-USP (Brazil)
@@ -148,7 +151,11 @@ if ($action == 'view') {
 	}
 	$str .= '</table>';
 	
-	$settings->add ( new admin_setting_heading ( 'iassign', get_string ( 'config_ilm', 'iassign' ).$OUTPUT->help_icon ( 'modulename', 'iassign' ), $str ) );
+	$pluginman = plugin_manager::instance();
+	$plugins = $pluginman->get_plugins();
+	$version_text = '<br><span class="form-shortname" style="align: right;">'.get_string ( 'version_ilm', 'iassign' ).': '.$plugins['mod']['iassign']->versiondb."</span>";
+	
+	$settings->add ( new admin_setting_heading ( 'iassign', get_string ( 'config_ilm', 'iassign' ).$OUTPUT->help_icon ( 'modulename', 'iassign' ).$version_text, $str ) );
 } else if ($action == 'confirm_upgrade') {
 	
 	$ilm = $DB->get_record ( 'iassign_ilm', array ('id' => $ilm_id ) );
@@ -342,10 +349,11 @@ if ($action == 'view') {
 			
 			$str .= '<table width="100%">' . chr ( 13 );
 			$str .= '<tr>' . chr ( 13 );
-			$str .= '<th colspan=3><center><strong>' . get_string ( 'config_param', 'iassign' ).$OUTPUT->help_icon ( 'config_param', 'iassign' ) . '</strong></center></th>';
+			$str .= '<th colspan=4><center><strong>' . get_string ( 'config_param', 'iassign' ).$OUTPUT->help_icon ( 'config_param', 'iassign' ) . '</strong></center></th>';
 			$str .= '<th>' . $link_add_param . '</th>';
 			$str .= '</tr>' . chr ( 13 );
 			$str .= '<tr>' . chr ( 13 );
+			$str .= '<td width="5%"><strong>' . get_string ( 'choose_type_param', 'iassign' ) . '</strong></td>';
 			$str .= '<td width="10%"><strong>' . get_string ( 'config_param_name', 'iassign' ) . '</strong></td>';
 			$str .= '<td width="20%"><strong>' . get_string ( 'config_param_value', 'iassign' ) . '</strong></td>';
 			$str .= '<td><strong>' . get_string ( 'config_param_description', 'iassign' ) . '</strong></td>';
@@ -373,9 +381,14 @@ if ($action == 'view') {
 				$url_delete_param = new moodle_url ( '/mod/iassign/settings_params.php', array ('action' => 'delete','ilm_param_id' => $ilm_config->id,'ilm_id' => $ilm_parent->id ));
 				$link_delete_param = $OUTPUT->action_link ( $url_delete_param, icons::insert ( 'delete_param' ));
 				
+				$value = $ilm_config->param_value;
+				if($ilm_config->param_type == 'boolean')
+					$value = ($ilm_config->param_value == '1' ? get_string('yes'): get_string('no'));
+				
 				$str .= '<tr>' . chr ( 13 );
+				$str .= '<td>' . get_string ( 'param_type_'.$ilm_config->param_type, 'iassign' ) . '</td>';
 				$str .= '<td>' . $ilm_config->param_name . '</td>';
-				$str .= '<td>' . $ilm_config->param_value . '</td>';
+				$str .= '<td>' . $value . '</td>';
 				$str .= '<td width="50%">' . $ilm_config->description . '</td>';
 				$str .= '<td width="10%"><center>';
 				$str .= $link_edit_param . '&nbsp;&nbsp;';
