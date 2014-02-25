@@ -62,6 +62,10 @@ if ($action == 'export') {
 	ilm_settings::export_ilm ( $ilm_id );
 	$action = 'config';
 }
+if ($action == 'export_update') {
+	ilm_settings::export_update_ilm ( $ilm_id );
+	$action = 'config';
+}
 
 
 $str = '';
@@ -151,7 +155,10 @@ if ($action == 'view') {
 	}
 	$str .= '</table>';
 	
-	$pluginman = plugin_manager::instance();
+	if(class_exists('plugin_manager'))
+		$pluginman = plugin_manager::instance();
+	else
+		$pluginman = core_plugin_manager::instance();
 	$plugins = $pluginman->get_plugins();
 	$version_text = '<br><span class="form-shortname" style="align: right;">'.get_string ( 'version_ilm', 'iassign' ).': '.$plugins['mod']['iassign']->versiondb."</span>";
 	
@@ -273,6 +280,9 @@ if ($action == 'view') {
 			$url_export = new moodle_url ( '/admin/settings.php', array ('section' => 'modsettingiassign', 'action' => 'export', 'ilm_id' => $ilm_parent->id, 'ilm_id_parent' => $ilm->id ));
 			$link_export = $OUTPUT->action_link ( $url_export, icons::insert ( 'export_ilm' ));
 			
+			$url_update = new moodle_url ( '/admin/settings.php', array ('section' => 'modsettingiassign', 'action' => 'export_update', 'ilm_id' => $ilm_parent->id, 'ilm_id_parent' => $ilm->id ));
+			$link_update = $OUTPUT->action_link ( $url_update, icons::insert ( 'export_update_ilm' ));
+			
 			$str .= '<tr><td colspan=3>';
 			$str .= '<table width="100%">';
 			
@@ -295,6 +305,7 @@ if ($action == 'view') {
 			$str .= $link_view . '&nbsp;&nbsp;';
 			$str .= $link_move;
 			$str .= $link_export . '&nbsp;&nbsp;';
+			$str .= $link_update . '&nbsp;&nbsp;';
 			$str .= $link_delete;
 			
 			$str .= '</td>' . chr ( 13 ) .'</tr>' . chr ( 13 );

@@ -3949,7 +3949,7 @@ class ilm_settings {
 		
 		$iassign_ilm_configs = $DB->get_records ( 'iassign_ilm_config', array ('iassign_ilmid' => $ilm_id ) );
 	
-		$zip_filename = $CFG->dataroot.'/temp/ilm-'.utils::format_pathname($iassign_ilm->name.'-v'.$iassign_ilm->version).'_'.date("Ymd-Hi").'.ipz';
+		$zip_filename = $CFG->dataroot.'/temp/ilm-'.utils::format_pathname($iassign_ilm->name.'-v'.$iassign_ilm->version).'.ipz';
 		$zip = new zip_archive();
 		$zip->open($zip_filename);
 		$fs = get_file_storage ();
@@ -4003,6 +4003,39 @@ class ilm_settings {
         @readfile("$zip_filename") or die("File not found.");
         unlink($zip_filename);
 	    exit;
+	}
+	/**
+	 * Function for export iLM package descriptor for allow online update.
+	 * @param int $ilm_id Id of iLM.
+	 */
+	static function export_update_ilm($ilm_id) {
+		global $DB, $CFG;
+	
+		$iassign_ilm = $DB->get_record ( 'iassign_ilm', array ('id' => $ilm_id ) );
+	
+		$xml_filename = $CFG->dataroot.'/temp/ilm-upgrade_'.utils::format_pathname($iassign_ilm->name).'.xml';
+		$zip_filename = 'ilm-'.utils::format_pathname($iassign_ilm->name.'-v'.$iassign_ilm->version).'.ipz';
+		
+		$upgrade_descriptor = '<?xml version="1.0" encoding="utf-8"?>'."\n";
+		$upgrade_descriptor .= '<upgrade xmlns="http://line.ime.usp.br/application/1.5">'."\n";
+		$upgrade_descriptor .= "\t".'<version>'.$iassign_ilm->version.'</version>'."\n";
+		$upgrade_descriptor .= "\t".'<file>'.$zip_filename.'</file>'."\n";
+		$upgrade_descriptor .= "\t".'<description>'.language::json_to_xml($iassign_ilm->description)."\n\t".'</description>'."\n";
+		$upgrade_descriptor .= '</upgrade>'."\n";
+		
+		file_put_contents($xml_filename, $upgrade_descriptor);
+	
+		header("Pragma: public");
+		header("Expires: 0");
+		header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+		header("Cache-Control: private",false);
+		header('Content-Type: application/xml; charset=utf-8');
+		header("Content-Disposition: attachment; filename=\"".basename($xml_filename)."\";");
+		header("Content-Length: ".@filesize($xml_filename));
+		set_time_limit(0);
+		@readfile("$xml_filename") or die("File not found.");
+		unlink($xml_filename);
+		exit;
 	}
 	/**
 	 * Function for save iLM from XML descriptor.
@@ -5902,6 +5935,19 @@ class language {
 			$langs .= $key." ";
 		}
 		return $langs;
+	}
+	/**
+	 * Function for convert json in xml.
+	 * @param string $json JSON text.
+	 * @return string Return as string with xml tags.
+	 */
+	static function json_to_xml($json) {
+		$xml = "";
+		$json = json_decode($json);
+		foreach ($json as $key => $value){
+			$xml .= "\n\t\t<".$key.">".$value."</".$key.">";
+		}
+		return $xml;
 	}
 }
 /**

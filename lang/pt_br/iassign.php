@@ -452,6 +452,7 @@ $string['error_upgrade_ilm']='Erro: Não foi possível baixar o pacote de atuali
 $string['export_ilm']='Exportar iMA';
 $string['import_ilm'] = 'Importar iMA';
 $string['import_ilm_help'] = 'Importar iMA';
+$string['update_ilm']='Exportar iMA para Update';
 $string['upload_ilm'] = 'Carregar pacote do iMA (Upload)';
 $string['error_import_ilm_version'] = 'ERRO: esta versão do iMA já está instalada.'; 
 $string['ok_import_ilm_version'] = 'O iMA foi importado com sucesso!';
@@ -487,6 +488,7 @@ $string['param_header'] = 'Parâmetros do Módulo';
 $string['param_header_help'] = '<p>Os parâmetros do módulo são configurações para personalizar o módulo de acordo com as atividades.</p><p>Para saber mais sobre cada parâmetro veja a ajuda de cada um.</p>';
 $string['param_default'] = 'Padrão: ';
 $string['param_default_static'] = 'Obs.: Para mudar este valor entre em contato com o administrador.';
+$string['export_update_ilm']='Exportar iMA para update online';
 
 $string['messageprovider:submission'] = 'Notificação de envio do iTarefa';
 $string['messageprovider:comment'] = 'Notificação de comentário do iTarefa';

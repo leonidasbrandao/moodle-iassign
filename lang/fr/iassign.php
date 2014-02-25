@@ -486,6 +486,7 @@ $string['param_header'] = 'Parâmetros do Módulo';
 $string['param_header_help'] = '<p>Os parâmetros do módulo são configurações para personalizar o módulo de acordo com as atividades.</p><p>Para saber mais sobre cada parâmetro veja a ajuda de cada um.</p>';
 $string['param_default'] = 'Padrão: ';
 $string['param_default_static'] = 'Obs.: Para mudar este valor entre em contato com o administrador.';
+$string['export_update_ilm']='Exportar iMA para update online';
 
 $string['messageprovider:submission'] = 'Notificação de envio do iTarefa';
 $string['messageprovider:comment'] = 'Notificação de comentário do iTarefa';
