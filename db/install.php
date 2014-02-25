@@ -31,7 +31,7 @@ function xmldb_iassign_install() {
 
 	$records = array(
 			array_combine(	array('name', 'url', 'version', 'description', 'extension', 'file_jar', 'file_class', 'width', 'height', 'enable','timemodified', 'author', 'timecreated', 'evaluate', 'tags'),
-					array('iGeom', 'http://www.matematica.br/igeom', '5.9.11', '{"en":"Interactive Geometry on the Internet.","pt_br":"Geometria Interativa na Internet."}', 'geo', 'iGeom_new.jar', 'IGeomApplet.class', 800, 600, 1, time(), $USER->id, time(), 1, array())
+					array('iGeom', 'http://www.matematica.br/igeom', '5.9.12', '{"en":"Interactive Geometry on the Internet.","pt_br":"Geometria Interativa na Internet."}', 'geo', 'iGeom_new.jar', 'IGeomApplet.class', 800, 600, 1, time(), $USER->id, time(), 1, array())
 			),
 			array_combine(	array('name', 'url', 'version', 'description', 'extension', 'file_jar', 'file_class', 'width', 'height', 'enable','timemodified', 'author', 'timecreated', 'evaluate', 'tags'),
 					array('iGraf', 'http://www.matematica.br/igraf', '4.4.0.10', '{"en":"Interactive Graphic on the Internet.","pt_br":"Gráficos Interativos na Internet."}', 'grf', 'iGraf_new.jar', 'igraf.IGraf.class', 840, 600, 1, time(), $USER->id, time(), 1, array())

@@ -3,6 +3,8 @@
  * This class provides all the functionality for an ia (interactive activities).
  * 
  * Release Notes:
+ * - v 4.6 2014/02/25 
+ * 		+ Fix bugs in filter function for open applets.
  * - v 4.5 2014/02/24 
  * 		+ Fix bugs in params.
  * 		+ Insert new param type.
@@ -70,7 +72,7 @@
  * @author Patricia Alves Rodrigues
  * @author Leônidas O. Brandão
  * @author Luciano Oliveira Borges
- * @version v 4.4 2014/01/24
+ * @version v 4.6 2014/02/25
  * @package mod_iassign_lib
  * @since 2010/09/27
  * @copyright iMatica (<a href="http://www.matematica.br">iMath</a>) - Computer Science Dep. of IME-USP (Brazil)
@@ -3441,6 +3443,11 @@ class ilm_settings {
 			
 			if (! empty ($file_url)) {
 				
+				if($options['type'] == "filter") {
+					$iassign_ilm->width = $options['width'];
+					$iassign_ilm->height = $options['height'];
+				}
+				
 				$html .= '<applet name="iLM" archive="'.implode(",", $file_url).'" code="' . $iassign_ilm->file_class . '" width="' . $iassign_ilm->width . '" height="' . $iassign_ilm->height . '" vspace=10 hspace=10>' . chr ( 13 );
 				$html .= '<param name="lang" value="' . $lang . '"/>' . chr ( 13 );
 				
@@ -3454,6 +3461,13 @@ class ilm_settings {
 								$html .= '<param name="'.$ilm_config->param_name.'" value="'.$ilm_config->param_value.'"/>' . chr ( 13 );
 							}
 						}
+						break;
+					case "filter":
+						$html .= '<param name="MA_PARAM_PropositionURL" value="true"/>' . chr ( 13 );
+						$html .= '<param name="MA_PARAM_Proposition" value="'.$options['Proposition'].'">' . chr ( 13 );
+						$html .= '<param name="MA_PARAM_notSEND" value="'.$options['notSEND'].'"/>' . chr ( 13 );
+						if ($options['toolbar'] == "disable")
+							$html .="<param name='SOH_ADD' value='ADD'>";
 						break;
 					case "activity":
 						$html .= '<param name="MA_PARAM_PropositionURL" value="true"/>' . chr ( 13 );
@@ -5172,7 +5186,7 @@ class ilm_manager {
 		
 		
 		echo $javascript;
-		echo filter_text ( $html );
+		echo format_text ( $html );
 		die;
 	}
 	/**

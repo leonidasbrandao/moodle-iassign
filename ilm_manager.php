@@ -3,6 +3,8 @@
  * iLM manager
  * 
  * Release Notes
+ * - v 2.5 2014/02/25
+ * 		+ Fix bugs in open files for block.
  * - v 2.4 2013/10/24
  * 		+ Insert function for recover iassign file in course.
  * - v 2.3 2013/08/26
@@ -36,7 +38,7 @@
  * @author Patricia Alves Rodrigues
  * @author Leônidas O. Brandão
  * @author Luciano Oliveira Borges
- * @version v 2.4 2013/10/24
+ * @version v 2.5 2014/02/25
  * @package mod_iassign_ilm
  * @since 2012/01/10
  * @copyright iMatica (<a href="http://www.matematica.br">iMath</a>) - Computer Science Dep. of IME-USP (Brazil)
@@ -190,9 +192,11 @@ if (has_capability('mod/iassign:editiassign', $context, $USER->id)) {
 	                }
 	            }
 	            $extensions = explode(",", $iassign_ilm->extension);
-	            if(in_array($extension[1], $extensions))
+	            if(in_array($extension[1], $extensions) && $from == 'iassign')
             		$file = $mform->save_stored_file('file', $context->id, 'mod_iassign', 'activity', 0, $dir_base, utils::format_filename($filename), 0, $USER->id);
-	            else 
+	            else if($from == 'block' || $from == 'tinymce')
+	            	$file = $mform->save_stored_file('file', $context->id, 'mod_iassign', 'activity', 0, $dir_base, utils::format_filename($filename), 0, $USER->id);
+	            else
 	            	$url .= "&error=incompatible_extension_file";
         	} else {
         	
