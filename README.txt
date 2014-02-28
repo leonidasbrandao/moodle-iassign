@@ -58,6 +58,7 @@ Besides, as the majority of Moodle modules, iAssign can export (as backup) one a
 9) Have fun.
 
 
+
 .: What is news :.
 
 Considering the iAssign for Moodle 1.9, the new featuress in this version are:

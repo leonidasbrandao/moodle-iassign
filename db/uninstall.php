@@ -28,7 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once ($CFG->dirroot . '/mod/iassign/locallib.php');
 
 function xmldb_iassign_uninstall() {
-	global $DB;
+	global $DB, $PAGE, $OUTPUT;
 	$fs = get_file_storage();
 	
     $context_system = context_system::instance();

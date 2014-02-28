@@ -3422,6 +3422,7 @@ class ilm_settings {
 	 * @return string Return with a tag html APPLET created.
 	 */
 	static function applet_ilm($ilm_id, $options = array()) {
+		
 		global $DB, $OUTPUT;
 		$html = "";
 		$iassign_ilm = $DB->get_record ( 'iassign_ilm', array ('id' => $ilm_id ) );
@@ -3447,7 +3448,7 @@ class ilm_settings {
 					$iassign_ilm->width = $options['width'];
 					$iassign_ilm->height = $options['height'];
 				}
-				
+				// TODO: Change to object, tag applet was deprecated.
 				$html .= '<applet name="iLM" archive="'.implode(",", $file_url).'" code="' . $iassign_ilm->file_class . '" width="' . $iassign_ilm->width . '" height="' . $iassign_ilm->height . '" vspace=10 hspace=10>' . chr ( 13 );
 				$html .= '<param name="lang" value="' . $lang . '"/>' . chr ( 13 );
 				
@@ -3463,11 +3464,12 @@ class ilm_settings {
 						}
 						break;
 					case "filter":
-						$html .= '<param name="MA_PARAM_PropositionURL" value="true"/>' . chr ( 13 );
-						$html .= '<param name="MA_PARAM_Proposition" value="'.$options['Proposition'].'">' . chr ( 13 );
-						$html .= '<param name="MA_PARAM_notSEND" value="'.$options['notSEND'].'"/>' . chr ( 13 );
 						if ($options['toolbar'] == "disable")
 							$html .="<param name='SOH_ADD' value='ADD'>";
+						$html .= '<param name="MA_PARAM_PropositionURL" value="true"/>' . chr ( 13 );
+						$html .= '<param name="MA_PARAM_notSEND" value="'.$options['notSEND'].'"/>' . chr ( 13 );
+						$html .= '<param name="MA_PARAM_addresPOST" value>' . chr ( 13 );
+						$html .= '<param name="MA_PARAM_Proposition" value="'.$options['Proposition'].'">' . chr ( 13 );
 						break;
 					case "activity":
 						$html .= '<param name="MA_PARAM_PropositionURL" value="true"/>' . chr ( 13 );
@@ -3507,7 +3509,7 @@ class ilm_settings {
 						//$ilm_config->param_value = $options[$ilm_config->param_name];
 					$html .= '<param name="'.$ilm_config->param_name.'" value="'.$ilm_config->param_value.'"/>' . chr ( 13 );
 				}
-				$html .= '</applet> <br/>';
+				$html .= '</applet>';
 			}
 		}
 		return $html;
@@ -5161,7 +5163,7 @@ class ilm_manager {
 		
 		$fileid = optional_param ( 'fileid', NULL, PARAM_TEXT );
 		
-		$tag_filter = $this->tag_ilm($fileid);
+		$tag_filter = format_text($this->tag_ilm($fileid));
 		
 		$javascript = "<script type='text/javascript'>
                //<![CDATA[
@@ -5172,7 +5174,7 @@ class ilm_manager {
                 //]]>
                 </script>";
 		
-		$html = "<html><head></head><body>
+		$html = "<html><head></head><body> $javascript
         <form name='formEnvio' id='formEnvio' method='post' enctype='multipart/form-data'>
         <table border='1'>
         <tr><td>$tag_filter</td></tr>
@@ -5184,9 +5186,7 @@ class ilm_manager {
         </body>
         </html>";
 		
-		
-		echo $javascript;
-		echo format_text ( $html );
+		echo $html;
 		die;
 	}
 	/**

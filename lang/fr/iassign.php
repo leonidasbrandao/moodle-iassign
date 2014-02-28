@@ -487,6 +487,8 @@ $string['param_header_help'] = '<p>Os parâmetros do módulo são configuraçõe
 $string['param_default'] = 'Padrão: ';
 $string['param_default_static'] = 'Obs.: Para mudar este valor entre em contato com o administrador.';
 $string['export_update_ilm']='Exportar iMA para update online';
+$string['error_ilm_path'] = 'ERRO: a pasta de iMA não foi encontrada para realizar a instalação, nenhum iMA foi inserido !!!';
+$string['error_ilm_delete'] = 'ERRO: não foi possível excluir a pasta de iMA e seu conteúdo.';
 
 $string['messageprovider:submission'] = 'Notificação de envio do iTarefa';
 $string['messageprovider:comment'] = 'Notificação de comentário do iTarefa';
