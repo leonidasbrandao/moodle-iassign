@@ -14,3 +14,5 @@ Install
 3) Unpack 'iAssign-master.zip' directly in Moodle root folder;
 
 4) Under role "administrator", go to the 'Site administration' and click on 'Notifications'.
+
+For more information about code see in https://github.com/leonidasbrandao/iAssign/wiki.
