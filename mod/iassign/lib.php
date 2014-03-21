@@ -418,7 +418,7 @@ function iassign_scale_used($iassignid, $scaleid) {
  * @return boolean True if the scale is used by any ia
  */
 function iassign_scale_used_anywhere($scaleid) {
-    if ($scaleid and record_exists('iassign', 'grade', -$scaleid)) {
+    if ($scaleid and $DB->record_exists('iassign', 'grade', -$scaleid)) {
         return true;
     } else {
         return false;
