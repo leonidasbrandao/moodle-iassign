@@ -3335,7 +3335,6 @@ class ilm {
 		$token = md5 ( $iassign_iLM_security->timecreated );
 		// $end_file = $CFG->wwwroot . DIRECTORY_SEPARATOR . 'mod' . DIRECTORY_SEPARATOR . 'iassign' . DIRECTORY_SEPARATOR . 'ilm_security.php?id=' . $id_iLM_security . '&token=' . $token . '&view=' . $view;
 		$end_file = $CFG->wwwroot . '/mod/iassign/ilm_security.php?id=' . $id_iLM_security . '&token=' . $token . '&view=' . $view;
-
 		$iassign = "
         <script type='text/javascript'>
           //<![CDATA[
@@ -3449,67 +3448,129 @@ class ilm_settings {
 					$iassign_ilm->height = $options['height'];
 				}
 				// TODO: Change to object, tag applet was deprecated.
-				$html .= '<applet name="iLM" archive="'.implode(",", $file_url).'" code="' . $iassign_ilm->file_class . '" width="' . $iassign_ilm->width . '" height="' . $iassign_ilm->height . '" vspace=10 hspace=10>' . chr ( 13 );
-				$html .= '<param name="lang" value="' . $lang . '"/>' . chr ( 13 );
-				
-				switch($options['type']){
-					case "view":
-						$html .= '<param name="MA_PARAM_notSEND" value="true"/>' . chr ( 13 );
-						$iassign_ilm_config = $DB->get_records('iassign_ilm_config', array ('iassign_ilmid' => $ilm_id ));
-						foreach ($iassign_ilm_config as $ilm_config) {
-							if(array_key_exists($ilm_config->param_name, $options)) {
-								$ilm_config->param_value = $options[$ilm_config->param_name];
-								$html .= '<param name="'.$ilm_config->param_name.'" value="'.$ilm_config->param_value.'"/>' . chr ( 13 );
+				if($iassign_ilm->extension=="html"){
+					$paramsStr = "?1=1&";
+					switch($options['type']){
+						case "view":
+							$paramsStr.= "&MA_PARAM_notSEND=true";
+							$iassign_ilm_config = $DB->get_records('iassign_ilm_config', array ('iassign_ilmid' => $ilm_id ));
+							foreach ($iassign_ilm_config as $ilm_config) {
+								if(array_key_exists($ilm_config->param_name, $options)) {
+									$ilm_config->param_value = $options[$ilm_config->param_name];
+									$paramsStr.= "&".$ilm_config->param_name."=".urlencode($ilm_config->param_value);
+								}
 							}
-						}
-						break;
-					case "filter":
-						if ($options['toolbar'] == "disable")
-							$html .="<param name='SOH_ADD' value='ADD'>";
-						$html .= '<param name="MA_PARAM_PropositionURL" value="true"/>' . chr ( 13 );
-						$html .= '<param name="MA_PARAM_notSEND" value="'.$options['notSEND'].'"/>' . chr ( 13 );
-						$html .= '<param name="MA_PARAM_addresPOST" value>' . chr ( 13 );
-						$html .= '<param name="MA_PARAM_Proposition" value="'.$options['Proposition'].'">' . chr ( 13 );
-						break;
-					case "activity":
-						$html .= '<param name="MA_PARAM_PropositionURL" value="true"/>' . chr ( 13 );
-						$html .= '<param name="MA_PARAM_notSEND" value="'.$options['notSEND'].'"/>' . chr ( 13 );
-						$html .= '<param name="MA_PARAM_addresPOST" value="'.$options['addresPOST'].'">' . chr ( 13 );
-						$html .= '<param name="MA_PARAM_Proposition" value="'.$options['Proposition'].'">' . chr ( 13 );
-						$html .= '<param name="MA_POST_ArchiveTeacher" value="true"/>';
-						$html .= '<param name="iLM_PARAM_Authoring" value="true"/>';
-						if($options['special_param'] == 1) {
-							$html .= '<param name="TIPO_SCRIPT" value="1">' . chr ( 13 );
-							$html .= '<param name="BOTAOSCR1" value="'.$options['student_answer'].'" />' . chr ( 13 );
-						}
-						
-						$iassign_statement_configs = $DB->get_records('iassign_statement_config', array ('iassign_statementid' => $options['iassign_statement'] ));
-						if($iassign_statement_configs) {
-							foreach ($iassign_statement_configs as $iassign_statement_config)
-								$html .= '<param name="'.$iassign_statement_config->param_name.'" value="'.$iassign_statement_config->param_value.'"/>' . chr ( 13 );
-						}
-						
-						break;
-					case "editor_new":
+							break;
+						case "filter":
+							if ($options['toolbar'] == "disable")
+								$paramsStr.= "&SOH_ADD=ADD";
+							$paramsStr.= "&MA_PARAM_PropositionURL=true";
+							$paramsStr.= "&MA_PARAM_notSEND=".urlencode($options['notSEND']);
+							$paramsStr.= "&MA_PARAM_addresPOST=".urlencode($ilm_config->param_value);
+							$paramsStr.= "&MA_PARAM_PropositionURL=".urlencode($ilm_config->param_value);
+							$paramsStr.= "&MA_PARAM_Proposition=".urlencode($options['Proposition']);
+							$paramsStr.= "&MA_PARAM_Proposition=".urlencode($options['Proposition']);
+							break;
+						case "activity":
+							$paramsStr.= "&MA_PARAM_PropositionURL=true";
+							$paramsStr.= "&MA_PARAM_notSEND=".urlencode($options['notSEND']);
+							$paramsStr.= "&MA_PARAM_addresPOST=".urlencode($options['addresPOST']);
+							$paramsStr.= "&MA_PARAM_Proposition=".urlencode($options['Proposition']);
+							$paramsStr.= "&MA_POST_ArchiveTeacher=true");
+							$paramsStr.= "&iLM_PARAM_Authoring=true";
+
+							if($options['special_param'] == 1) {
+								$paramsStr.= "&TIPO_SCRIPT=1";
+								$paramsStr.= "&MA_PARAM_Proposition=".urlencode($options['student_answer']);
+							}
+							
+							$iassign_statement_configs = $DB->get_records('iassign_statement_config', array ('iassign_statementid' => $options['iassign_statement'] ));
+							if($iassign_statement_configs) {
+								foreach ($iassign_statement_configs as $iassign_statement_config)
+									$paramsStr.= "&".$iassign_statement_config->param_name."=".urlencode($iassign_statement_config->param_value);
+							}
+							
+							break;
+						case "editor_new":
+								$paramsStr.= "&MA_PARAM_PropositionURL=true";
+								$paramsStr.= "&MA_PARAM_notSEND=".urlencode($options['notSEND']);
+								break;
+						case "editor_update":
+							$paramsStr.= "&MA_PARAM_PropositionURL=true";
+							$paramsStr.= "&MA_PARAM_Proposition=".urlencode($options['Proposition']);
+							$paramsStr.= "&MA_PARAM_notSEND=".urlencode($options['notSEND']);
+							break;
+						default:
+							print_error("ERROR: type of params not found!");
+					}
+
+					$html .='<iframe frameborder="0" name="iLM" src="ilm/'.$iassign_ilm->file_class.$paramsStr.'" style="width: '.$iassign_ilm->width.'px; height: '.$iassign_ilm->height.'px;" id="iLM" name="iLM"></iframe>';
+				}else{
+					$html .= '<applet name="iLM" archive="'.implode(",", $file_url).'" code="' . $iassign_ilm->file_class . '" width="' . $iassign_ilm->width . '" height="' . $iassign_ilm->height . '" vspace=10 hspace=10>' . chr ( 13 );
+					$html .= '<param name="lang" value="' . $lang . '"/>' . chr ( 13 );
+					
+					switch($options['type']){
+						case "view":
+							$html .= '<param name="MA_PARAM_notSEND" value="true"/>' . chr ( 13 );
+							$iassign_ilm_config = $DB->get_records('iassign_ilm_config', array ('iassign_ilmid' => $ilm_id ));
+							foreach ($iassign_ilm_config as $ilm_config) {
+								if(array_key_exists($ilm_config->param_name, $options)) {
+									$ilm_config->param_value = $options[$ilm_config->param_name];
+									$html .= '<param name="'.$ilm_config->param_name.'" value="'.$ilm_config->param_value.'"/>' . chr ( 13 );
+								}
+							}
+							break;
+						case "filter":
+							if ($options['toolbar'] == "disable")
+								$html .="<param name='SOH_ADD' value='ADD'>";
 							$html .= '<param name="MA_PARAM_PropositionURL" value="true"/>' . chr ( 13 );
 							$html .= '<param name="MA_PARAM_notSEND" value="'.$options['notSEND'].'"/>' . chr ( 13 );
+							$html .= '<param name="MA_PARAM_addresPOST" value>' . chr ( 13 );
+							$html .= '<param name="MA_PARAM_Proposition" value="'.$options['Proposition'].'">' . chr ( 13 );
 							break;
-					case "editor_update":
-						$html .= '<param name="MA_PARAM_PropositionURL" value="true"/>' . chr ( 13 );
-						$html .= '<param name="MA_PARAM_Proposition" value="'.$options['Proposition'].'">' . chr ( 13 );
-						$html .= '<param name="MA_PARAM_notSEND" value="'.$options['notSEND'].'"/>' . chr ( 13 );
-						break;
-					default:
-						print_error("ERROR: type of params not found!");
+						case "activity":
+							$html .= '<param name="MA_PARAM_PropositionURL" value="true"/>' . chr ( 13 );
+							$html .= '<param name="MA_PARAM_notSEND" value="'.$options['notSEND'].'"/>' . chr ( 13 );
+							$html .= '<param name="MA_PARAM_addresPOST" value="'.$options['addresPOST'].'">' . chr ( 13 );
+							$html .= '<param name="MA_PARAM_Proposition" value="'.$options['Proposition'].'">' . chr ( 13 );
+							$html .= '<param name="MA_POST_ArchiveTeacher" value="true"/>';
+							$html .= '<param name="iLM_PARAM_Authoring" value="true"/>';
+							if($options['special_param'] == 1) {
+								$html .= '<param name="TIPO_SCRIPT" value="1">' . chr ( 13 );
+								$html .= '<param name="BOTAOSCR1" value="'.$options['student_answer'].'" />' . chr ( 13 );
+							}
+							
+							$iassign_statement_configs = $DB->get_records('iassign_statement_config', array ('iassign_statementid' => $options['iassign_statement'] ));
+							if($iassign_statement_configs) {
+								foreach ($iassign_statement_configs as $iassign_statement_config)
+									$html .= '<param name="'.$iassign_statement_config->param_name.'" value="'.$iassign_statement_config->param_value.'"/>' . chr ( 13 );
+							}
+							
+							break;
+						case "editor_new":
+								$html .= '<param name="MA_PARAM_PropositionURL" value="true"/>' . chr ( 13 );
+								$html .= '<param name="MA_PARAM_notSEND" value="'.$options['notSEND'].'"/>' . chr ( 13 );
+								break;
+						case "editor_update":
+							$html .= '<param name="MA_PARAM_PropositionURL" value="true"/>' . chr ( 13 );
+							$html .= '<param name="MA_PARAM_Proposition" value="'.$options['Proposition'].'">' . chr ( 13 );
+							$html .= '<param name="MA_PARAM_notSEND" value="'.$options['notSEND'].'"/>' . chr ( 13 );
+							break;
+						default:
+							print_error("ERROR: type of params not found!");
+					}
 				}
+				if($iassign_ilm->extension!="html"){
+
+					$iassign_ilm_config = $DB->get_records('iassign_ilm_config', array ('iassign_ilmid' => $ilm_id, 'visible' => 1, 'param_type' => 'static' ));
+					foreach ($iassign_ilm_config as $ilm_config) {
+						//if(array_key_exists($ilm_config->param_name, $options))
+							//$ilm_config->param_value = $options[$ilm_config->param_name];
+						$html .= '<param name="'.$ilm_config->param_name.'" value="'.$ilm_config->param_value.'"/>' . chr ( 13 );
+					}
 				
-				$iassign_ilm_config = $DB->get_records('iassign_ilm_config', array ('iassign_ilmid' => $ilm_id, 'visible' => 1, 'param_type' => 'static' ));
-				foreach ($iassign_ilm_config as $ilm_config) {
-					//if(array_key_exists($ilm_config->param_name, $options))
-						//$ilm_config->param_value = $options[$ilm_config->param_name];
-					$html .= '<param name="'.$ilm_config->param_name.'" value="'.$ilm_config->param_value.'"/>' . chr ( 13 );
+					$html .= '</applet>';
 				}
-				$html .= '</applet>';
 			}
 		}
 		return $html;
@@ -4796,7 +4857,7 @@ class ilm_manager {
                var resposta_exerc = new Array(3);
                var valor_resposta = new Array(3);
                var sessao = new Array(3);
-               var doc = document.iLM;
+               var doc = window.iLM;
                resposta_exerc[0] = doc.getAnswer();
                valor_resposta[0] = doc.getEvaluation();
                docForm.MA_POST_Value.value = valor_resposta[0];
