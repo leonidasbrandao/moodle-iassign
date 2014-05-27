@@ -54,8 +54,7 @@ Besides, as the majority of Moodle modules, iAssign can export (as backup) one a
 5) Copy the 'iassign_filter' filter directory into the "filter" subdirectory of Moodle
 6) Copy the 'iassign_block' filter directory into the "blocks" subdirectory of Moodle
 7) Under role "administrator", go to the 'Site administration' and click on 'Notifications'
-8) Enable the filter 'iassign_filter'
-9) Have fun.
+8) Have fun.
 
 
 

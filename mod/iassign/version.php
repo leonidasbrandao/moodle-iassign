@@ -81,8 +81,8 @@ defined('MOODLE_INTERNAL') || die();
 
 $module->component = 'mod_iassign'; // Full name of the plugin (used for diagnostics)
 $module->requires = 2012120300;    // Requires this Moodle 2.4.x version 2012120300 (http://docs.moodle.org/dev/Releases)
-$module->version = 2014022700;    // The current module version (Date: YYYYMMDDXX)
+$module->version = 2014041600;    // The current module version (Date: YYYYMMDDXX)
 $module->cron = 60;
-$module->release = '2.1.57 (Build: 2014022700)';	// Human-readable version name
+$module->release = '2.1.57 (Build: 2014041600)';	// Human-readable version name
 $module->maturity = MATURITY_BETA;	// How stable the plugin is: MATURITY_ALPHA, MATURITY_BETA, MATURITY_RC, MATURITY_STABLE (Moodle 2.0 and above)
 ?>

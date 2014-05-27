@@ -216,8 +216,17 @@ class mod_ilm_form extends moodleform {
 	        $mform->addRule('evaluate', get_string('required', 'iassign'), 'required');
 	        $mform->addHelpButton('evaluate', 'auto_evaluate', 'iassign');
 	        
+	        $mform->addElement('header', 'license_header', get_string('license', 'iassign'));
+	        $mform->addElement('text', 'type_license', get_string('type_license', 'iassign'), array('size' => '55'));
+	        $mform->setType('type_license', PARAM_TEXT);
+	        $mform->addRule('type_license', get_string('required', 'iassign'), 'required');
+	        $mform->addHelpButton('type_license', 'license', 'iassign');
+	        
+	        $mform->addElement('text', 'author_license', get_string('author_license', 'iassign'), array('size' => '55'));
+	        $mform->setType('author_license', PARAM_TEXT);
+	        $mform->addRule('author_license', get_string('required', 'iassign'), 'required');
+	         
 	        /// Upload file ilm
-	
 	        $mform->addElement('header', 'upload_jar', get_string('upload_jar', 'iassign'));
 	        //$mform->setExpanded('upload_jar');
 	        $options = array('subdirs' => 0, 'maxbytes' => $CFG->userquota, 'maxfiles' => -1, 'accepted_types' => '*');
@@ -249,6 +258,8 @@ class mod_ilm_form extends moodleform {
 	        $mform->setType('parent', PARAM_INT);
 	        $mform->addElement('hidden', 'enable');
 	        $mform->setType('enable', PARAM_INT);
+	        $mform->addElement('hidden', 'id_old');
+	        $mform->setType('id_old', PARAM_INT);
 	        
 	        $mform->addElement('html', $code_javascript);
         } else {

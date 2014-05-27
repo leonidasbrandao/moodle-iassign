@@ -127,16 +127,16 @@ class filter_iassign_filter extends moodle_text_filter {
      * @return string Return html tag with a string  
      */
     function convert_applet($file, $width, $height, $toolbar, $file_string, $fileid) {
-        global $CFG, $DB;
+      global $CFG, $DB;
 
-        $tmp = explode(".", $file);
-        $extension = $tmp[1];
+      $tmp = explode(".", $file);
+      $extension = $tmp[1];
 
-        $iassign_ilms = $DB->get_records("iassign_ilm", array('enable' => 1, 'parent' => 0));
-        foreach($iassign_ilms as $value) {
-			$extensions = explode(",", $value->extension);
-			if(in_array($extension, $extensions))   
-				$iassign_ilm = $value;
+      $iassign_ilms = $DB->get_records("iassign_ilm", array('enable' => 1, 'parent' => 0));
+      foreach($iassign_ilms as $value) {
+				$extensions = explode(",", $value->extension);
+				if(in_array($extension, $extensions))   
+					$iassign_ilm = $value;
         }
 
         $output = '';

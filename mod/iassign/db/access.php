@@ -114,6 +114,11 @@ $capabilities = array(
         ),
         'clonepermissionsfrom' => 'moodle/course:manageactivities'
     ),
+    'mod/iassign:emailnotifyactivity' => array(
+    		'captype' => 'read',
+    		'contextlevel' => CONTEXT_MODULE,
+    		'archetypes' => array()
+    ),
     'mod/iassign:emailnotifysubmission' => array(
     		'captype' => 'read',
     		'contextlevel' => CONTEXT_MODULE,

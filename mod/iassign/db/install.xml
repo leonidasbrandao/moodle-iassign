@@ -9,8 +9,9 @@
         <FIELD NAME="description"  TYPE="text" LENGTH="medium" NOTNULL="false"                SEQUENCE="false"               ENUM="false" COMMENT="Description of the iLM"                  PREVIOUS="version"      NEXT="url"/>
         <FIELD NAME="url"          TYPE="text" LENGTH="small"  NOTNULL="false"                SEQUENCE="false"               ENUM="false" COMMENT="URL of iLM"                              PREVIOUS="description"  NEXT="extension"/>
         <FIELD NAME="extension"    TYPE="char" LENGTH="30"     NOTNULL="true" UNSIGNED="true" SEQUENCE="false"               ENUM="false" COMMENT="File extension iLM"                      PREVIOUS="url"          NEXT="parent"/>
-        <FIELD NAME="parent"       TYPE="int"  LENGTH="10"     NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0"   ENUM="false" COMMENT="id iLM parent. 0 - parent"               PREVIOUS="extension"    NEXT="file_jar"/>
-        <FIELD NAME="file_jar"     TYPE="char" LENGTH="255"    NOTNULL="true" UNSIGNED="true" SEQUENCE="false"               ENUM="false" COMMENT="File name JAR"                           PREVIOUS="parent"       NEXT="file_class"/>
+        <FIELD NAME="parent"       TYPE="int"  LENGTH="10"     NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0"   ENUM="false" COMMENT="id iLM parent. 0 - parent"               PREVIOUS="extension"    NEXT="ilm_type"/>
+        <FIELD NAME="ilm_type"     TYPE="char" LENGTH="255"    NOTNULL="true" UNSIGNED="true" SEQUENCE="false"               ENUM="false" COMMENT="Ilm Type"                                PREVIOUS="parent"       NEXT="file_jar"/>
+        <FIELD NAME="file_jar"     TYPE="char" LENGTH="255"    NOTNULL="true" UNSIGNED="true" SEQUENCE="false"               ENUM="false" COMMENT="File name JAR"                           PREVIOUS="ilm_type"     NEXT="file_class"/>
         <FIELD NAME="file_class"   TYPE="char" LENGTH="255"    NOTNULL="true" UNSIGNED="true" SEQUENCE="false"               ENUM="false" COMMENT="File name class"                         PREVIOUS="file_jar"     NEXT="width"/>
         <FIELD NAME="width"        TYPE="int"  LENGTH="10"     NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="800" ENUM="false" COMMENT="Width of area to display the iLM"        PREVIOUS="file_class"   NEXT="height"/>
         <FIELD NAME="height"       TYPE="int"  LENGTH="10"     NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="600" ENUM="false" COMMENT="Heigth of area to display the iLM"       PREVIOUS="width"        NEXT="enable"/>
@@ -111,7 +112,9 @@
         <FIELD NAME="max_experiment"           TYPE="int"  LENGTH="10"     NOTNULL="true"  UNSIGNED="true"  DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Maximum number of attempts. 0 - unlimited"                        PREVIOUS="visible"              NEXT="dependency"/>
         <FIELD NAME="dependency"               TYPE="char" LENGTH="255"    NOTNULL="true"  UNSIGNED="true"  DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="List the activities that this activity depends. 0 - independent"  PREVIOUS="max_experiment"       NEXT="automatic_evaluate"/>
         <FIELD NAME="automatic_evaluate"       TYPE="int"  LENGTH="1"      NOTNULL="false" UNSIGNED="true"  DEFAULT="1" SEQUENCE="false" ENUM="false" COMMENT="Using automatic evaluation activity?0 - no / 1 - yes"             PREVIOUS="dependency"           NEXT="show_answer"/>
-        <FIELD NAME="show_answer"              TYPE="int"  LENGTH="1"      NOTNULL="false" UNSIGNED="true"  DEFAULT="1" SEQUENCE="false" ENUM="false" COMMENT="Show automatic evaluation results to students? 0 - no / 1 - yes"  PREVIOUS="automatic_evaluate"/>
+        <FIELD NAME="show_answer"              TYPE="int"  LENGTH="1"      NOTNULL="false" UNSIGNED="true"  DEFAULT="1" SEQUENCE="false" ENUM="false" COMMENT="Show automatic evaluation results to students? 0 - no / 1 - yes"  PREVIOUS="automatic_evaluate"   NEXT="notify_submission"/>
+        <FIELD NAME="notify_submission"        TYPE="int"  LENGTH="1"      NOTNULL="false" UNSIGNED="true"  DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Send mail for student submission? 0 - no / 1 - yes"               PREVIOUS="show_answer"          NEXT="notify_comment"/>
+        <FIELD NAME="notify_comment"           TYPE="int"  LENGTH="1"      NOTNULL="false" UNSIGNED="true"  DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Send mail for comment in submission? 0 - no / 1 - yes"            PREVIOUS="notify_submission"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary"       TYPE="primary" FIELDS="id" NEXT="iassignid"/>
@@ -181,5 +184,20 @@
         <KEY NAME="iassign_statementid" TYPE="foreign" FIELDS="iassign_statementid" REFTABLE="iassign_statement" REFFIELDS="id" PREVIOUS="primary"/>
        </KEYS>
   </TABLE>
+  <TABLE NAME="iassign_tracking" COMMENT="Tracking de uso do IVPROG">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="tracking_data" />
+        <FIELD NAME="tracking_data" TYPE="text" LENGHT="big" PREVIOUS="id" NEXT="cmid" />
+        <FIELD NAME="cmid" TYPE="text" LENGHT="200" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" PREVIOUS="peso5" NEXT="course"/>
+        <FIELD NAME="course" TYPE="text" LENGHT="200" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" PREVIOUS="cm_id" NEXT="user"/>
+        <FIELD NAME="user" TYPE="text" LENGHT="200" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" PREVIOUS="course" NEXT="created"/>
+        <FIELD NAME="created" TYPE="datetime" NOTNULL="false" SEQUENCE="false" PREVIOUS="user" />
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+      </INDEXES>
+    </TABLE>
 </TABLES>
 </XMLDB>

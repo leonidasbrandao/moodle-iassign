@@ -36,7 +36,7 @@
  * 		+ Insert tool for manage aditional params for iLM (ilm_settings::add_edit_copy_param, ilm_settings::visible_param, ilm_settings::add_param, ilm_settings::edit_param, ilm_settings::copy_param, ilm_settings::delete_param).
  * - v 3.6 2013/09/05
  * 		+ Insert function ilm_settings::applet_ilm for create APPLET html tag.
- * 		+ Insert function ilm_settings::applet_filetime for get modified date of iLM file.
+ * 		+ Insert function ilm_settings::applet_fileinfo for get modified date of iLM file.
  * 		+ Change tag APPLET in funcion ilm_settings::view_ilm.
  * - v 3.5 2013/08/26
  * 		+ Fix bug in download package iassign without answers (iassign::report).
@@ -199,7 +199,7 @@ class iassign {
 		
 		$action_iassign = array ('newcomment' => '$this->get_answer ();','view' => '$this->view_iassign_current ();','get_answer' => '$this->get_answer ();','repeat' => '$this->view_iassign_current ();','overwrite' => '$this->get_answer ();','stats_student' => '$this->stats_students ();', 'download_answer' => '$this->export_file_answer();', 'download_all_answer' => '$this->export_package_answer();' );
 		
-		$action_iassign_limit = array ('view' => '$this->view_iassign_current();','newcomment' => '$this->get_answer ();','viewsubmission' => '$this->view_iassign_current();','edit_status' => '$this->edit_status ();','edit_grade' => '$this->edit_grade ();','report' => '$this->report ();','print' => '$this->report ();','stats' => '$this->stats ();','printstats' => '$this->stats ();' );
+		$action_iassign_limit = array ('view' => '$this->view_iassign_current();','newcomment' => '$this->get_answer ();','viewsubmission' => '$this->view_iassign_current();','edit_status' => '$this->edit_status ();','edit_grade' => '$this->edit_grade ();','report' => '$this->report ();','print' => '$this->report ();','stats' => '$this->stats ();','printstats' => '$this->stats ();','messages' => '$this->messages ();' );
 		
 		$restricted = array ('up' => '$this->activity->move_iassign ($this->iassign_up,$this->return);','down' => '$this->activity->move_iassign ($this->iassign_down,$this->return);','visible' => '$this->activity->visible_iassign ($this->return);','delete' => '$this->activity->delete ($this->return);','deleteno' => '$this->return_home_course("confirm_not_delete_iassign");','deleteyes' => '$this->activity->deleteyes($this->return, $this);','add' => '$this->add_edit_iassign ();','edit' => '$this->add_edit_iassign ();','get_answer' => '$this->get_answer ();' );
 		
@@ -217,7 +217,7 @@ class iassign {
 	 * receives the return of iLM
 	 */
 	function get_answer() {
-		global $USER, $CFG, $DB, $OUTPUT;
+		global $USER, $CFG, $DB, $OUTPUT, $COURSE;
 		$id = $this->cm->id;
 		$submission_comment = optional_param ( 'submission_comment', NULL, PARAM_TEXT );
 		$comment = false;
@@ -236,6 +236,18 @@ class iassign {
 		$MA_POST_SystemData = optional_param ( 'MA_POST_SystemData', NULL, PARAM_FORMAT );
 		$return_get_answer = optional_param ( 'return_get_answer', 0, PARAM_INT );
 		$msg = '';
+		
+		$count = 0;
+		$row = 0;
+		$column = $this->activity->get_activity ()->position;
+		$iassigns = $DB->get_records ( "iassign", array ("course" =>  $COURSE->id) );
+		foreach ($iassigns as $tmp) {
+			if($tmp == $this->activity->get_activity ()->iassignid)
+				$row = $count;
+			$count++;
+		}
+		
+		$iassign_statement = $DB->get_record ( "iassign_statement", array ("id" => $this->activity->get_activity ()->id ) );
 		
 		// feedback
 		/*
@@ -275,6 +287,13 @@ class iassign {
 					$status = 2;
 					$grade_student = 0; // evaluated as incorrect solution
 					$msg = '<tr><td colspan=2>' . icons::insert ( 'feedback_incorrect' ) . '<br>' . get_string ( 'get_answer_incorrect', 'iassign' ) . '</td>';
+					
+					if($iassign_statement->notify_submission == 1) {
+						$url_message = $CFG->wwwroot . "/mod/iassign/view.php?action=viewsubmission&id=$id&iassign_submission_current=$this->iassign_submission_current&userid_iassign=$this->userid_iassign&iassign_current=".$this->activity->get_activity ()->id."&row=$row&column=$column";
+						$tousers = get_users_by_capability($this->context, 'mod/iassign:evaluateiassign');
+						$subject = get_string ( 'send_message_submission', 'iassign' ).$iassign_statement->name;
+						messages::send_message('submission', $tousers, $subject, $url_message);
+					}
 					
 					// log record
 					$info = $iassign->name . "&nbsp;-&nbsp;" . $this->activity->get_activity ()->name . "&nbsp;-&nbsp;" . get_string ( 'feedback_incorrect', 'iassign' ) . '&nbsp;-&nbsp;' . get_string ( 'grade_iassign', 'iassign' ) . $grade_student;
@@ -327,9 +346,22 @@ class iassign {
 				if (! $newentry->id = $DB->insert_record ( "iassign_submission", $newentry )) {
 					print_error ( 'error_insert', 'iassign' );
 				} else {
+
+					if($iassign_statement->notify_submission == 1) {
+						$url_message = $CFG->wwwroot . "/mod/iassign/view.php?action=viewsubmission&id=$id&iassign_submission_current=$newentry->id&userid_iassign=$newentry->userid&iassign_current=$newentry->iassign_statementid&row=$row&column=$column";
+						$tousers = get_users_by_capability($this->context, 'mod/iassign:evaluateiassign');
+						$subject = get_string ( 'send_message_submission', 'iassign' ).$iassign_statement->name;
+						messages::send_message('submission', $tousers, $subject, $url_message);
+					}
+					
 					add_to_log ( $this->course->id, "iassign", "add submission", "view.php?id={$this->iassign->id}", $this->activity->get_activity ()->name, $this->cm->id, $USER->id );
 					$this->update_grade_student ( $newentry->userid, $newentry->iassign_statementid, $this->iassign->id );
 				}
+				
+				// log event -----------------------------------------------------
+				log::add_log('get_aswer', 'status: '.$newentry->status.' experiment: '.$newentry->experiment, $id, $iassign_ilm->id);
+				// log event -----------------------------------------------------
+				
 			} elseif ($iassign_submission->status != 3) {
 				$newentry = new stdClass ();
 				$newentry->id = $iassign_submission->id;
@@ -348,9 +380,22 @@ class iassign {
 					// D $fp = fopen("teste1.txt","w");
 					// D fwrite($fp,$stringAux);
 				} else {
+					
+					if($iassign_statement->notify_submission == 1) {
+						$url_message = $CFG->wwwroot . "/mod/iassign/view.php?action=viewsubmission&id=$id&iassign_submission_current=$newentry->id&userid_iassign=$newentry->userid&iassign_current=$newentry->iassign_statementid&row=$row&column=$column";
+						$tousers = get_users_by_capability($this->context, 'mod/iassign:evaluateiassign');
+						$subject = get_string ( 'send_message_submission', 'iassign' ).$iassign_statement->name;
+						messages::send_message('submission', $tousers, $subject, $url_message);
+					}
+					
 					add_to_log ( $this->course->id, "iassign", "update submission", "view.php?id={$this->iassign->id}", $this->activity->get_activity ()->name, $this->cm->id, $USER->id );
 					$this->update_grade_student ( $newentry->userid, $newentry->iassign_statementid, $this->iassign->id );
 				}
+				
+				// log event -----------------------------------------------------
+				log::add_log('get_aswer', 'status: '.$newentry->status.' experiment: '.$newentry->experiment, $id, $iassign_ilm->id);
+				// log event -----------------------------------------------------
+				
 			} else {
 				if ($return_get_answer == 1) {
 					$newentry = new stdClass ();
@@ -366,16 +411,34 @@ class iassign {
 					if (! $DB->update_record ( "iassign_submission", $newentry ))
 						print_error ( 'error_update', 'iassign' );
 					else {
+						
+						if($iassign_statement->notify_submission == 1) {
+							$url_message = $CFG->wwwroot . "/mod/iassign/view.php?action=viewsubmission&id=$id&iassign_submission_current=$newentry->id&userid_iassign=$newentry->userid&iassign_current=$newentry->iassign_statementid&row=$row&column=$column";
+							$tousers = get_users_by_capability($this->context, 'mod/iassign:evaluateiassign');
+							$subject = get_string ( 'send_message_submission', 'iassign' ).$iassign_statement->name;
+							messages::send_message('submission', $tousers, $subject, $url_message);
+						}
+						
 						add_to_log ( $this->course->id, "iassign", "update submission", "view.php?id={$this->iassign->id}", $this->activity->get_activity ()->name, $this->cm->id, $USER->id );
 						$this->update_grade_student ( $newentry->userid, $newentry->iassign_statementid, $this->iassign->id );
 						echo $OUTPUT->box_start ();
 						echo "<p>" . get_string ( 'iassign_update', 'iassign' ) . "</p>";
 						echo $OUTPUT->box_end ();
 					}
+					
+					// log event -----------------------------------------------------
+					log::add_log('get_aswer', 'status: '.$newentry->status.' experiment: '.$newentry->experiment, $id, $iassign_ilm->id);
+					// log event -----------------------------------------------------
+					
 				} elseif ($return_get_answer == 2) {
 					echo $OUTPUT->box_start ();
 					echo "<p>" . get_string ( 'iassign_cancel', 'iassign' ) . "</p>";
 					echo $OUTPUT->box_end ();
+					
+					// log event -----------------------------------------------------
+					log::add_log('get_aswer', 'status: '.$status.' experiment: '.($iassign_submission->experiment + 1), $id, $iassign_ilm->id);
+					// log event -----------------------------------------------------
+					
 				} else {
 					echo $OUTPUT->box_start ();
 					echo "
@@ -484,17 +547,17 @@ class iassign {
 		$zip->close();
 		
 		header("Pragma: public");
-        header("Expires: 0");
-        header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
-        header("Cache-Control: private",false);
-        header("Content-Type: application/zip");
-        header("Content-Disposition: attachment; filename=\"".basename($zip_filename)."\";");
-        header("Content-Transfer-Encoding: binary");
-        header("Content-Length: ".@filesize($zip_filename));
-        set_time_limit(0);
-        @readfile("$zip_filename") or die("File not found.");
-        unlink($zip_filename);
-	    exit;
+    header("Expires: 0");
+    header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+    header("Cache-Control: private",false);
+    header("Content-Type: application/zip");
+    header("Content-Disposition: attachment; filename=\"".basename($zip_filename)."\";");
+    header("Content-Transfer-Encoding: binary");
+    header("Content-Length: ".@filesize($zip_filename));
+    set_time_limit(0);
+    @readfile("$zip_filename") or die("File not found.");
+    unlink($zip_filename);
+	  exit;
 	}
 	
 	/**
@@ -926,7 +989,7 @@ class iassign {
 		echo '&nbsp;' . icons::insert ( 'incorrect' ) . '&nbsp;' . get_string ( 'incorrect', 'iassign' );
 		echo '&nbsp;' . icons::insert ( 'post' ) . '&nbsp;' . get_string ( 'post', 'iassign' );
 		echo '&nbsp;' . icons::insert ( 'not_post' ) . '&nbsp;' . get_string ( 'not_post', 'iassign' );
-		echo '&nbsp;' . icons::insert ( 'comment_unread' ) . '&nbsp;' . get_string ( 'comment_unread', 'iassign' );
+		echo '&nbsp;' . icons::insert ( 'comment_unread_legend',  'comment_unread') . '&nbsp;' . get_string ( 'comment_unread', 'iassign' );
 		
 		if (has_capability ( 'mod/iassign:viewreport', $this->context, $USER->id ) && $this->action == 'report') {
 			echo '&nbsp;' . icons::insert ( 'comment_read' ) . '&nbsp;' . get_string ( 'comment_read', 'iassign' );
@@ -979,9 +1042,6 @@ class iassign {
 			$iassign_submission = $DB->get_record ( "iassign_submission", array ("iassign_statementid" => $this->activity->get_activity ()->id,"userid" => $this->userid_iassign ) ); // data about student solution
 		}
 		
-		if ($iassign_submission)
-			$this->update_comment ( $iassign_submission->id );
-		
 		$file = $iassign_statement->file;
 		$this->bottonPost = 0; // hide submit button
 		$this->write_solution = 0; // disable recording solution
@@ -1018,6 +1078,11 @@ class iassign {
 		                                                                                                                           // ----> area teacher evaluate
 			$row = optional_param ( 'row', 0, PARAM_INT );
 			$column = optional_param ( 'column', 0, PARAM_INT );
+			$mark_read = optional_param ( 'mark_read', 0, PARAM_INT );
+			
+			if ($iassign_submission)
+				if($mark_read == 1)
+					$this->update_comment ( $iassign_submission->id );
 			
 			$link_next = icons::insert ( 'right_disable' );
 			$link_previous = icons::insert ( 'left_disable' );
@@ -1025,24 +1090,26 @@ class iassign {
 			$link_down = icons::insert ( 'down_disable' );
 			
 			// next_activity
-			if ($USER->matrix_iassign [$row] [$column]->iassign_next != - 1) {
-				$url_next = "view.php?action=viewsubmission&id=$id&iassign_submission_current=" . $USER->matrix_iassign [$row] [$column + 1]->iassign_submission_current . "&userid_iassign=$this->userid_iassign&iassign_current=" . $USER->matrix_iassign [$row] [$column]->iassign_next . "&view_iassign=report&row=" . ($row) . "&column=" . ($column + 1);
-				$link_next = "<a href='" . $url_next . "'>" . (icons::insert ( 'next_activity' )) . "</a>";
-			}
-			// previous_activity
-			if ($USER->matrix_iassign [$row] [$column]->iassign_previous != - 1) {
-				$url_previous = "view.php?action=viewsubmission&id=$id&iassign_submission_current=" . $USER->matrix_iassign [$row] [$column - 1]->iassign_submission_current . "&userid_iassign=$this->userid_iassign&iassign_current=" . $USER->matrix_iassign [$row] [$column]->iassign_previous . "&view_iassign=report&row=" . ($row) . "&column=" . ($column - 1);
-				$link_previous = "<a href='" . $url_previous . "'>" . (icons::insert ( 'previous_activity' )) . "</a>";
-			}
-			// previous_student
-			if ($USER->matrix_iassign [$row] [$column]->user_next != - 1) {
-				$url_down = "view.php?action=viewsubmission&id=$id&iassign_submission_current=" . $USER->matrix_iassign [$row + 1] [$column]->iassign_submission_current . "&userid_iassign=" . $USER->matrix_iassign [$row] [$column]->user_next . "&iassign_current=" . $this->activity->get_activity ()->id . "&view_iassign=report&row=" . ($row + 1) . "&column=" . ($column);
-				$link_down = "<a href='" . $url_down . "'>" . (icons::insert ( 'previous_student' )) . "</a>";
-			}
-			// next_student
-			if ($USER->matrix_iassign [$row] [$column]->user_previous != - 1) {
-				$url_up = "view.php?action=viewsubmission&id=$id&iassign_submission_current=" . $USER->matrix_iassign [$row - 1] [$column]->iassign_submission_current . "&userid_iassign=" . $USER->matrix_iassign [$row] [$column]->user_previous . "&iassign_current=" . $this->activity->get_activity ()->id . "&view_iassign=report&row=" . ($row - 1) . "&column=" . ($column);
-				$link_up = "<a href='" . $url_up . "'>" . (icons::insert ( 'next_student' )) . "</a>";
+			if(!empty($USER->matrix_iassign)) {
+				if ($USER->matrix_iassign [$row] [$column]->iassign_next != - 1) {
+					$url_next = "view.php?action=viewsubmission&id=$id&iassign_submission_current=" . $USER->matrix_iassign [$row] [$column + 1]->iassign_submission_current . "&userid_iassign=$this->userid_iassign&iassign_current=" . $USER->matrix_iassign [$row] [$column]->iassign_next . "&view_iassign=report&row=" . ($row) . "&column=" . ($column + 1);
+					$link_next = "<a href='" . $url_next . "'>" . (icons::insert ( 'next_activity' )) . "</a>";
+				}
+				// previous_activity
+				if ($USER->matrix_iassign [$row] [$column]->iassign_previous != - 1) {
+					$url_previous = "view.php?action=viewsubmission&id=$id&iassign_submission_current=" . $USER->matrix_iassign [$row] [$column - 1]->iassign_submission_current . "&userid_iassign=$this->userid_iassign&iassign_current=" . $USER->matrix_iassign [$row] [$column]->iassign_previous . "&view_iassign=report&row=" . ($row) . "&column=" . ($column - 1);
+					$link_previous = "<a href='" . $url_previous . "'>" . (icons::insert ( 'previous_activity' )) . "</a>";
+				}
+				// previous_student
+				if ($USER->matrix_iassign [$row] [$column]->user_next != - 1) {
+					$url_down = "view.php?action=viewsubmission&id=$id&iassign_submission_current=" . $USER->matrix_iassign [$row + 1] [$column]->iassign_submission_current . "&userid_iassign=" . $USER->matrix_iassign [$row] [$column]->user_next . "&iassign_current=" . $this->activity->get_activity ()->id . "&view_iassign=report&row=" . ($row + 1) . "&column=" . ($column);
+					$link_down = "<a href='" . $url_down . "'>" . (icons::insert ( 'previous_student' )) . "</a>";
+				}
+				// next_student
+				if ($USER->matrix_iassign [$row] [$column]->user_previous != - 1) {
+					$url_up = "view.php?action=viewsubmission&id=$id&iassign_submission_current=" . $USER->matrix_iassign [$row - 1] [$column]->iassign_submission_current . "&userid_iassign=" . $USER->matrix_iassign [$row] [$column]->user_previous . "&iassign_current=" . $this->activity->get_activity ()->id . "&view_iassign=report&row=" . ($row - 1) . "&column=" . ($column);
+					$link_up = "<a href='" . $url_up . "'>" . (icons::insert ( 'next_student' )) . "</a>";
+				}
 			}
 			if ($iassign_submission)
 				$answer = $iassign_submission->answer;
@@ -1200,11 +1267,15 @@ class iassign {
 					$enderecoPOSTcomment = "" . $CFG->wwwroot . "/mod/iassign/view.php?id=" . $id . "&action=newcomment&iassign_current=" . $this->activity->get_activity ()->id . "&userid_iassign=" . $this->userid_iassign . "&row=" . ($row) . "&column=" . ($column);
 				}
 				
+				$comment_label = get_string ( 'submit_comment', 'iassign' );
+				if(strpos($history_comment, "formCommentMarkRead") !== false)
+					$comment_label = get_string ( 'submit_comment_and_mark_read', 'iassign' );
+				
 				$output .= $OUTPUT->box_start ();
 				
 				$output .= "<center><form name='formEnvioComment' id='formEnvioComment1' method='post' action='$enderecoPOSTcomment' enctype='multipart/form-data'>\n<p>\n";
 				$output .= "<textarea rows='2' cols='60' name='submission_comment'></textarea>";
-				$output .= "</p><p><input type=submit value='" . get_string ( 'submit_comment', 'iassign' ) . "'\></p>\n";
+				$output .= "</p><p><input type=submit value='" . $comment_label . "'\></p>\n";
 				$output .= "</form></center>\n";
 				if (! empty ( $history_comment )) {
 					$output .= "  <table id='outlinetable' class='generaltable boxaligncenter' cellpadding='5' width='100%'> \n";
@@ -1218,6 +1289,13 @@ class iassign {
 			} // if ($iassign_statement->type_iassign == 3)
 		}		// elseif (($this->action == 'viewsubmission')
 		elseif (has_capability ( 'mod/iassign:submitiassign', $USER->context, $USER->id )) { // access student
+			
+			if ($iassign_submission)
+				$this->update_comment ( $iassign_submission->id );
+			
+			// log event -----------------------------------------------------
+			log::add_log('view_iassign', '', $this->cm->id);
+			// log event -----------------------------------------------------
 
 			// ---> access student
 			if ($iassign_statement->type_iassign == 1) {
@@ -1788,6 +1866,7 @@ class iassign {
 		die ();
 	}
 	
+	
 	/**
 	 * Display graphics of performance
 	 */
@@ -2235,11 +2314,306 @@ class iassign {
 		die ();
 	}
 	
+	function messages() {
+		global $USER, $CFG, $DB, $OUTPUT, $COURSE;
+		
+		$id = optional_param ( 'id', 0, PARAM_INT );
+		$iassignid = optional_param ( 'iassignid', 0, PARAM_INT );
+		
+		$iassign_selected = optional_param ( 'iassign_select', 0, PARAM_INT );
+		$user_selected = optional_param ( 'user_select', 0, PARAM_INT );
+		$dates_selected = optional_param ( 'dates_select', 0, PARAM_INT );
+		$status_selected = optional_param ( 'status_select', -1, PARAM_INT );
+		$type_selected = optional_param ( 'type_select', '', PARAM_TEXT );
+		
+		$iassign_select = array();
+		$iassigns = $DB->get_records( 'iassign', array ('course' => $COURSE->id ));
+		foreach ( $iassigns as $iassign ) 
+			$iassign_select[$iassign->id] = $iassign->name; 
+		
+		if($iassign_selected != 0)
+			$iassigns = $DB->get_records( 'iassign', array ('course' => $COURSE->id, 'id' => $iassign_selected ));
+		
+		$user_select = array();
+		$context = context_course::instance($COURSE->id);
+		$courseusers = get_enrolled_users($context); //get_enrolled_users($context, '', $selectedgroup, 'u.id, u.firstname, u.lastname, u.idnumber', null, $limitfrom, $limitnum);
+		foreach ( $courseusers as $courseuser ) 
+			$user_select[$courseuser->id] = $courseuser->firstname.' '.$courseuser->lastname;
+		
+		$timenow = time();
+		$strftimedate = get_string("strftimedate");
+		$strftimedaydate = get_string("strftimedaydate");
+		$timemidnight = $today = usergetmidnight(time());
+		$dates_select = array(
+				"0" => get_string('alldays'),
+				"$timemidnight" => get_string("today").", ".userdate($timenow, $strftimedate)
+		);
+		if (!$COURSE->startdate or ($COURSE->startdate > $timenow)) {
+			$COURSE->startdate = $COURSE->timecreated;
+		}
+		$numdates = 1;
+		while ($timemidnight > $COURSE->startdate and $numdates < 365) {
+			$timemidnight = $timemidnight - 86400;
+			$timenow = $timenow - 86400;
+			$dates_select["$timemidnight"] = userdate($timenow, $strftimedaydate);
+			$numdates++;
+		}
+		$selecteddate = '';
+		if ($selecteddate === "today") {
+			$selecteddate = $today;
+		}
+		
+		$status_select = array(
+				"-1" => get_string('messages_allmessages', 'iassign'),
+				"0" => get_string('comment_unread', 'iassign'),
+				"1" => get_string('comment_read', 'iassign')
+		);
+		
+		$type_select = array(
+				"group" => get_string('messages_report_group', 'iassign'),
+				"table" => get_string('messages_report_table', 'iassign')
+		);
+		
+		if($dates_selected == 0)
+			$dates_selected_text = get_string('messages_alldays', 'iassign');
+		else
+			$dates_selected_text = userdate($dates_selected);
+		
+		if($user_selected == 0)
+			$user_selected_text = get_string('messages_allusers', 'iassign');
+		else {
+			$user = $DB->get_record ( 'user', array ('id' => $user_selected ) );
+			$user_selected_text = $user->firstname.' '.$user->lastname;
+		}
+		
+		echo $OUTPUT->header ();
+		echo $OUTPUT->box_start ();
+		
+		echo $OUTPUT->heading(get_string('messages', 'iassign').' ('.format_string($COURSE->fullname).'): '.$user_selected_text.', '.$dates_selected_text);
+		
+		echo "<center><form class='messageselectform' action='$CFG->wwwroot/mod/iassign/view.php' method='GET'>\n";
+		echo "<div>\n";
+		echo "<input type='hidden' name='id' value='$id' />\n";
+		echo "<input type='hidden' name='action' value='messages' />\n";
+		echo "<input type='hidden' name='iassignid' value='$iassignid' />\n";
+		
+		echo html_writer::select($type_select, "type_select", $type_selected, false);
+		echo html_writer::select($iassign_select, "iassign_select", $iassign_selected, get_string('messages_allactivities', 'iassign'));
+		echo html_writer::select($user_select, "user_select", $user_selected, get_string('messages_allusers', 'iassign'));
+		echo html_writer::select($dates_select, "dates_select", $dates_selected, false);
+		echo html_writer::select($status_select, "status_select", $status_selected, false);
+		
+		echo '<input type="submit" value="'.get_string('messages_getthesemessages', 'iassign').'" />';
+		echo '</div>';
+		echo '</form></center>';
+		
+		echo $OUTPUT->box_end ();
+		
+		$count_registers = 0;
+		$count_messages = 0;
+		$messages = array();
+		
+		if($type_selected != 'table') {
+			$count_iassign = 0;
+			$row = 0;
+			foreach ( $iassigns as $iassign ) {
+				$iassign_statements = $DB->get_records( 'iassign_statement', array ('iassignid' => $iassign->id ));
+				$iassigndata = new stdClass();
+				$column = 1;
+				foreach ( $iassign_statements as $iassign_statement ) {
+					if($user_selected == 0)
+						$iassign_submissions = $DB->get_records( 'iassign_submission', array ('iassign_statementid' => $iassign_statement->id ));
+					else
+						$iassign_submissions = $DB->get_records( 'iassign_submission', array ('iassign_statementid' => $iassign_statement->id, 'userid' => $user_selected ));
+					foreach ( $iassign_submissions as $iassign_submission ) {
+						$user_ilm = $DB->get_record ( 'user', array ('id' => $iassign_submission->userid ) );
+						
+						$options = array();
+						$options['iassign_submissionid'] = $iassign_submission->id;
+						//$options['receiver'] = 1;
+						
+						if($dates_selected != 0)
+							$options['timecreated'] = $dates_selected ;
+						
+						if($status_selected != -1)
+							$options['return_status'] = $status_selected ;
+
+						$iassign_submission_comments = $DB->get_records( 'iassign_submission_comment', $options);
+						
+						$comments = array();
+						$count_comments = 0;
+						foreach ( $iassign_submission_comments as $iassign_submission_comment ) {
+							$user_comment = $DB->get_record ( 'user', array ('id' => $iassign_submission_comment->comment_authorid ) );
+							
+							$message = new stdClass();
+							$message->date = $user_comment->firstname.' '.$user_comment->lastname.': '.userdate($iassign_submission_comment->timecreated);
+							$message->comment = $iassign_submission_comment->comment;
+							$message->status = $iassign_submission_comment->return_status;
+							$comments[$count_comments] = $message;
+							$count_comments++;
+						}
+						$count_registers += $count_comments;
+						if(!empty($comments)) {
+							$iassigndata->id = $iassign->id;
+							$iassigndata->data[$count_iassign] = array('statement' => $iassign_statement->id, 'student' => $user_ilm->id, 'iassign_submission' => $iassign_submission->id, 'row' => $row, 'column' => $column, 'comments' => $comments);
+							$count_iassign++;
+						}
+					}
+					$column++;
+				}
+				$messages[$count_messages] = $iassigndata;
+				$count_messages++;
+				$row++;
+			}
+			$count_messages = $count_iassign;
+		} else {
+			$row = 0;
+			foreach ( $iassigns as $iassign ) {
+				$iassign_statements = $DB->get_records( 'iassign_statement', array ('iassignid' => $iassign->id ));
+				$column = 1;
+				foreach ( $iassign_statements as $iassign_statement ) {
+					$iassign_submissions = $DB->get_records( 'iassign_submission', array ('iassign_statementid' => $iassign_statement->id ));
+					foreach ( $iassign_submissions as $iassign_submission ) {
+						$options = array();
+						$options['iassign_submissionid'] = $iassign_submission->id;
+						//$options['receiver'] = 1;
+						
+						if($user_selected != 0)
+							$options['comment_authorid'] = $user_selected ;
+						
+						if($dates_selected != 0)
+							$options['timecreated'] = $dates_selected ;
+						
+						if($status_selected != -1)
+							$options['return_status'] = $status_selected ;
+
+						$iassign_submission_comments = $DB->get_records( 'iassign_submission_comment', $options);
+						
+						foreach ( $iassign_submission_comments as $iassign_submission_comment ) {
+							
+							$user_ilm = $DB->get_record ( 'user', array ('id' => $iassign_submission_comment->comment_authorid ) );
+							
+							$message = new stdClass();
+							$message->iassign = $iassign->id;
+							$message->statement = $iassign_statement->id;
+							$message->student = $user_ilm->id;
+							$message->iassign_submission = $iassign_submission->id;
+							$message->date = userdate($iassign_submission_comment->timecreated);
+							$message->comment = $iassign_submission_comment->comment;
+							$message->status = $iassign_submission_comment->return_status;
+							$message->row = $row;
+							$message->column = $column;
+							$messages[$count_messages] = $message;
+							$count_messages++;
+						}
+					}
+					$column++;
+				}
+				$row++;
+			}
+			$count_registers = $count_messages;
+		}
+		
+		echo "<p>" . get_string('messages_records', 'iassign', $count_registers). "</p>\n";
+				
+		if($type_selected != 'table') {
+			
+			foreach ( $messages as $iassigndata ) {
+				
+				$iassign = $DB->get_record( 'iassign', array ('id' => $iassigndata->id ));
+				
+				echo '<table id="outlinetable" class="generaltable boxaligncenter" cellpadding="5" width="100%">' . "\n";
+				echo '<tr><th colspan=2 class="header c1">' . $iassign->name . '</th></tr>' . "\n";
+				echo '<tr>' . "\n";
+				echo "<td class=\"cell c0 actvity\">";
+				
+				foreach ( $iassigndata->data as $message ) {
+				
+					$iassign_statement = $DB->get_record( 'iassign_statement', array ('id' => $message['statement'] ));
+					
+					$user_ilm = $DB->get_record ( 'user', array ('id' => $message['student'] ) );
+					
+					
+					echo '<table cellpadding="5" width="100%">' . "\n";
+					echo '<tr><th colspan=2>' . $iassign_statement->name . '</th></tr>' . "\n";
+					
+					echo "  <td width='20%'>" . $user_ilm->firstname .' '. $user_ilm->lastname . "</td>\n";
+					
+					$comments = '';
+					foreach ( $message['comments'] as $comment ) {
+						
+						$url = "" . $CFG->wwwroot . "/mod/iassign/view.php?action=viewsubmission&id=" . $id . "&iassign_submission_current=" . $message['iassign_submission'] . "&userid_iassign=" . $user_ilm->id . "&iassign_current=" . $iassign_statement->id . "&view_iassign=" . $iassign->id;
+						$url .= "&row=".$message['row']."&column=".$message['column'];
+						
+						if($comment->status == 0)
+							$comments .= icons::insert ( 'comment_unread');
+						else
+							$comments .= icons::insert ( 'comment_read');
+						$comments .= '&nbsp;&nbsp; <a href="' . $url . '">' . $comment->comment.'</a> ('.$comment->date.') <br>';
+						
+					} 
+					
+					echo "  <td>" . $comments . "</td>\n";
+					echo ' </tr>' . "\n";
+					echo "</table>";
+					
+				}
+				
+				echo "</td>";
+				echo ' </tr>' . "\n";
+				echo '</table>' . "\n";
+					
+			}
+		} else {
+			
+			echo '<table id="outlinetable" class="generaltable boxaligncenter" cellpadding="5" width="100%">' . "\n";
+			echo '<tr>';
+			echo '<th class="header c1">' . 'iAssign' . '</th>';
+			echo '<th class="header c1">' . 'Atividade' . '</th>';
+			echo '<th class="header c1">' . 'Aluno' . '</th>';
+			echo '<th class="header c1">' . 'Hora' . '</th>';
+			echo '<th class="header c1">' . 'Recado' . '</th>';
+			echo '<th class="header c1">' . 'Status' . '</th>';
+			echo '</tr>' . "\n";
+			
+			foreach ( $messages as $message ) {
+				
+				$iassign = $DB->get_record( 'iassign', array ('id' => $message->iassign ));
+				
+				$iassign_statement = $DB->get_record( 'iassign_statement', array ('id' => $message->statement ));
+				
+				$user_ilm = $DB->get_record ( 'user', array ('id' => $message->student ) );
+				
+				$url = "" . $CFG->wwwroot . "/mod/iassign/view.php?action=viewsubmission&id=" . $id . "&iassign_submission_current=" . $message->iassign_submission . "&userid_iassign=" . $user_ilm->id . "&iassign_current=" . $iassign_statement->id . "&view_iassign=" . $iassign->id;
+				$url .= "&row=".$message->row."&column=".$message->column;
+				
+				echo '<tr>' . "\n";
+				echo '<td>' . $iassign->name . '</td>' . "\n";
+				echo '<td>' . $iassign_statement->name . '</td>' . "\n";
+				echo '<td>' . $user_ilm->firstname .' '. $user_ilm->lastname . "</td>\n";
+				echo '<td>' . $message->date . "</td>\n";
+				echo '<td>' . $message->comment . "</td>\n";
+				
+				if($message->status == 0)
+					$comments = icons::insert ( 'comment_unread') . '&nbsp;&nbsp; <a href="' . $url . '">' . get_string ( 'comment_unread', 'iassign' ).'</a>';
+				else
+					$comments = icons::insert ( 'comment_read') . '&nbsp;&nbsp; <a href="' . $url . '">' . get_string ( 'comment_read', 'iassign' ).'</a>';
+				echo "  <td>" . $comments . "</td>\n";
+				
+				echo "</tr>\n";
+							
+			}
+			echo "</table>";
+		}
+		echo $OUTPUT->footer ();
+		die ();
+	}
+	
 	/**
 	 * Display page of iAssigns
 	 */
 	function view_iassigns() {
-		global $USER, $CFG, $COURSE, $DB, $OUTPUT;
+		global $USER, $CFG, $COURSE, $DB, $OUTPUT, $PAGE;
 		$id = $this->cm->id;
 		
 		$iassign_list = $DB->get_records_list ( 'iassign_statement', 'iassignid', array ('iassignid' => $this->iassign->id ), 'position ASC' );
@@ -2256,9 +2630,13 @@ class iassign {
 		$url_help = new moodle_url ( '/mod/iassign/settings_ilm.php', array ('action' => 'list','ilm_id' => 1 ) );
 		$action_help = new popup_action ( 'click', $url_help, 'iplookup', array ('title' => get_string ( 'help_ilm', 'iassign' ),'width' => 1200,'height' => 700 ) );
 		
-		$link_help = $OUTPUT->action_link ( $url_help, icons::insert ( 'help_ilm' ) . get_string ( 'help_ilm', 'iassign' ), $action_help );
-		$link_add = "<a href='" . $CFG->wwwroot . "/mod/iassign/view.php?id=" . $id . "&action=add&iassignid=" . $this->iassign->id . "'>" . icons::insert ( 'add_iassign' ) . get_string ( 'add_iassign', 'iassign' ) . "</a>";
-		$link_report = "<a href='" . $CFG->wwwroot . "/mod/iassign/view.php?id=" . $id . "&action=report&iassignid=" . $this->iassign->id . "'>" . icons::insert ( 'view_report' ) . get_string ( 'report', 'iassign' ) . "</a>";
+		$url_repository = new moodle_url ( '/mod/iassign/ilm_manager.php', array('id' => $COURSE->id, 'from' => 'block', 'returnurl' => $PAGE->url->out()) );
+		$link_repository = $OUTPUT->action_link ( $url_repository, icons::insert ( 'repository' ) .'&nbsp;'. get_string ( 'repository', 'iassign' ) );
+		
+		$link_help = $OUTPUT->action_link ( $url_help, icons::insert ( 'help_ilm' ) .'&nbsp;'. get_string ( 'help_ilm', 'iassign' ), $action_help );
+		$link_add = "<a href='" . $CFG->wwwroot . "/mod/iassign/view.php?id=" . $id . "&action=add&iassignid=" . $this->iassign->id . "'>" . icons::insert ( 'add_iassign' ) .'&nbsp;'. get_string ( 'add_iassign', 'iassign' ) . "</a>";
+		$link_report = "<a href='" . $CFG->wwwroot . "/mod/iassign/view.php?id=" . $id . "&action=report&iassignid=" . $this->iassign->id . "'>" . icons::insert ( 'view_report' ) .'&nbsp;'. get_string ( 'report', 'iassign' ) . "</a>";
+		$link_messages = "<a href='" . $CFG->wwwroot . "/mod/iassign/view.php?id=" . $id . "&action=messages&iassignid=" . $this->iassign->id . "'>" . icons::insert ( 'messages' ) .'&nbsp;'. get_string ( 'messages', 'iassign' ) . "</a>";
 		
 		// TODO: esta consulta esta sendo feita novamente na linha +/- 2258
 		if (has_capability ( 'mod/iassign:viewiassignall', $this->context, $USER->id )) { // could be "has_capability('mod/iassign:viewiassignall', $this->context, $USER->id)"
@@ -2267,7 +2645,13 @@ class iassign {
 			echo $link_help;
 			echo '</td>' . "\n";
 			echo '<td width=10% align="left">' . "\n";
+			echo $link_repository;
+			echo '</td>' . "\n";
+			echo '<td width=10% align="left">' . "\n";
 			echo $link_report;
+			echo '</td>' . "\n";
+			echo '<td width=10% align="left">' . "\n";
+			echo $link_messages;
 			echo '</td>' . "\n";
 		} // if (has_capability('mod/iassign:viewiassignall', $this->context, $USER->id))
 		if (has_capability ( 'mod/iassign:editiassign', $this->context, $USER->id )) {
@@ -2464,6 +2848,11 @@ class iassign {
 			}
 		} 		// if (has_capability('mod/iassign:viewiassignall', $this->context, $USER->id))
 		elseif (has_capability ( 'mod/iassign:submitiassign', $this->context, $USER->id )) { // student
+			
+			// log event -----------------------------------------------------
+			log::add_log('view_activity', '', $id);
+			// log event -----------------------------------------------------
+			
 			echo '<table width=100% ><tr>' . "\n";
 			echo "<td width=70% align='left'><font color='#0000aa'><strong>" . $title . "</strong></font></td>" . "\n";
 			echo '</tr></table>' . "\n";
@@ -2575,23 +2964,44 @@ class iassign {
 	 * Search comment of activity
 	 */
 	function search_comment_submission($iassign_submissionid) {
-		global $USER, $DB, $OUTPUT, $COURSE;
+		global $USER, $DB, $OUTPUT, $COURSE, $CFG;
 		$context = context_course::instance($COURSE->id );
 		
 		$comments = $DB->get_records_list ( 'iassign_submission_comment', 'iassign_submissionid', array ('iassign_submissionid' => $iassign_submissionid ), 'timecreated DESC' ); // 'ORDER BY "timecreated" ASC'
 		$text = "";
 		if ($comments) {
-			
+			$unread_exist = false;
 			foreach ( $comments as $tmp ) {
+				$alert = "";
+				if($tmp->receiver == 1 && $tmp->return_status == 0) {
+					$alert = icons::insert ( 'comment_unread');
+					$unread_exist = true;
+				}
 				$user_answer = $DB->get_record ( "user", array ('id' => $tmp->comment_authorid ) );
 				if (has_capability ( 'mod/iassign:editiassign', $context, $tmp->comment_authorid )) {
-					$text .= "<tr><td bgcolor='#fee7ae'><b> $user_answer->firstname</b>&nbsp;(" . userdate ( $tmp->timecreated ) . "</br>";
+					$text .= "<tr><td bgcolor='#fee7ae'><b> $user_answer->firstname</b>&nbsp;(" . userdate ( $tmp->timecreated ) . ")</br>";
 					$text .= "$tmp->comment</td></tr>";
 				} else {
-					$text .= "<tr><td bgcolor='#dce7ec'>&raquo;<b> $user_answer->firstname</b>&nbsp;(" . userdate ( $tmp->timecreated ) . "</br>";
-					$text .= "$tmp->comment</td></tr>";
+					$text .= "<tr><td bgcolor='#dce7ec'> <b> $user_answer->firstname</b>&nbsp;(" . userdate ( $tmp->timecreated ) . ")</br>";
+					$text .= "$alert&nbsp;$tmp->comment</td></tr>";
 				}
 			} // foreach ($comments as $tmp)
+				
+			if($unread_exist) {
+				$id = optional_param ( 'id', 0, PARAM_INT );
+				$iassign_submission_current = optional_param ( 'iassign_submission_current', 0, PARAM_INT );
+				$userid_iassign = optional_param ( 'userid_iassign', 0, PARAM_INT );
+				$iassign_current = optional_param ( 'iassign_current', 0, PARAM_INT );
+				$view_iassignd = optional_param ( 'view_iassign', 0, PARAM_INT );
+				$row = optional_param ( 'row', 0, PARAM_INT );
+				$column = optional_param ( 'column', 0, PARAM_INT );
+				
+				$url = $CFG->wwwroot . "/mod/iassign/view.php?action=viewsubmission&id=$id&iassign_submission_current=$iassign_submission_current&userid_iassign=$userid_iassign";
+				$url .= "&iassign_current=$iassign_current&view_iassignd=$view_iassignd&row=$row&column=$column&mark_read=1";
+				
+				$text .= "<tr><td><center><form name='formCommentMarkRead' method='post' action='$url' enctype='multipart/form-data'>\n";
+				$text .= "<input type='submit' value='". get_string ( 'comment_mark_read', 'iassign' ) ."'/></form></center></td></tr>";
+			}
 		}
 		return $text;
 	}
@@ -2627,11 +3037,23 @@ class iassign {
 	 * Record comment of activity
 	 */
 	function write_comment_submission() {
-		global $USER, $CFG, $DB, $OUTPUT;
+		global $USER, $CFG, $DB, $OUTPUT, $COURSE;
 		$id = $this->cm->id;
 		$submission_comment = optional_param ( 'submission_comment', NULL, PARAM_TEXT );
-		$row = optional_param ( 'row', 0, PARAM_INT );
-		$column = optional_param ( 'column', 0, PARAM_INT );
+		//$row = optional_param ( 'row', 0, PARAM_INT );
+		//$column = optional_param ( 'column', 0, PARAM_INT );
+		
+		$count = 0;
+		$row = 0;
+		$column = $this->activity->get_activity ()->position;
+		$iassigns = $DB->get_records ( "iassign", array ("course" =>  $COURSE->id) );
+		foreach ($iassigns as $tmp) {
+			if($tmp == $this->activity->get_activity ()->iassignid)
+				$row = $count;
+			$count++;
+		}
+		
+		$this->update_comment ( $this->iassign_submission_current );
 		
 		$sum_comment = 0;
 		
@@ -2646,12 +3068,16 @@ class iassign {
 			
 			$iassign_submission = $DB->get_record ( "iassign_submission", array ("id" => $this->iassign_submission_current ) );
 			
+			$iassign_statement = $DB->get_record ( "iassign_statement", array ("id" => $iassign_submission->iassign_statementid ) );
+			
 			if (has_capability ( 'mod/iassign:submitiassign', $this->context, $USER->id ) && !is_siteadmin()) {
 				$receiver = 1; // student message to teacher
 				$this->action = 'view';
 				
-				$iassign_statement = $DB->get_record ( "iassign_statement", array ("id" => $iassign_submission->iassign_statementid ) );
 				$tousers = get_users_by_capability($this->context, 'mod/iassign:evaluateiassign');
+				
+				$url_message = $CFG->wwwroot . "/mod/iassign/view.php?action=viewsubmission&id=$id&iassign_submission_current=$iassign_submission->id&userid_iassign=$iassign_submission->userid&iassign_current=$iassign_submission->iassign_statementid&row=$row&column=$column";
+				
 			} else {
 				$receiver = 2; // teacher message to student
 				$this->action = 'viewsubmission';
@@ -2659,6 +3085,8 @@ class iassign {
 				$tousers = array();
 				$tousers[] = $DB->get_record ( "user", array ("id" => $iassign_submission->userid ) );
 				
+				$url_message = $CFG->wwwroot . "/mod/iassign/view.php?action=view&id=$id&userid_iassign=$iassign_submission->userid&iassign_current=$iassign_submission->iassign_statementid";
+				 
 			} // if (has_capability('mod/iassign:submitiassign', $this->context, $USER->id))
 			
 			if (! $iassign_submission) {
@@ -2691,19 +3119,11 @@ class iassign {
 				$newentry->receiver = $receiver;
 				$ia_assign_submissions_comment_id = $DB->insert_record ( 'iassign_submission_comment', $newentry );
 				
-				foreach ($tousers as $touser) {
-					$eventdata = new stdClass();
-					$eventdata->component         = 'mod_iassign'; //your component name
-					$eventdata->name              = 'comment'; //this is the message name from messages.php
-					$eventdata->userfrom          = $USER;
-					$eventdata->userto            = $touser;
-					$eventdata->subject           = "Teste de Subject";
-					$eventdata->fullmessage       = "Teste de Mensagem...";
-					$eventdata->fullmessageformat = FORMAT_PLAIN;
-					$eventdata->fullmessagehtml   = "<b>Teste de Mensagem...</b>";
-					$eventdata->smallmessage      = "Teste de Mensagem";
-					$eventdata->notification      = 1; //this is only set to 0 for personal messages between users
-					message_send($eventdata);
+				
+				if($iassign_statement->notify_comment == 1) {
+					$iassign_statement = $DB->get_record ( "iassign_statement", array ("id" => $iassign_submission->iassign_statementid ) );
+					$subject = get_string ( 'send_message_comment', 'iassign' ).$iassign_statement->name;
+					messages::send_message('comment', $tousers, $subject, $url_message, $submission_comment);
 				}
 				
 				add_to_log ( $this->course->id, "iassign", "add comment", "view.php?id={$this->iassign->id}", $ia_assign_submissions_comment_id, $this->cm->id, $USER->id );
@@ -2717,6 +3137,7 @@ class iassign {
 		
 		return true;
 	}
+	
 	
 	/**
 	 * Writes a new submission
@@ -2736,6 +3157,16 @@ class iassign {
 			return_home_course ( 'error_insert_submissions');
 		else
 			add_to_log ( $this->course->id, "iassign", "add submission", "view.php?id={$this->iassign->id}", $newentry->id, $this->cm->id, $USER->id );
+		
+		$iassign_statement = $DB->get_record ( "iassign_statement", array ("id" => $iassignid ) );
+		
+		if($iassign_statement->notify_submission == 1) {
+			$url_message = $CFG->wwwroot . "/mod/iassign/view.php?action=viewsubmission&id=$this->cm->id&iassign_submission_current=$newentry->id&userid_iassign=$newentry->userid&iassign_current=$newentry->iassign_statementid&row=$row&column=$column";
+			$tousers = get_users_by_capability($this->cm, 'mod/iassign:evaluateiassign');
+			$iassign_statement = $DB->get_record ( "iassign_statement", array ("id" => $iassignid ) );
+			$subject = get_string ( 'send_message_submission', 'iassign' ).$iassign_statement->name;
+			messages::send_message('submission', $tousers, $subject, $url_message);
+		}
 		
 		return $newentry->id;
 	}
@@ -2906,7 +3337,7 @@ class activity {
 	 * Add news interactive activities
 	 */
 	function new_iassign($param) {
-		global $DB;
+		global $DB, $USER, $CFG;
 		
 		$newentry = new stdClass ();
 		$newentry->iassignid = $param->iassignid;
@@ -2937,6 +3368,8 @@ class activity {
 		$newentry->dependency = $param->dependency;
 		$newentry->automatic_evaluate = $param->automatic_evaluate;
 		$newentry->show_answer = $param->show_answer;
+		$newentry->notify_submission = $param->message_notify_submission;
+		$newentry->notify_comment = $param->message_notify_comment;
 		
 		if ($id = $DB->insert_record ( "iassign_statement", $newentry )) {
 			
@@ -2955,7 +3388,7 @@ class activity {
 			if ($param->type_iassign == 3)
 				iassign::update_grade_iassign ( $param->iassignid );
 			
-			$iassign_ilm_configs = $DB->get_records ( 'iassign_ilm_config', array ('iassign_ilmid' => $param->iassign_ilmid, 'visible' => '1' ) );
+			$iassign_ilm_configs = $DB->get_records ( 'iassign_ilm_config', array ('iassign_ilmid' => $newentry->iassign_ilmid, 'visible' => '1' ) );
 			if($iassign_ilm_configs) {
 				foreach ($iassign_ilm_configs as $iassign_ilm_config) {
 					if($iassign_ilm_config->param_type != 'static'){
@@ -2963,7 +3396,16 @@ class activity {
 						$newentry->iassign_statementid = $id;
 						$newentry->iassign_ilm_configid = $iassign_ilm_config->id;
 						$newentry->param_name = $iassign_ilm_config->param_name;
-						$newentry->param_value = (is_array($param->{'param_'.$iassign_ilm_config->id}) ? implode(",", $param->{'param_'.$iassign_ilm_config->id}) : $param->{'param_'.$iassign_ilm_config->id});
+						if(!empty($param->{'param_'.$iassign_ilm_config->id})) {
+							$param_value = $param->{'param_'.$iassign_ilm_config->id};
+							if(is_array($param_value))
+								$param_value = implode(",", $param->{'param_'.$iassign_ilm_config->id});
+							if(empty($param_value))
+								$param_value = "";
+						} else
+							$param_value = "";
+						
+						$newentry->param_value = $param_value;
 						
 						if (!$DB->insert_record ( "iassign_statement_config", $newentry ))
 							print_error ( 'error_add_param', 'iassign' );
@@ -2971,8 +3413,15 @@ class activity {
 				}
 			}
 			
+			if($param->message_notify_activity == 1 && $param->visible == 1) {
+				$url_message = $CFG->wwwroot . "/mod/iassign/view.php?action=view&id=".$USER->cm."&userid_iassign=#USER_ID#&iassign_current=$id";
+				$tousers = get_users_by_capability($param->context, 'mod/iassign:submitiassign');
+				$subject = get_string ( 'send_message_activity', 'iassign' ).$param->name;
+				messages::send_message('activity', $tousers, $subject, $url_message);
+			}
+			
 			// log event --------------------------------------------------------------------------------------
-			log::add_log('add_iassign_exercise', 'name: '.$param->name, $id, $param->iassign_ilmid);
+			log::add_log('add_iassign_exercise', 'name: '.$param->name.' type:'.$param->type_iassign, $id, $param->iassign_ilmid);
 			// log event --------------------------------------------------------------------------------------
 			
 			return $id;
@@ -3072,7 +3521,7 @@ class activity {
 	 * Update interactive activities
 	 */
 	function update_iassign($param) {
-		global $DB;
+		global $DB, $CFG, $USER;
 		
 		$component = 'mod_iassign';
 		$filearea = 'exercise';
@@ -3127,6 +3576,8 @@ class activity {
 		$newentry->dependency = $param->dependency;
 		$newentry->automatic_evaluate = $param->automatic_evaluate;
 		$newentry->show_answer = $param->show_answer;
+		$newentry->notify_submission = $param->message_notify_submission;
+		$newentry->notify_comment = $param->message_notify_comment;
 		
 		if (! $DB->update_record ( "iassign_statement", $newentry ))
 			print_error ( 'error_update', 'iassign' );
@@ -3147,11 +3598,34 @@ class activity {
 				if (!$DB->update_record ( "iassign_statement_config", $newentry ))
 					print_error ( 'error_edit_param', 'iassign' );
 				
-			}
+			} 
+		} else {
+			$iassign_ilm_configs = $DB->get_records ( 'iassign_ilm_config', array ('iassign_ilmid' => $newentry->iassign_ilmid, 'visible' => '1' ) );
+			if($iassign_ilm_configs) {
+				foreach ($iassign_ilm_configs as $iassign_ilm_config) {
+					if($iassign_ilm_config->param_type != 'static'){
+						$newentry = new stdClass ();
+						$newentry->iassign_statementid = $id;
+						$newentry->iassign_ilm_configid = $iassign_ilm_config->id;
+						$newentry->param_name = $iassign_ilm_config->param_name;
+						$newentry->param_value = (is_array($param->{'param_'.$iassign_ilm_config->id}) ? implode(",", $param->{'param_'.$iassign_ilm_config->id}) : $param->{'param_'.$iassign_ilm_config->id});
+			
+						if (!$DB->insert_record ( "iassign_statement_config", $newentry ))
+							print_error ( 'error_add_param', 'iassign' );
+					}
+				}
+			}		
+		}
+		
+		if($param->message_notify_activity == 1 && $param->visible == 1) {
+			$url_message = $CFG->wwwroot . "/mod/iassign/view.php?action=view&id=".$USER->cm."&userid_iassign=#USER_ID#&iassign_current=$id";
+			$tousers = get_users_by_capability($param->context, 'mod/iassign:submitiassign');
+			$subject = get_string ( 'send_message_activity', 'iassign' ).$param->name;
+			messages::send_message('activity', $tousers, $subject, $url_message);
 		}
 		
 		// log event --------------------------------------------------------------------------------------
-		log::add_log('update_iassign_exercise', 'name: '.$param->name, $param->iassign_id, $param->iassign_ilmid);
+		log::add_log('update_iassign_exercise', 'name: '.$param->name.' type:'.$param->type_iassign, $param->iassign_id, $param->iassign_ilmid);
 		// log event --------------------------------------------------------------------------------------
 		
 		return $id;
@@ -3333,7 +3807,6 @@ class ilm {
 		$id_iLM_security = $this->write_iLM_security ( $iassign_statement->id, addslashes ( $file ) );
 		$iassign_iLM_security = $DB->get_record ( "iassign_security", array ("id" => $id_iLM_security ) );
 		$token = md5 ( $iassign_iLM_security->timecreated );
-		// $end_file = $CFG->wwwroot . DIRECTORY_SEPARATOR . 'mod' . DIRECTORY_SEPARATOR . 'iassign' . DIRECTORY_SEPARATOR . 'ilm_security.php?id=' . $id_iLM_security . '&token=' . $token . '&view=' . $view;
 		$end_file = $CFG->wwwroot . '/mod/iassign/ilm_security.php?id=' . $id_iLM_security . '&token=' . $token . '&view=' . $view;
 
 		$iassign = "
@@ -3449,7 +3922,10 @@ class ilm_settings {
 					$iassign_ilm->height = $options['height'];
 				}
 				// TODO: Change to object, tag applet was deprecated.
-				$html .= '<applet name="iLM" archive="'.implode(",", $file_url).'" code="' . $iassign_ilm->file_class . '" width="' . $iassign_ilm->width . '" height="' . $iassign_ilm->height . '" vspace=10 hspace=10>' . chr ( 13 );
+				//$html .= '<applet name="iLM" archive="'.implode(",", $file_url).'" code="' . $iassign_ilm->file_class . '" width="' . $iassign_ilm->width . '" height="' . $iassign_ilm->height . '" vspace=10 hspace=10>' . chr ( 13 );
+				$html .= '<object type="application/x-java-applet;version=1.4.1" name="iLM" id="iLM" width="' . $iassign_ilm->width . '" height="' . $iassign_ilm->height . '" vspace=10 hspace=10>';
+				$html .= '<param name="archive" value="'.implode(",", $file_url).'"/>' . chr ( 13 );
+				$html .= '<param name="code" value="' . $iassign_ilm->file_class . '"/>' . chr ( 13 );
 				$html .= '<param name="lang" value="' . $lang . '"/>' . chr ( 13 );
 				
 				switch($options['type']){
@@ -3497,7 +3973,13 @@ class ilm_settings {
 					case "editor_update":
 						$html .= '<param name="MA_PARAM_PropositionURL" value="true"/>' . chr ( 13 );
 						$html .= '<param name="MA_PARAM_Proposition" value="'.$options['Proposition'].'">' . chr ( 13 );
+						$html .= '<param name="MA_PARAM_notSEND" value="false"/>' . chr ( 13 );
+						break;
+					case "qtype":
+						$html .= '<param name="MA_PARAM_PropositionURL" value="true"/>' . chr ( 13 );
 						$html .= '<param name="MA_PARAM_notSEND" value="'.$options['notSEND'].'"/>' . chr ( 13 );
+						$html .= '<param name="MA_PARAM_addresPOST" value>' . chr ( 13 );
+						$html .= '<param name="MA_PARAM_Proposition" value="'.$options['Proposition'].'">' . chr ( 13 );
 						break;
 					default:
 						print_error("ERROR: type of params not found!");
@@ -3509,7 +3991,7 @@ class ilm_settings {
 						//$ilm_config->param_value = $options[$ilm_config->param_name];
 					$html .= '<param name="'.$ilm_config->param_name.'" value="'.$ilm_config->param_value.'"/>' . chr ( 13 );
 				}
-				$html .= '</applet>';
+				$html .= '</object>';
 			}
 		}
 		return $html;
@@ -3519,16 +4001,41 @@ class ilm_settings {
 	 * @param string $file_jar String with Ids of iLM files.
 	 * @return string Return with the filenames and modified date.
 	 */
-	static function applet_filetime($file_jar){
+	static function applet_fileinfo($file_jar){
 		$filetime = "";
 		$fs = get_file_storage();
 		$files_jar = explode(",", $file_jar);
 		foreach($files_jar as $fj) {
 			$file = $fs->get_file_by_id($fj);
 			if ($file)
-				$filetime .= chr ( 13 ) . $file->get_filename() . ' (' . userdate($file->get_timemodified()) . ')'.'</br>';
+				$filetime .= chr ( 13 ) . $file->get_filename() . ' (' . userdate($file->get_timemodified()) . ') </br>';
 		}
 		return $filetime;
+	}
+	/**
+	 * Function for get license information of applet.
+	 * @param String $file_jar String containing an list de ids of applet files.
+	 * @param String $type String with type of information.
+	 * @return boolean Return true or fale if applet is default.
+	 */
+	static function applet_license($file_jar, $type = ''){
+		$license = "";
+		$fs = get_file_storage();
+		$files_jar = explode(",", $file_jar);
+		foreach($files_jar as $fj) {
+			$file = $fs->get_file_by_id($fj);
+			if($file) {
+      	if($file->get_license() != null && $file->get_license() != '') {  
+        	if($type == '')
+      			$license = $file->get_license().' ('.$file->get_author().')';
+			    if($type == 'license')
+				  	$license = $file->get_license();
+			    if($type == 'author')
+				  	$license = $file->get_author();
+				}
+			}
+		}
+		return $license;
 	}
 	/**
 	 * Function for verify an default applet.
@@ -3595,7 +4102,7 @@ class ilm_settings {
 				$param->extension = $iassign_ilm->extension;
 				$param->author = $iassign_ilm->author;
 				$param->file_jar = $iassign_ilm->file_jar;
-				$param->file_jar_static = ilm_settings::applet_filetime($iassign_ilm->file_jar);
+				$param->file_jar_static = ilm_settings::applet_fileinfo($iassign_ilm->file_jar);
 				$param->file_class = $iassign_ilm->file_class;
 				$param->width = $iassign_ilm->width;
 				$param->height = $iassign_ilm->height;
@@ -3604,6 +4111,8 @@ class ilm_settings {
 				$param->timemodified = time ();
 				$param->evaluate = $iassign_ilm->evaluate;
 				$param->parent = $iassign_ilm->parent;
+				$param->type_license = ilm_settings::applet_license($iassign_ilm->file_jar, 'license');
+				$param->author_license = ilm_settings::applet_license($iassign_ilm->file_jar, 'author');
 			}
 		} elseif ($action == 'new_version') {
 			$description = json_decode($iassign_ilm->description);
@@ -3629,6 +4138,9 @@ class ilm_settings {
 				$param->timemodified = time ();
 				$param->evaluate = $iassign_ilm->evaluate;
 				$param->parent = $iassign_ilm->parent;
+				$param->id_old = $ilm_id;
+				$param->type_license = ilm_settings::applet_license($iassign_ilm->file_jar, 'license');
+				$param->author_license = ilm_settings::applet_license($iassign_ilm->file_jar, 'author');
 			}
 		} elseif ($action == 'copy') {
 			$description = json_decode($iassign_ilm->description);
@@ -3655,6 +4167,9 @@ class ilm_settings {
 				$param->timemodified = time ();
 				$param->evaluate = $iassign_ilm->evaluate;
 				$param->parent = $iassign_ilm->parent;
+				$param->id_old = $ilm_id;
+				$param->type_license = ilm_settings::applet_license($iassign_ilm->file_jar, 'license');
+				$param->author_license = ilm_settings::applet_license($iassign_ilm->file_jar, 'author');
 			}
 		}
 		return $param;
@@ -3665,7 +4180,7 @@ class ilm_settings {
 	 * @param int $ilm_id Id of iLM.
 	 * @return string Return an string with ids of iLM files.
 	 */
-	static function new_file_ilm($itemid, $iassign_ilm) {
+	static function new_file_ilm($itemid, $iassign_ilm, $license) {
 		global $CFG, $USER, $DB;
 		
 		$return = null;
@@ -3686,7 +4201,9 @@ class ilm_settings {
 							'filearea' => 'ilm', 
 							'itemid' => rand(1, 999999999),
 							'filepath' => '/iassign/ilm/'.utils::format_pathname($iassign_ilm->name).'/'.utils::format_pathname($iassign_ilm->version).'/', 
-							'filename' => $value->get_filename ());
+							'filename' => $value->get_filename (),
+							'license' => $license[0],
+							'author' => $license[1]);
 					
 					$file_ilm = $fs->create_file_from_storedfile($file_ilm, $value);
 					
@@ -3725,7 +4242,7 @@ class ilm_settings {
 		$iassign_ilm->version = $param->version;
 		$iassign_ilm->file_jar = null;
 		
-		$file_jar = ilm_settings::new_file_ilm ( $param->file, $iassign_ilm );
+		$file_jar = ilm_settings::new_file_ilm ( $param->file, $iassign_ilm, array($param->type_license, $param->author_license)  );
 		
 		if (empty ( $file_jar ))
 			print_error ( 'error_add_ilm', 'iassign' );
@@ -3769,7 +4286,7 @@ class ilm_settings {
 		$iassign_ilm->version = $param->version;
 		$iassign_ilm->file_jar = $param->file_jar;
 		
-		$file_jar = ilm_settings::new_file_ilm ( $param->file, $iassign_ilm );
+		$file_jar = ilm_settings::new_file_ilm ( $param->file, $iassign_ilm, array($param->type_license, $param->author_license) );
 		
 		if (is_null ( $file_jar ))
 			print_error ( 'error_edit_ilm', 'iassign' );
@@ -3811,7 +4328,7 @@ class ilm_settings {
 		$iassign_ilm->version = $param->version;
 		$iassign_ilm->file_jar = null;
 		
-		$file_jar = ilm_settings::new_file_ilm ( $param->file, $iassign_ilm );
+		$file_jar = ilm_settings::new_file_ilm ( $param->file, $iassign_ilm, array($param->type_license, $param->author_license) );
 		
 		if (empty ( $file_jar ))
 			print_error ( 'error_add_ilm', 'iassign' );
@@ -3837,6 +4354,15 @@ class ilm_settings {
 			$newentry->parent = $param->parent;
 			
 			$newentry->id = $DB->insert_record ( "iassign_ilm", $newentry );
+			
+			$iassign_ilm_configs = $DB->get_records ( 'iassign_ilm_config', array ('iassign_ilmid' => $param->id_old ) );
+			if($iassign_ilm_configs) {
+				foreach ($iassign_ilm_configs as $iassign_ilm_config) {
+					$iassign_ilm_config->id = 0;
+					$iassign_ilm_config->iassign_ilmid = $newentry->id;
+					$DB->insert_record ( "iassign_ilm_config", $iassign_ilm_config );
+				}
+			}
 			
 			// log event --------------------------------------------------------------------------------------
 			log::add_log('copy_iassign_ilm', 'name: '.$param->name.' '.$param->version, 0, $newentry->id);
@@ -3971,11 +4497,15 @@ class ilm_settings {
 		$fs = get_file_storage ();
 		$files_id = explode(',',$iassign_ilm->file_jar);
 		$files_jar = "";
+		$type_license = "";
+		$author_license = "";
 		foreach($files_id as $file_id) {
 			$file = $fs->get_file_by_id($file_id);
 			if(!$file->is_directory()) {
 				$zip->add_file_from_string($file->get_filename(), $file->get_content());
 				$files_jar .= $file->get_filename();
+				$type_license = $file->get_license();
+				$author_license = $file->get_author();
 			}
 		}
 		$application_descriptor = '<?xml version="1.0" encoding="utf-8"?>'."\n";
@@ -3990,6 +4520,8 @@ class ilm_settings {
 		$application_descriptor .= "\t".'<width>'.$iassign_ilm->width.'</width>'."\n";
 		$application_descriptor .= "\t".'<height>'.$iassign_ilm->height.'</height>'."\n";
 		$application_descriptor .= "\t".'<evaluate>'.$iassign_ilm->evaluate.'</evaluate>'."\n";
+		$application_descriptor .= "\t".'<type_license>'.$type_license.'</type_license>'."\n";
+		$application_descriptor .= "\t".'<author_license>'.$author_license.'</author_license>'."\n";
 		If($iassign_ilm_configs){
 			$application_descriptor .= "\t".'<params>'."\n";
 			foreach($iassign_ilm_configs as $iassign_ilm_config) {
@@ -4064,7 +4596,7 @@ class ilm_settings {
 		
 		$fs = get_file_storage ();
 		$file_jar = array();
-		$files_ilm = explode(",", $application_xml->file_jar);
+		$files_ilm = explode(",", (String) $application_xml->file_jar);
 		$contextsystem = context_system::instance();
 			
 		foreach ( $files_ilm as $value ) {
@@ -4074,8 +4606,10 @@ class ilm_settings {
 					'component' => 'mod_iassign',
 					'filearea' => 'ilm',
 					'itemid' => rand(1, 999999999),
-					'filepath' => '/iassign/ilm/'.utils::format_pathname($application_xml->name).'/'.utils::format_pathname($application_xml->version).'/',
-					'filename' => $value);
+					'filepath' => '/iassign/ilm/'.utils::format_pathname((String) $application_xml->name).'/'.utils::format_pathname((String) $application_xml->version).'/',
+					'filename' => $value,
+					'license' => (String) $application_xml->type_license,
+					'author' => (String) $application_xml->author_license);
 	
 			$file_ilm = $fs->create_file_from_pathname($file_ilm, $CFG->dataroot.'/temp/'.$value);
 	
@@ -4111,67 +4645,71 @@ class ilm_settings {
  		
  		$application_xml = @simplexml_load_file($CFG->dataroot.'/temp/'.'ilm-application.xml', null, LIBXML_NOCDATA);
  		
- 		$iassign_ilm = $DB->get_record ( 'iassign_ilm', array ("name" => (String) $application_xml->name, "version" => (String) $application_xml->version) );
- 		if($iassign_ilm) {
- 			foreach ( $files_extract as $key => $value ) {
- 				$file = $CFG->dataroot.'/temp/'.$key;
- 				if(file_exists($file))
- 					unlink($file);
- 			}
- 			
- 			echo($OUTPUT->notification(get_string ( 'error_import_ilm_version', 'iassign' ), 'notifyproblem'));
- 		} else {
- 		
-	 		$file_jar = self::save_ilm_by_xml($application_xml, $files_extract);		
+ 		if($application_xml) {
+	 		$iassign_ilm = $DB->get_record ( 'iassign_ilm', array ("name" => (String) $application_xml->name, "version" => (String) $application_xml->version) );
+	 		if($iassign_ilm) {
+	 			foreach ( $files_extract as $key => $value ) {
+	 				$file = $CFG->dataroot.'/temp/'.$key;
+	 				if(file_exists($file))
+	 					unlink($file);
+	 			}
+	 			
+	 			echo($OUTPUT->notification(get_string ( 'error_import_ilm_version', 'iassign' ), 'notifyproblem'));
+	 		} else {
 	 		
-	 		if (empty ( $file_jar ))
-	 			print_error ( 'error_add_ilm', 'iassign' );
-	 		else {
-	 			$description_str = html_entity_decode((String) $application_xml->description);
-	 			
-	 			$iassign_ilm = $DB->get_record ( 'iassign_ilm', array ("parent" => 0, "name" => (String) $application_xml->name) );
-	 			if(!$iassign_ilm) {
-	 				$iassign_ilm = new stdClass ();
-	 				$iassign_ilm->id = 0;
-	 			}
-	 			
-	 			$newentry = new stdClass ();
-	 			$newentry->name = (String) $application_xml->name;
-	 			$newentry->version = (String) $application_xml->version;
-	 			$newentry->url = (String) $application_xml->url;
-	 			$newentry->description = $description_str;
-	 			$newentry->extension = strtolower((String) $application_xml->extension);
-	 			$newentry->file_jar = implode(",", $file_jar);
-	 			$newentry->file_class = (String) $application_xml->file_class;
-	 			$newentry->width = (String) $application_xml->width;
-	 			$newentry->height = (String) $application_xml->height;
-	 			$newentry->enable = 0;
-	 			$newentry->timemodified = time ();;
-	 			$newentry->author = $USER->id;
-	 			$newentry->timecreated = time ();;
-	 			$newentry->evaluate = (String) $application_xml->evaluate;
-	 			$newentry->parent = $iassign_ilm->id;
-	 			
-	 			$iassign_ilmid = $DB->insert_record ( "iassign_ilm", $newentry );
-	 			
-	 			foreach ( $application_xml->params->param as $value ) {
-	 				
-		 			$newentry = new stdClass ();
-		 			$newentry->iassign_ilmid = $iassign_ilmid;
-		 			$newentry->param_type = (String) $value->type;
-		 			$newentry->param_name = (String) $value->name;
-	 				$newentry->param_value = (String) $value->value;
-		 			$newentry->description =  html_entity_decode((String) $value->description);
-		 			$newentry->visible = (String) $value->visible;
-	 			
-		 			$newentry->id = $DB->insert_record ( "iassign_ilm_config", $newentry );
-		 			if (! $newentry->id) {
-		 				print_error ( 'error_add_param', 'iassign' );
+		 		$file_jar = self::save_ilm_by_xml($application_xml, $files_extract);		
+		 		
+		 		if (empty ( $file_jar ))
+		 			print_error ( 'error_add_ilm', 'iassign' );
+		 		else {
+		 			$description_str = html_entity_decode((String) $application_xml->description);
+		 			
+		 			$iassign_ilm = $DB->get_record ( 'iassign_ilm', array ("parent" => 0, "name" => (String) $application_xml->name) );
+		 			if(!$iassign_ilm) {
+		 				$iassign_ilm = new stdClass ();
+		 				$iassign_ilm->id = 0;
 		 			}
-	 			}
+		 			
+		 			$newentry = new stdClass ();
+		 			$newentry->name = (String) $application_xml->name;
+		 			$newentry->version = (String) $application_xml->version;
+		 			$newentry->url = (String) $application_xml->url;
+		 			$newentry->description = $description_str;
+		 			$newentry->extension = strtolower((String) $application_xml->extension);
+		 			$newentry->file_jar = implode(",", $file_jar);
+		 			$newentry->file_class = (String) $application_xml->file_class;
+		 			$newentry->width = (String) $application_xml->width;
+		 			$newentry->height = (String) $application_xml->height;
+		 			$newentry->enable = 0;
+		 			$newentry->timemodified = time ();;
+		 			$newentry->author = $USER->id;
+		 			$newentry->timecreated = time ();;
+		 			$newentry->evaluate = (String) $application_xml->evaluate;
+		 			$newentry->parent = $iassign_ilm->id;
+		 			
+		 			$iassign_ilmid = $DB->insert_record ( "iassign_ilm", $newentry );
+		 			
+		 			if($application_xml->params) {
+			 			foreach ( $application_xml->params->param as $value ) {
+				 			$newentry = new stdClass ();
+				 			$newentry->iassign_ilmid = $iassign_ilmid;
+				 			$newentry->param_type = (String) $value->type;
+				 			$newentry->param_name = (String) $value->name;
+			 				$newentry->param_value = (String) $value->value;
+				 			$newentry->description =  html_entity_decode((String) $value->description);
+				 			$newentry->visible = (String) $value->visible;
+			 			
+				 			$newentry->id = $DB->insert_record ( "iassign_ilm_config", $newentry );
+				 			if (! $newentry->id) {
+				 				print_error ( 'error_add_param', 'iassign' );
+				 			}
+			 			}
+		 			}
+		 		}
+		 		echo($OUTPUT->notification(get_string ( 'ok_import_ilm_version', 'iassign' ), 'notifysuccess'));
 	 		}
-	 		echo($OUTPUT->notification(get_string ( 'ok_import_ilm_version', 'iassign' ), 'notifysuccess'));
- 		}
+ 		} else
+ 			print_error ( 'error_import_ilm', 'iassign' );
  		
  		$fs->delete_area_files($contextuser->id, 'user', 'draft', $itemid);
 	}
@@ -4413,12 +4951,9 @@ class ilm_settings {
 				$str .= '<tr><td width="50%"><strong>' . get_string ( 'extension', 'iassign' ) . ':</strong>&nbsp;' . $iassign_ilm->extension . '</td>';
 				$str .= '<td width="50%"><strong>' . get_string ( 'width', 'iassign' ) . ':</strong>&nbsp;' . $iassign_ilm->width;
 				$str .= '&nbsp;&nbsp;<strong>' . get_string ( 'height', 'iassign' ) . ':</strong>&nbsp;' . $iassign_ilm->height . '</td></tr>';
-				//$files_jar = explode ( ",", $iassign_ilm->file_jar );
-				$date_jar = ilm_settings::applet_filetime($iassign_ilm->file_jar);
-				//foreach ( $files_jar as $files )
-					//$date_jar .= '</br>' . chr ( 13 ) . $files . ' (' . userdate ( filemtime ( $CFG->dirroot . '/mod/iassign/ilm/' . $files ) ) . ')';
+				$file_jar = ilm_settings::applet_fileinfo($iassign_ilm->file_jar);
 				
-				$str .= '<tr><td><strong>' . get_string ( 'file_jar', 'iassign' ) . '</strong>&nbsp;' . $date_jar . '</td>';
+				$str .= '<tr><td><strong>' . get_string ( 'file_jar', 'iassign' ) . '</strong>&nbsp;' . $file_jar . '</td>';
 				$str .= '<td ><strong>' . get_string ( 'file_class', 'iassign' ) . ':</strong>&nbsp;' . $iassign_ilm->file_class . '</td></tr>';
 				if ($iassign_ilm->evaluate == 1)
 					$evaluate = get_string ( 'yes', 'iassign' );
@@ -4437,7 +4972,8 @@ class ilm_settings {
 				$str .= '</tr>' . chr ( 13 );
 				$user_ilm = $DB->get_record ( 'user', array ('id' => $iassign_ilm->author ) );
 				$str .= '<tr>' . chr ( 13 );
-				$str .= '<td colspan=2><strong>' . get_string ( 'author', 'iassign' ) . ':</strong>&nbsp;' . $user_ilm->firstname . '&nbsp;' . $user_ilm->lastname . '</td>';
+				$str .= '<td width="50%"><strong>' . get_string ( 'author', 'iassign' ) . ':</strong>&nbsp;' . $user_ilm->firstname.'&nbsp;'.$user_ilm->lastname . '</td>';
+				$str .= '<td width="50%"><strong>' . get_string ( 'license', 'iassign' ) . ':</strong>&nbsp;' . ilm_settings::applet_license($iassign_ilm->file_jar) . '</td>' . chr ( 13 );
 				$str .= '</tr>' . chr ( 13 );
 				$str .= '</table>';
 				$str .= '</td></tr>';
@@ -5147,7 +5683,7 @@ class ilm_manager {
 		$output = "<script type='text/javascript'>
 		//<![CDATA[
 		var iassign_file_link = window.opener.document.getElementById('iassign_file_link');
-		iassign_file_link.innerHTML = '$filename';
+		iassign_file_link.innerHTML = '$filename&nbsp;&nbsp;&nbsp;';
 		window.opener.document.forms['mform1'].file.value='$fileid';
 		window.opener.document.forms['mform1'].filename.value='$filename';
 		window.close();
@@ -5237,14 +5773,76 @@ class ilm_manager {
 	 * @param int $fileid Id of file.
 	 */
 	function tinymce_ilm($fileid) {
+		global $DB;
 	
 		$tag_filter = $this->tag_ilm($fileid);
+		
+		$context = context_course::instance($this->id );
+		
+		$fs = get_file_storage();
+		$file = $fs->get_file_by_id($fileid);
+		
+		$tmp = explode(".", $file->get_filename());
+		$extension = $tmp[1];
+		
+		$ilm_id = 0;
+		$iassign_ilm = $DB->get_records("iassign_ilm", array('enable' => 1, 'parent' => 0));
+		foreach($iassign_ilm as $value) {
+			$extensions = explode(",", $value->extension);
+			if(in_array($extension, $extensions))
+				$ilm_id = $value;
+		}
+		
+		// log event -----------------------------------------------------
+		log::add_log('add_filter', 'Tag: '.$tag_filter, $context->id, $ilm_id);
+		// log event -----------------------------------------------------
 		
 		$output = "<script type='text/javascript'>
 		//<![CDATA[
 		var tag_filter = '$tag_filter';
 		window.opener.tinyMCE.execCommand('mceiAssignReturn', tag_filter);
 		window.close();
+		//]]>
+		</script>";
+		echo $output;
+		die ();
+	}
+	/**
+	 * Function of execute a command in button editor atto.
+	 * @param int $fileid Id of file.
+	 */
+	function atto_ilm($fileid) {
+		global $DB;
+	
+		$tag_filter = $this->tag_ilm($fileid);
+	
+		$context = context_course::instance($this->id );
+	
+		$fs = get_file_storage();
+		$file = $fs->get_file_by_id($fileid);
+	
+		$tmp = explode(".", $file->get_filename());
+		$extension = $tmp[1];
+	
+		$ilm_id = 0;
+		$iassign_ilm = $DB->get_records("iassign_ilm", array('enable' => 1, 'parent' => 0));
+		foreach($iassign_ilm as $value) {
+			$extensions = explode(",", $value->extension);
+			if(in_array($extension, $extensions))
+				$ilm_id = $value;
+		}
+	
+		// log event -----------------------------------------------------
+		//log::add_log('add_filter', 'Tag: '.$tag_filter, $context->id, $ilm_id);
+		// log event -----------------------------------------------------
+	
+		$output = "<script type='text/javascript'>
+		//<![CDATA[
+		
+		var tag_filter = '$tag_filter';
+		window.opener.document.getElementById('id_introeditoreditable').innerHTML += '<p>'+tag_filter+'</p>';
+		window.close();
+		
 		//]]>
 		</script>";
 		echo $output;
@@ -5719,12 +6317,12 @@ class ilm_manager {
 			$pathname = $pathname[count($pathname)-1];
 			$fileid = $value->get_id ();
 			$tmp = explode ( ".", $filename );
-                        $filetype = $tmp[1];
+			$filetype = $tmp[1];
 			$author = $value->get_author ();
 			$timemodified = date ("d/m/Y H:i:s", $value->get_timemodified () );
 			$timecreated = date ("d/m/Y H:i:s", $value->get_timecreated () );
 			$extensions = explode(",", $extension);
-			if (in_array(strtolower ( $filetype ), $extensions) || $value->is_directory() || $this->from == 'block' || $this->from == 'tinymce') {
+			if (in_array(strtolower ( $filetype ), $extensions) || $value->is_directory() || $this->from == 'block' || $this->from == 'tinymce' || $this->from == 'atto') {
 				
 				$count_files++;
 				
@@ -5737,8 +6335,13 @@ class ilm_manager {
 					}
 				}
 				
-				$iassign_ilm = $DB->get_record ( "iassign_ilm", array ('extension' => $filetype, 'parent' => '0', 'enable' => '1' ) );
-				if (!$iassign_ilm) {
+				$iassign_ilms = $DB->get_records ( "iassign_ilm", array ('parent' => '0', 'enable' => '1' ) );
+				if($iassign_ilms) {
+					foreach ( $iassign_ilms as $tmp ) {
+						if(strpos($tmp->extension, $filetype) !== false )
+							$iassign_ilm = $tmp;
+					}
+				} else {
 					$iassign_ilm = new stdClass ();
 					$iassign_ilm->id = $ilmid;
 				}
@@ -5747,8 +6350,9 @@ class ilm_manager {
 				$fileurl = $url . '/' . $value->get_itemid () . $filepath  . $filename;
 				$dirurl = new moodle_url ( $this->url ).'&ilmid='.$iassign_ilm->id.'&dirid='.$fileid;
 				
-				$link_add_ilm_iassign = "&nbsp;&nbsp;<a href='$CFG->wwwroot/mod/iassign/ilm_manager.php?from=$this->from&id=$this->id&action=addilm&fileid=$fileid&filename=$filename&nbsp;&nbsp;&nbsp;'>" . icons::insert ( 'add_ilm_iassign' ) . "</a>";
+				$link_add_ilm_iassign = "&nbsp;&nbsp;<a href='$CFG->wwwroot/mod/iassign/ilm_manager.php?from=$this->from&id=$this->id&action=addilm&fileid=$fileid&filename=$filename'>" . icons::insert ( 'add_ilm_iassign' ) . "</a>";
 				$link_add_ilm_tinymce = "&nbsp;&nbsp;<a href='$CFG->wwwroot/mod/iassign/ilm_manager.php?from=$this->from&id=$this->id&action=tinymceilm&fileid=$fileid'>" . icons::insert ( 'add_ilm_iassign' ) . "</a>";
+				$link_add_ilm_atto = "&nbsp;&nbsp;<a href='$CFG->wwwroot/mod/iassign/ilm_manager.php?from=$this->from&id=$this->id&action=attoilm&fileid=$fileid'>" . icons::insert ( 'add_ilm_iassign' ) . "</a>";
 				
 				$check_select = "";
 				$link_rename = "";
@@ -5799,6 +6403,18 @@ class ilm_manager {
 					<td><center>$timemodified</center></td></tr>";
 				} else if ($this->from == 'tinymce') {
 					$output .= "<tr><td>$check_select$link_rename$link_delete$link_duplicate$link_edit$link_filter$link_add_ilm_tinymce</td>
+					<td><a href='$fileurl' title='".get_string ( 'download_file', 'iassign' )."$filename'>$filename</a></td>
+                    <td><center>$author</center></td>
+                    <td><center>$timecreated</center></td>
+                    <td><center>$timemodified</center></td></tr>";
+				} else if ($this->from == 'qtype') { 
+					$output .= "<tr><td>$check_select$link_rename$link_delete$link_duplicate$link_edit$link_filter$link_add_ilm_iassign</td>
+                    <td><a href='$fileurl' title='".get_string ( 'download_file', 'iassign' )."$filename'>$filename</a></td>
+                    <td><center>$author</center></td>
+                    <td><center>$timecreated</center></td>
+                    <td><center>$timemodified</center></td></tr>";
+				} else if ($this->from == 'atto') {
+					$output .= "<tr><td>$check_select$link_rename$link_delete$link_duplicate$link_edit$link_filter$link_add_ilm_atto</td>
 					<td><a href='$fileurl' title='".get_string ( 'download_file', 'iassign' )."$filename'>$filename</a></td>
                     <td><center>$author</center></td>
                     <td><center>$timecreated</center></td>
@@ -5854,9 +6470,22 @@ class ilm_manager {
  * Class to insert of icons
  */
 class icons {
-	static function insert($icon) {
+	/**
+	 * Function to insert an icon.
+	 * @param string $icon String with icon name.
+	 * @param string $legend String with text of legend, case empty icon name to be use.
+	 * @return string Return string with image html tag.
+	 */
+	static function insert($icon, $legend = "") {
 		global $CFG;
-		$string = '<img src="' . $CFG->wwwroot . '/mod/iassign/icon/' . $icon . '.gif" title="' . get_string ( $icon, 'iassign' ) . '" alt="' . get_string ( $icon, 'iassign' ) . '"/>';
+		if(!empty(get_string($icon, 'iassign'))) {
+			if($legend == "")
+				$legend = get_string($icon, 'iassign');
+			else
+				$legend = get_string($legend, 'iassign');
+		}
+		
+		$string = '<img src="' . $CFG->wwwroot . '/mod/iassign/icon/' . $icon . '.gif" title="' . $legend . '" alt="' . $legend . '"/>';
 		return $string;
 	}
 }
@@ -5996,6 +6625,66 @@ class log {
 		}
 		if (! $newentry->id = $DB->insert_record ( "iassign_log", $newentry ))
 			print_error ( 'error_add_log', 'iassign' );
+	}
+}
+/**
+ * Class for manager messages in plugin.
+ */
+class messages {
+	
+	static function send_message($name, $tousers, $subject, $url, $text = ''){
+		global $USER;
+		
+		if($name == 'activity') {
+			
+			$fullmessage = get_string('send_message_activity_text', 'iassign')."\n".$url;
+			
+			$fullmessagehtml = "<p>".get_string('send_message_activity_text', 'iassign')."</p><p><a href='$url'>$url</a></p>";
+			
+			$smallmessage = "<p>$subject</p><p>".get_string('send_message_activity_text', 'iassign')."</p><p><a href='$url'>$url</a></p>";
+			
+		} else if($name == 'submission') {
+			
+			$fullmessage = get_string('send_message_submission_text', 'iassign', $USER->firstname.' '.$USER->lastname)."\n".$url;
+				
+			$fullmessagehtml = "<p>".get_string('send_message_submission_text', 'iassign', $USER->firstname.' '.$USER->lastname)."</p><p><a href='$url'>$url</a></p>";
+				
+			$smallmessage = "<p>$subject</p><p>".get_string('send_message_submission_text', 'iassign', $USER->firstname.' '.$USER->lastname)."</p><p><a href='$url'>$url</a></p>";
+			
+		} else if($name == 'comment') {
+			
+			$fullmessage = get_string('send_message_comment_text', 'iassign', $USER->firstname.' '.$USER->lastname)."\n".$text."\n".$url;
+			
+			$fullmessagehtml = "<p>".get_string('send_message_comment_text', 'iassign', $USER->firstname.' '.$USER->lastname)."</p><p><b>$text<b></p><p><a href='$url'>$url</a></p>";
+			
+			$smallmessage = "<p>$subject</p><p>".get_string('send_message_comment_text', 'iassign', $USER->firstname.' '.$USER->lastname)."</p><p><b>$text<b></p><p><a href='$url'>$url</a></p>";
+			
+		}
+		
+		foreach ($tousers as $touser) {
+			
+			$fullmessage_repl = str_replace("#USER_ID#", $touser->id, $fullmessage);
+			$fullmessagehtml_repl = str_replace("#USER_ID#", $touser->id, $fullmessagehtml);
+			$smallmessage_repl = str_replace("#USER_ID#", $touser->id, $smallmessage);
+			
+			$eventdata = new stdClass();
+			$eventdata->component         = 'mod_iassign'; //your component name
+			$eventdata->name              = $name; //this is the message name from messages.php
+			$eventdata->userfrom          = $USER;
+			$eventdata->userto            = $touser;
+			$eventdata->subject           = $subject;
+			$eventdata->fullmessage       = $fullmessage_repl;
+			$eventdata->fullmessageformat = FORMAT_HTML;
+			$eventdata->fullmessagehtml   = $fullmessagehtml_repl;
+			$eventdata->smallmessage      = $smallmessage_repl;
+			$eventdata->notification      = 1; //this is only set to 0 for personal messages between users
+			
+			//echo "<pre>";
+			//print_r($eventdata);
+			//echo "</pre>";
+			
+			message_send($eventdata);
+		}
 	}
 }
 ?>

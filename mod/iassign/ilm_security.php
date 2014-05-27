@@ -17,7 +17,7 @@ require_once("../../config.php");
 global $DB;
 //Debug: debug iLM security scheme
 //Debug: ATTENTION, this requests the directory './mod/iassign/ilm_debug/' with write permition to www-data !!!!
-$DEBUG = 0; //Debug: help to debug, take note of file em 'MOODLE/mod/iassign/ilm_debug/YYYY_mm_dd_m_s_int'
+$DEBUG = false; //Debug: help to debug, take note of file em 'MOODLE/mod/iassign/ilm_debug/YYYY_mm_dd_m_s_int'
 
 $view = $_GET['view'];
 $token = $_GET['token'];

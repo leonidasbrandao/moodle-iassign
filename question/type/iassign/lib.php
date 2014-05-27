@@ -1,14 +1,12 @@
 <?php
 /**
- * Serve question type files
+ * iAssign question type files
  *
  * @package    qtype_iassign
  * @copyright iMatica (<a href="http://www.matematica.br">iMath</a>) - Computer Science Dep. of IME-USP (Brazil)
  * 
  * <b>License</b> 
  *  - http://opensource.org/licenses/gpl-license.php GNU Public License
- *  
- *  <br><br><a href="../index.html"><b>Return to iAssign Documentation</b></a>
  */
 
 
@@ -29,7 +27,23 @@ defined('MOODLE_INTERNAL') || die();
  * @return bool
  */
 function qtype_iassign_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
-    global $DB, $CFG;
-    require_once($CFG->libdir . '/questionlib.php');
-    question_pluginfile($course, $context, 'qtype_iassign', $filearea, $args, $forcedownload, $options);
+    global $CFG, $DB;
+
+    require_course_login($course, true, $cm);
+    
+    $fileareas = array('activity');
+    if (!in_array($filearea, $fileareas)) {
+        return false;
+    }
+    $fs = get_file_storage();
+    $postid = (int) array_shift($args);
+    $relativepath = implode('/', $args);
+    $fullpath = "/$context->id/qtype_iassign/$filearea/$postid/$relativepath";
+
+    if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+        return false;
+    }
+    send_stored_file($file, 0, 0, true);
+
+    return false;
 }

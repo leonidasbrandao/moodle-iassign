@@ -203,6 +203,8 @@ if ($action == 'view') {
 		
 } else if ($action == 'config') {
 	
+	$fs = get_file_storage();
+	
  	$url_return = new moodle_url ( '/admin/settings.php', array ('section' => 'modsettingiassign' ) );
  	$link_return = $OUTPUT->action_link ( $url_return, get_string ( 'return', 'iassign' ) );
 	
@@ -256,6 +258,18 @@ if ($action == 'view') {
 				$link_visible = $OUTPUT->action_link ( $url_visible, icons::insert ( 'hide_ilm' ) );
 			} else {
 				$link_visible = '&nbsp;' . icons::insert ( 'unlock' );
+			}
+			
+			$count_files_ilm = 0;
+			$courses = $DB->get_records('course');
+			foreach ($courses as $course) {
+				$context = context_course::instance($course->id);
+				$files_ilm = $fs->get_area_files($context->id, 'mod_iassign', 'activity');
+				foreach($files_ilm as $file_ilm) {
+					$extension = explode('.', $file_ilm->get_filename());
+					if(strpos($extension[1], $ilm_parent->extension) !== false)
+						$count_files_ilm++;
+				}	
 			}
 			
 			$url_copy = new moodle_url ( '/mod/iassign/settings_ilm.php', array ('action' => 'copy','ilm_id' => $ilm_parent->id ) );
@@ -315,13 +329,13 @@ if ($action == 'view') {
 			$str .= '<td width="50%"><strong>' . get_string ( 'description', 'iassign' ) . ':</strong>&nbsp;' . language::get_description_lang(current_language(), $ilm_parent->description) . '</td>';
 			$str .= '<td width="50%"><strong>' . get_string ( 'activities', 'iassign' ) . ':</strong>&nbsp;' . $total . '</td>' . chr ( 13 );
 			$str .= '</tr>' . chr ( 13 );
-			if(language::get_all_lang($ilm_parent->description) != "")
-				$str .= '<tr><td  colspan=3><strong>' . get_string ( 'language_label', 'iassign' ) . ':</strong>&nbsp;' . language::get_all_lang($ilm_parent->description) . '</td></tr>';
+			$str .= '<tr><td width="50%"><strong>' . get_string ( 'language_label', 'iassign' ) . ':</strong>&nbsp;' . language::get_all_lang($ilm_parent->description) . '</td>';
+			$str .= '<td width="50%"><strong>' . get_string ( 'repository_files', 'iassign' ) . ':</strong>&nbsp;' . $count_files_ilm . '</td></tr>';
 			
-			$ilm_parent->file_jar = ilm_settings::applet_filetime($ilm_parent->file_jar);
+			$file_jar = ilm_settings::applet_fileinfo($ilm_parent->file_jar);
 
 			$str .= '<tr><td  colspan=3><strong>' . get_string ( 'url_ilm', 'iassign' ) . ':</strong>&nbsp;<a href="' . $url_ilm . '" target="_blank">' . $url_ilm . '</a></td></tr>';
-			$str .= '<tr><td width="50%"><strong>' . get_string ( 'file_jar', 'iassign' ) . '</strong>&nbsp;' . $ilm_parent->file_jar . '</td>';
+			$str .= '<tr><td width="50%"><strong>' . get_string ( 'file_jar', 'iassign' ) . '</strong>&nbsp;' . $file_jar . '</td>';
 			$str .= '<td width="50%"><strong>' . get_string ( 'file_class', 'iassign' ) . ':</strong>&nbsp;' . $ilm_parent->file_class . '</td></tr>';
 			
 			$str .= '<tr><td width="50%"><strong>' . get_string ( 'extension', 'iassign' ) . ':</strong>&nbsp;' . $ilm_parent->extension . '</td>';
@@ -348,7 +362,8 @@ if ($action == 'view') {
 			
 			$user_ilm = $DB->get_record ( 'user', array ('id' => $ilm_parent->author ) );
 			$str .= '<tr>' . chr ( 13 );
-			$str .= '<td colspan=2><strong>' . get_string ( 'author', 'iassign' ) . ':</strong>&nbsp;' . $user_ilm->firstname.'&nbsp;'.$user_ilm->lastname . '</td>';
+			$str .= '<td width="50%"><strong>' . get_string ( 'author', 'iassign' ) . ':</strong>&nbsp;' . $user_ilm->firstname.'&nbsp;'.$user_ilm->lastname . '</td>';
+			$str .= '<td width="50%"><strong>' . get_string ( 'license', 'iassign' ) . ':</strong>&nbsp;' . ilm_settings::applet_license($ilm_parent->file_jar) . '</td>' . chr ( 13 );
 			$str .= '</tr>' . chr ( 13 );
 			
 			$str .= '<tr>' . chr ( 13 );

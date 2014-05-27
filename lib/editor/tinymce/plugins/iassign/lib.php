@@ -14,17 +14,15 @@ class tinymce_iassign extends editor_tinymce_plugin {
     /** @var array list of buttons defined by this plugin */
     protected $buttons = array('iassign');
 
-    protected function update_init_params(array &$params, context $context,
-            array $options = null) {
-		global $CFG, $COURSE;
-
-        // Add button after 'table' in advancedbuttons3.
-        $this->add_button_after($params, 3, 'iassign', 'table');
-
-        // Add JS file, which uses default name.
-        $this->add_js_plugin($params);
-		
-		$params['iassign_course'] = $COURSE->id;
-		$params['iassign_wwwroot'] = $CFG->wwwroot."/mod/iassign/ilm_manager.php";
+    protected function update_init_params(array &$params, context $context, array $options = null) {
+			global $CFG, $COURSE;
+			
+      // Add button after 'table' in advancedbuttons3.
+      $this->add_button_after($params, 3, 'iassign', 'table');
+      // Add JS file, which uses default name.
+      $this->add_js_plugin($params);
+      
+			$params['iassign_course'] = $COURSE->id;
+			$params['iassign_wwwroot'] = $CFG->wwwroot."/mod/iassign/ilm_manager.php";
     }
 }

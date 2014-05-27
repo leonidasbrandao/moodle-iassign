@@ -155,9 +155,6 @@ class mod_iassign_form extends moodleform {
         $html_div .= '</div>';
         $mform->addElement('html', $html_div);
         
-        $mform->setType('file', PARAM_INT);
-        $mform->addElement('hidden', 'filename');
-
         //Applies only iLM iGeom
         if(in_array($iassign_ilmid, $idigeom) || $iassign_ilmid == 0) {
         	$mform->addElement('selectyesno', 'special_param1', get_string('special_param', 'iassign')); //$ynoptions
@@ -252,7 +249,17 @@ class mod_iassign_form extends moodleform {
 
         $mform->addElement('hidden', 'dependency');
         $mform->setType('dependency', PARAM_RAW);
-
+        
+        ///-------------- message
+        $mform->addElement('header', 'messages', get_string('messages', 'iassign'));
+        $mform->addElement('selectyesno', 'message_notify_activity', get_string('message_notify_activity', 'iassign'));
+        $mform->setDefault('message_notify_activity', ($iassignid == 0 ? 0 : 1));
+        $mform->disabledIf('message_notify_activity', 'visible', 'eq', 0);
+        $mform->addElement('selectyesno', 'message_notify_submission', get_string('message_notify_submission', 'iassign'));
+        $mform->setDefault('message_notify_submission', 1);
+        $mform->addElement('selectyesno', 'message_notify_comment', get_string('message_notify_comment', 'iassign'));
+        $mform->setDefault('message_notify_comment', 1);
+        
         ///-------------- params
         if($iassign_ilmid == 0)
         	$iassign_ilmid = $idigeom[0];
@@ -294,7 +301,7 @@ class mod_iassign_form extends moodleform {
 
        	$mform->addElement('select', 'visible', get_string('visible', 'iassign'), $visibleoptions);
        	$mform->setDefault('visible', 0);
-
+       	
         //-------------------------------------------------------------------------------
         // Hidden fields
         $mform->addElement('hidden', 'action');
@@ -306,6 +313,8 @@ class mod_iassign_form extends moodleform {
         $mform->addElement('hidden', 'iassign_id');
         $mform->setType('iassign_id', PARAM_TEXT);
         $mform->addElement('hidden', 'file', '0');
+        $mform->setType('file', PARAM_INT);
+        $mform->addElement('hidden', 'filename');
         $mform->setType('filename', PARAM_TEXT);
         $mform->addElement('hidden', 'fileold');
         $mform->setType('fileold', PARAM_TEXT);

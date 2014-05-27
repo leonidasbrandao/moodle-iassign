@@ -8,7 +8,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Insert interactive activity (iAssign) by TinyMCE editor';
+$string['pluginname'] = 'Insérez activité interactive (iAssign) par l\'éditeur TinyMCE';
 
 /* All lang strings used from TinyMCE JavaScript code must be named 'pluginname:stringname', no need to create langs/en_dlg.js */
 $string['iassign:desc'] = 'Insert interactive activity (iAssign)';

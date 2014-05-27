@@ -52,6 +52,25 @@ if ($id) {
 
 $PAGE->set_url($url);
 
+// tracking
+// author: Tulio Faria (tuliofaria@usp.br)
+if(isset($_GET["track"])){
+	
+	$record = new stdClass();
+	$record->course = $course->id;
+	$record->user = $USER->id;
+	$record->cmid = $cm->id;
+	
+	$record->created = date('Y-m-d H:i:s');
+	
+	$record->tracking_data = $_POST["trackingData"];
+	
+	$DB->insert_record('iassign_tracking', $record, false);
+	
+	exit;
+}
+
+
 require_login($course, true, $cm);
 
 $PAGE->set_title(format_string($iassign->name));

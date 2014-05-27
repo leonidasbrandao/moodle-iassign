@@ -118,9 +118,13 @@ if (has_capability('mod/iassign:editiassign', $context, $USER->id)) {
             $ilm_manager_instance->add_ilm();
             break;
         case 'tinymceilm':
-        	$fileid = optional_param ( 'fileid', NULL, PARAM_INT );
+        	  $fileid = optional_param ( 'fileid', NULL, PARAM_INT );
             $ilm_manager_instance->tinymce_ilm($fileid);
             break;
+        case 'attoilm':
+           	$fileid = optional_param ( 'fileid', NULL, PARAM_INT );
+           	$ilm_manager_instance->atto_ilm($fileid);
+           	break;
         case 'export':
             $ilm_manager_instance->export_files_ilm();
             break;
@@ -154,7 +158,7 @@ if (has_capability('mod/iassign:editiassign', $context, $USER->id)) {
     if ($from == 'block')
         $PAGE->set_heading($title);
 
-    if ($from == 'iassign' || $from == 'tinymce')
+    if ($from == 'iassign' || $from == 'tinymce' || $from == 'atto')
         $PAGE->set_pagelayout('popup');
 
     $mform = new ilm_manager_form();
@@ -192,9 +196,9 @@ if (has_capability('mod/iassign:editiassign', $context, $USER->id)) {
 	                }
 	            }
 	            $extensions = explode(",", $iassign_ilm->extension);
-	            if(in_array($extension[1], $extensions) && $from == 'iassign')
+	            if(in_array($extension[1], $extensions) && ($from == 'iassign' || $from == 'qtype'))
             		$file = $mform->save_stored_file('file', $context->id, 'mod_iassign', 'activity', 0, $dir_base, utils::format_filename($filename), 0, $USER->id);
-	            else if($from == 'block' || $from == 'tinymce')
+	            else if($from == 'block' || $from == 'tinymce' || $from == 'atto')
 	            	$file = $mform->save_stored_file('file', $context->id, 'mod_iassign', 'activity', 0, $dir_base, utils::format_filename($filename), 0, $USER->id);
 	            else
 	            	$url .= "&error=incompatible_extension_file";
@@ -243,7 +247,11 @@ if (has_capability('mod/iassign:editiassign', $context, $USER->id)) {
     	echo $OUTPUT->header();
     	if(isset($_SERVER['HTTP_REFERER']))
     		echo('<div width=100% align=right style="margin: 20px 20px 20px 20px;"><input type=button value="' . get_string ( 'return', 'iassign' ) . '"  onclick="javascript:window.location = \''.$_SESSION['returnurl'].'\';"></div>');
-    } else if ($from == 'tinymce') {
+    } else if ($from == 'tinymce' || $from == 'atto') {
+    	echo $OUTPUT->header();
+    	echo $OUTPUT->heading($title);
+    	echo('<div width=100% align=right style="margin: 20px 20px 20px 20px;"><input type=button value="' . get_string ( 'close', 'iassign' ) . '"  onclick="javascript:window.close ();"></div>');
+    } else if ($from == 'qtype') {
     	echo $OUTPUT->header();
     	echo $OUTPUT->heading($title);
     	echo('<div width=100% align=right style="margin: 20px 20px 20px 20px;"><input type=button value="' . get_string ( 'close', 'iassign' ) . '"  onclick="javascript:window.close ();"></div>');

@@ -40,7 +40,7 @@ function xmldb_iassign_install() {
 	
 	$ilms = array(
 			array_combine(	array('name', 'url', 'version', 'description', 'extension', 'file_jar', 'file_class', 'width', 'height', 'enable','timemodified', 'author', 'timecreated', 'evaluate'),
-					array('iGeom', 'http://www.matematica.br/igeom', '5.9.12', '{"en":"Interactive Geometry on the Internet.","pt_br":"Geometria Interativa na Internet."}', 'geo', 'iGeom.jar', 'IGeomApplet.class', 800, 600, 1, time(), $USER->id, time(), 1)
+					array('iGeom', 'http://www.matematica.br/igeom', '5.9.14', '{"en":"Interactive Geometry on the Internet.","pt_br":"Geometria Interativa na Internet."}', 'geo', 'iGeom.jar', 'IGeomApplet.class', 800, 600, 1, time(), $USER->id, time(), 1)
 			),
 			array_combine(	array('name', 'url', 'version', 'description', 'extension', 'file_jar', 'file_class', 'width', 'height', 'enable','timemodified', 'author', 'timecreated', 'evaluate'),
 					array('iGraf', 'http://www.matematica.br/igraf', '4.4.0.10', '{"en":"Interactive Graphic on the Internet.","pt_br":"Gráficos Interativos na Internet."}', 'grf', 'iGraf.jar', 'igraf.IGraf.class', 840, 600, 1, time(), $USER->id, time(), 1)
@@ -55,7 +55,7 @@ function xmldb_iassign_install() {
 					array('iTangram2', 'http://www.matematica.br/itangram', '0.4.3', '{"en":"The Objective of the game is to reproduce the form of the model using all 7 pieces of iTangram.","pt_br":"O Objetivo do jogo é reproduzir a forma do modelo usando todas as 7 peças do iTangram."}', 'itg2', 'iTangram2.jar', 'ilm.line.itangram2.Tangram', 800, 600, 1, time(), $USER->id, time(), 1)
 			),
 			array_combine(	array('name', 'url', 'version', 'description', 'extension', 'file_jar', 'file_class', 'width', 'height', 'enable','timemodified', 'author', 'timecreated', 'evaluate'),
-					array('Risko', 'http://risko.pcc.usp.br/', '2.1.94', '{"en":"Interactive computational tool for teaching geometry.","pt_br":"Ferramenta computacional interativa para o ensino de geometria."}', 'rsk', 'Risko.jar', 'RiskoApplet.class', 800, 600, 1, time(), $USER->id, time(), 0)
+					array('Risko', 'http://risko.pcc.usp.br/', '2.2.23', '{"en":"Interactive computational tool for teaching geometry.","pt_br":"Ferramenta computacional interativa para o ensino de geometria."}', 'rsk', 'Risko.jar', 'RiskoApplet.class', 800, 600, 1, time(), $USER->id, time(), 0)
 			)
 	);
 	$tags = array(
@@ -65,8 +65,21 @@ function xmldb_iassign_install() {
 		'iVProg' => array(),
 		'iTangram2' => array(),
 		'Risko' => array(
-				array('iassign_ilmid' => '', 'param_type' => 'multiple', 'param_name' => 'MA_PARAM_noInstruments', 'param_value' => 'pencil, compass, triangle_45, triangle_60, magnifier, color_pens, player', 'description' => '<p>Selecione o código dos instrumentos que não deseja utilizar na atividade.</p><p>Códigos: <br /><b>pencil</b>(Lápis)<br /><b>compass</b>(Compasso) <br /><b>triangle_45</b>(Esquadro de 45º) <br /><b>triangle_60</b>(Esquadro de 60º) <br /><b>magnifier</b>(Lupa) <br /><b>color_pens</b>(Caixa de Lápis) <br /><b>player</b>(Player)</p>', 'visible' => '1')
+				array('iassign_ilmid' => '', 
+						'param_type' => 'multiple', 
+						'param_name' => 'MA_PARAM_noInstruments', 
+						'param_value' => 'pencil, compass, triangle_45, triangle_60, magnifier, color_pens, player', 
+						'description' => '<p>Selecione o código dos instrumentos que não deseja utilizar na atividade.</p><p>Códigos: <br /><b>pencil</b>(Lápis)<br /><b>compass</b>(Compasso) <br /><b>triangle_45</b>(Esquadro de 45º) <br /><b>triangle_60</b>(Esquadro de 60º) <br /><b>magnifier</b>(Lupa) <br /><b>color_pens</b>(Caixa de Lápis) <br /><b>player</b>(Player)</p>', 
+						'visible' => '1')
 		)
+	);
+	$licenses = array(
+			'iGeom' => array('GPL 2.0', 'Leônidas Oliveira Brandão - DCC - IME'),
+			'iGraf' => array('GPL 2.0', 'Reginaldo do Prado'),
+			'iComb' => array('GPL 2.0', 'Leônidas Oliveira Brandão - DCC - IME'),
+			'iVProg' => array('GPL 2.0', 'Leônidas Oliveira Brandão - DCC - IME'),
+			'iTangram2' => array('GPL 2.0', 'Leônidas Oliveira Brandão - DCC - IME'),
+			'Risko' => array('CC v4.0', 'LabCAD - PCC / USP')
 	);
 
 	$fs = get_file_storage();
@@ -91,7 +104,9 @@ function xmldb_iassign_install() {
 						'filearea' => 'ilm',     // file area of iLM files
 						'itemid' => 0,               // zero for defaults iLM
 						'filepath' => '/iassign/ilm/'.utils::format_pathname($ilm['name']).'/'.utils::format_pathname($ilm['version']).'/', 
-						'filename' => $filename);
+						'filename' => $filename,
+						'license' => $licenses[$ilm['name']][0],
+						'author' => $licenses[$ilm['name']][1]);
 				$file_ilm = @$fs->create_file_from_string($file_ilm, file_get_contents($ilm_path.$filename));
 	
 				if($file_ilm && !$is_debug)
@@ -112,7 +127,7 @@ function xmldb_iassign_install() {
 		}
 		
 		if(!$is_debug)
-			$is_delete &= @unlink($ilm_path . "index.html");
+			$is_delete &= @unlink($ilm_path . "index.php");
 	
 		if($is_delete && !$is_debug) {
 			@rmdir($ilm_path);

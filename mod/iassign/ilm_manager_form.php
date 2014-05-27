@@ -71,7 +71,7 @@ class ilm_manager_form extends moodleform {
         
         $extension_text = '';
         
-        if($from == 'block' || $from == 'tinymce') {
+        if($from == 'block' || $from == 'tinymce' || $from == 'atto') {
 	        // Search iMA registered in the database
 	        $sql = "SELECT s.id, s.name, s.version
 	          FROM {$CFG->prefix}iassign_ilm s
@@ -87,7 +87,7 @@ class ilm_manager_form extends moodleform {
         	$ia_array[] = & $mform->createElement('select', 'iassign_ilmid', get_string('choose_iLM', 'iassign'), $applets);
         	$ia_array[] = & $mform->createElement('button', 'online_new_iassign', get_string('open_editor_ilm', 'iassign', ''), array('onClick' => 'open_online_ilm()'));
         	$mform->addGroup($ia_array, 'select_iassign', get_string('choose_iLM', 'iassign'), array(' '), false);
-        } else if($from == 'iassign') {
+        } else if($from == 'iassign' || $from == 'qtype') {
         	
         	$iassign_ilm = $DB->get_record("iassign_ilm", array("id" => $ilmid));
         	if($iassign_ilm) {

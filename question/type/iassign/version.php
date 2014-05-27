@@ -2,7 +2,7 @@
 /**
  * IAssign question type version information.
  * 
- * @version v 1.0.43 2014/02/27
+ * @version v1.1.23 2014/02/27
  * @package    qtype
  * @subpackage iassign
  * @since 2014/02/27
@@ -18,5 +18,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'qtype_iassign';
 $plugin->version   = 2014022700;
+$plugin->release = '1.1.23 (Build: 2014022700)';
 $plugin->requires  = 2012120300;
 $plugin->maturity  = MATURITY_ALPHA;
+$plugin->dependencies = array('mod_iassign' => 2014022600);

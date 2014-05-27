@@ -41,8 +41,8 @@ function xmldb_iassign_upgrade($oldversion) {
    global $CFG, $DB, $USER;
 
     $dbman = $DB->get_manager();
-
-    if ($oldversion < 2014011600) {
+    
+    if ($oldversion < 2014041600) {
     	//TODO Retirar assim que atualizar o DEV SAW.
     	
     	$table = new xmldb_table('iassign_log');
@@ -92,9 +92,7 @@ function xmldb_iassign_upgrade($oldversion) {
 	    	// Assign savepoint reached.
 	    	upgrade_mod_savepoint(true, 2014011600, 'iassign');
     	}
-    }
     
-    if ($oldversion < 2014020600) {
     	//TODO Retirar assim que atualizar no DEV SAW.
     	
     	$table = new xmldb_table('iassign_ilm_config');
@@ -127,6 +125,17 @@ function xmldb_iassign_upgrade($oldversion) {
     		// Assign savepoint reached.
     		upgrade_mod_savepoint(true, 2014020600, 'iassign');
     	}
+    	
+    	$table = new xmldb_table('iassign_statement');
+    	
+    	$field_notify_submission = new xmldb_field('notify_submission', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'show_answer');
+    	if (!$dbman->field_exists($table, $field_notify_submission))
+    		$dbman->add_field($table, $field_notify_submission);
+    	
+    	$field_notify_comment = new xmldb_field('notify_comment', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'notify_submission');
+    	if (!$dbman->field_exists($table, $field_notify_comment))
+    		$dbman->add_field($table, $field_notify_comment);
+    	
     }
     
     // log event -----------------------------------------------------
