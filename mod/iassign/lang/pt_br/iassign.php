@@ -12,7 +12,6 @@
  * <b>License</b> 
  *  - http://opensource.org/licenses/gpl-license.php GNU Public License
  */
-
 $string['action']='Ação';
 $string['activities']='Atividades';
 $string['activities_page']='Página de atividades';

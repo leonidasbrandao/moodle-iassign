@@ -31,22 +31,22 @@ function xmldb_iassign_install() {
 
 	$records = array(
 			array_combine(	array('name', 'url', 'version', 'description', 'extension', 'file_jar', 'file_class', 'width', 'height', 'enable','timemodified', 'author', 'timecreated', 'evaluate'),
-					array('iGeom', 'http://www.matematica.br/igeom', '5.9.9', '{"en":"Interactive Geometry on the Internet.","pt_br":"Geometria Interativa na Internet."}', 'geo', 'iGeom_new.jar', 'IGeomApplet.class', 800, 600, 1, time(), $USER->id, time(), 1)
+					array('iGeom', 'http://www.matematica.br/igeom', '5.9.14', '{"en":"Interactive Geometry on the Internet.","pt_br":"Geometria Interativa na Internet."}', 'geo', 'iGeom.jar', 'IGeomApplet.class', 800, 600, 1, time(), $USER->id, time(), 1)
 			),
 			array_combine(	array('name', 'url', 'version', 'description', 'extension', 'file_jar', 'file_class', 'width', 'height', 'enable','timemodified', 'author', 'timecreated', 'evaluate'),
-					array('iGraf', 'http://www.matematica.br/igraf', '4.4.0.10', '{"en":"Interactive Graphic on the Internet.","pt_br":"Gráficos Interativos na Internet."}', 'grf', 'iGraf_new.jar', 'igraf.IGraf.class', 840, 600, 1, time(), $USER->id, time(), 1)
+					array('iGraf', 'http://www.matematica.br/igraf', '4.4.0.10', '{"en":"Interactive Graphic on the Internet.","pt_br":"Gráficos Interativos na Internet."}', 'grf', 'iGraf.jar', 'igraf.IGraf.class', 840, 600, 1, time(), $USER->id, time(), 1)
 			),
 			array_combine(	array('name', 'url', 'version', 'description', 'extension', 'file_jar', 'file_class', 'width', 'height', 'enable','timemodified', 'author', 'timecreated', 'evaluate'),
-					array('iComb', 'http://www.matematica.br/icomb', '0.9.0', '{"en":"Combinatorics Interactive on the Internet.","pt_br":"Combinatória Interativa na Internet."}', 'icb,cmb', 'iComb_new.jar', 'icomb.IComb.class', 750, 685, 1, time(), $USER->id, time(), 1)
+					array('iComb', 'http://www.matematica.br/icomb', '0.9.0', '{"en":"Combinatorics Interactive on the Internet.","pt_br":"Combinatória Interativa na Internet."}', 'icb,cmb', 'iComb.jar', 'icomb.IComb.class', 750, 685, 1, time(), $USER->id, time(), 1)
 			),
 			array_combine(	array('name', 'url', 'version', 'description', 'extension', 'file_jar', 'file_class', 'width', 'height', 'enable','timemodified', 'author', 'timecreated', 'evaluate'),
-					array('iVProg', 'http://www.matematica.br/ivprog', '0.3.1', '{"en":"Visual Interactive Programming on the Internet.","pt_br":"Programação visual interativa na Internet."}', 'ivp', 'iVprog_new.jar', 'edu.cmu.cs.stage3.alice.authoringtool.JAlice.class', 800, 600, 1, time(), $USER->id, time(), 0)
+					array('iVProg', 'http://www.matematica.br/ivprog', '0.3.1', '{"en":"Visual Interactive Programming on the Internet.","pt_br":"Programação visual interativa na Internet."}', 'ivp', 'iVprog.jar', 'edu.cmu.cs.stage3.alice.authoringtool.JAlice.class', 800, 600, 1, time(), $USER->id, time(), 0)
 			),
 			array_combine(	array('name', 'url', 'version', 'description', 'extension', 'file_jar', 'file_class', 'width', 'height', 'enable','timemodified', 'author', 'timecreated', 'evaluate'),
-					array('iTangram2', 'http://www.matematica.br/itangram', '0.4.3', '{"en":"The Objective of the game is to reproduce the form of the model using all 7 pieces of iTangram.","pt_br":"O Objetivo do jogo é reproduzir a forma do modelo usando todas as 7 peças do iTangram."}', 'itg2', 'iTangram2_new.jar', 'ilm.line.itangram2.Tangram', 800, 600, 1, time(), $USER->id, time(), 1)
+					array('iTangram2', 'http://www.matematica.br/itangram', '0.4.3', '{"en":"The Objective of the game is to reproduce the form of the model using all 7 pieces of iTangram.","pt_br":"O Objetivo do jogo é reproduzir a forma do modelo usando todas as 7 peças do iTangram."}', 'itg2', 'iTangram2.jar', 'ilm.line.itangram2.Tangram', 800, 600, 1, time(), $USER->id, time(), 1)
 			),
 			array_combine(	array('name', 'url', 'version', 'description', 'extension', 'file_jar', 'file_class', 'width', 'height', 'enable','timemodified', 'author', 'timecreated', 'evaluate'),
-					array('Risko', 'http://risko.pcc.usp.br/', '2.1.67', '{"en":"Interactive computational tool for teaching geometry.","pt_br":"Ferramenta computacional interativa para o ensino de geometria."}', 'rsk', 'Risko_new.jar', 'RiskoApplet.class', 800, 600, 1, time(), $USER->id, time(), 0)
+					array('Risko', 'http://risko.pcc.usp.br/', '2.2.23', '{"en":"Interactive computational tool for teaching geometry.","pt_br":"Ferramenta computacional interativa para o ensino de geometria."}', 'rsk', 'Risko.jar', 'RiskoApplet.class', 800, 600, 1, time(), $USER->id, time(), 0)
 			)
 	);
 
@@ -80,10 +80,10 @@ function xmldb_iassign_install() {
 						'contextid' => $context->id, // ID of context
 						'component' => 'mod_iassign',     // usually = table name
 						'filearea' => 'ilm',     // usually = table name
-						'itemid' => 0,               // usually = ID of row in table
+						'itemid' => 0, 
 						'filepath' => '/iassign/ilm/'.utils::format_pathname($name_ilm).'/'.utils::format_pathname($version_ilm).'/',           // any path beginning and ending in /
-						'filename' => str_replace('_new', '', $filename)); // any filename
-				$file_ilm = @$fs->create_file_from_string($file_ilm, file_get_contents($ilm_path.$filename));
+						'filename' => $filename); // any filename
+				$file_ilm = $fs->create_file_from_string($file_ilm, file_get_contents($ilm_path.$filename));
 
 				if($file_ilm)
 					$is_delete &= @unlink($ilm_path.$filename);
