@@ -49,7 +49,7 @@
  *  	+ Changes for implement iLM version.
  *  	+ Change file for Moodle filesystem (MoodleData).
  *
- * @version v 2.1.15 2013/10/25
+ * @version v 2.1.16 2013/10/25
  * @since 2010/09/27
  * @copyright iMatica (<a href="http://www.matematica.br">iMath</a>) - Computer Science Dep. of IME-USP (Brazil)
  *
@@ -70,8 +70,10 @@
 defined('MOODLE_INTERNAL') || die();
 
 // The current plugin version (Date: YYYYMMDDXX).
-$plugin->version   = 2013092000;
-// Required Moodle version.
-$plugin->requires  = 2012112900;
-// Full name of the plugin (used for diagnostics).
 $plugin->component = 'tinymce_iassign';
+$plugin->release = '2.1.16 (Build: 2013113100)';	// Human-readable version name
+$plugin->version   = 2013092000; // Required Moodle version.
+$plugin->requires  = 2012112900; // Full name of the plugin (used for diagnostics).
+$plugin->maturity = MATURITY_STABLE;	// How stable the plugin is: MATURITY_ALPHA, MATURITY_BETA, MATURITY_RC, MATURITY_STABLE (Moodle 2.0 and above)
+$plugin->dependencies = array('mod_iassign' => 2014012100);
+?>
