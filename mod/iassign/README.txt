@@ -1,28 +1,14 @@
-/**
- * @author Patricia Alves Rodrigues
- * @author Le�nidas O. Brand�o
- * @version 2.1.7 2013/09/19
- * @package mod_iassign
- * @since 2010/09/27
- * @copyright iMatica (<a href="http://www.matematica.br">iMath</a>) - Computer Science Dep. of IME-USP (Brazil)
- * 
- * <b>License</b> 
- *  - http://opensource.org/licenses/gpl-license.php GNU Public License
- */
-/**
-
-
-iAssign version 2.1.15 dev
+iAssign version 2.1.70
 ------------------------
 
 By iMatica/iMath - free interactive tools for teaching-learning Math
-   Patricia Rodrigues <patricnet@ig.com.br>, Le�nidas O. Brand�o <leo@ime.usp.br>
+   Patricia Rodrigues <patricnet@ig.com.br>, Leônidas O. Brandão <leo@ime.usp.br>
 
 
 .: About iAssign :.
 
 This is the iAssign (Interactive Assignment) package, an iMath free system to enrich activities in Moodle. 
-It is created by Patricia Rodrigues and Le�nidas de Oliveira Brand�o.
+It is created by Patricia Rodrigues and Leônidas de Oliveira Brandão.
 
 iAssign's goal is to increase interactivity in activities related to specific subjects (such as Geometry, Functions, Programming,...)
 in a flexible way. 
@@ -57,19 +43,17 @@ The main features of iAssign package are:
 
 Besides, as the majority of Moodle modules, iAssign can export (as backup) one activity or a complete lesson (a set of activities).
 
+Note: This plugin is part of iAssign SET see more in https://moodle.org/plugins/browse.php?list=set&id=54
 
 .: Quick install instructions (to be used by the system administrator) :.
 
-0) Be sure you have (at least) Moodle "2.0" installed
-1) Be sure to have the latest language package, such as English (en), Portuguese (pt_br), Spanish (es), or French (fr) (these are the current languages for iAssign)
-2) Be sure to have the latest version of the module iAssign (see in http://www.matematica.br/ia)
-3) Unpack 'iAssign.2.0.zip' (or 'iAssign.2.0.tgz')
+0) Be sure you have (at least) Moodle 2.4 until Moodle 2.6 installed
+1) Be sure to have the latest language package, such as English (en), Portuguese (pt_br).
+2) Be sure to have the latest version of the module iAssign (see in https://github.com/leonidasbrandao/iAssign master)
+3) Unpack 'iAssign.2.1.x.zip' (or 'iAssign.2.1.x.tgz')
 4) Copy the 'iassign' module directory into the "mod" subdirectory of Moodle installation
-5) Copy the 'iassign_filter' filter directory into the "filter" subdirectory of Moodle
-6) Copy the 'iassign_block' filter directory into the "blocks" subdirectory of Moodle
-7) Under role "administrator", go to the 'Site administration' and click on 'Notifications'
-8) Enable the filter 'iassign_filter'
-9) Have fun.
+5) Under role "administrator", go to the 'Site administration' and click on 'Notifications'
+6) Have fun.
 
 
 .: What is news :.
@@ -78,15 +62,16 @@ Considering the iAssign for Moodle 1.9, the new featuress in this version are:
 
  - the teacher can produce a new interactive activity directly "on-line", using the new iLM editor (but is still possible to upload files);
  - in a course with more than one teacher, it is now possible to use a local repository.
+ - See more in http://docs.moodle.org/en/iAssign.
 
 
-Comments and suggestions are always welcome at http://www.matematica.br/iassign.
+Comments and suggestions are always welcome at http://www.matematica.br/iassign or https://github.com/leonidasbrandao/iAssign.
 (if the comment area is missing, please send us an email).
 
 
 Best regards,
 
-Le�nidas <leo@ime.usp.br> and Patricia <patricnet@ig.com.br>
+Leônidas <leo@ime.usp.br> and Patricia <patricnet@ig.com.br>
 
-Institute of Mathematics and Statistics - University of S�o Paulo
+Institute of Mathematics and Statistics - University of São Paulo
 iMath/LInE : http://www.matematica.br : http://line.ime.usp.br

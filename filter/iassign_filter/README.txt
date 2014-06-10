@@ -51,7 +51,7 @@ Note: This plugin is part of iAssign SET see more in https://moodle.org/plugins/
 1) Be sure to have the latest language package, such as English (en), Portuguese (pt_br).
 2) Be sure to have the latest version of the module iAssign (see in https://github.com/leonidasbrandao/iAssign master)
 3) Unpack 'iAssign.2.1.x.zip' (or 'iAssign.2.1.x.tgz')
-4) Copy the 'iassign' tinymce directory into the "lib/editor/tinymce/plugins" subdirectory of Moodle installation
+4) Copy the 'iassign' filter directory into the "filter" subdirectory of Moodle installation
 5) Under role "administrator", go to the 'Site administration' and click on 'Notifications'
 6) Have fun.
 
