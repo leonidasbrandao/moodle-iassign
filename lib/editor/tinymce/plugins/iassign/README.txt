@@ -55,6 +55,8 @@ Note: This plugin is part of iAssign SET see more in https://moodle.org/plugins/
 5) Under role "administrator", go to the 'Site administration' and click on 'Notifications'
 6) Have fun.
 
+See more documentation in http://docs.moodle.org/en/Insert_interactive_activity_(iAssign)_by_TinyMCE_editor
+
 Comments and suggestions are always welcome at http://www.matematica.br/iassign or https://github.com/leonidasbrandao/iAssign.
 (if the comment area is missing, please send us an email).
 
