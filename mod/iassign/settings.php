@@ -161,7 +161,10 @@ if ($action == 'view') {
 	}
 	$str .= '</table>';
 	
+	$PAGE->set_docs_path('http://docs.moodle.org/en/iAssign');
+	
 	$settings->add(new admin_setting_heading('iassign', icons::insert('icon').'&nbsp;&nbsp;'.get_string('config_ilm', 'iassign').$OUTPUT->help_icon('modulename', 'iassign'), $str));
+	
 } else if ($action == 'confirm_upgrade') {
 	
 	$ilm = $DB->get_record ( 'iassign_ilm', array ('id' => $ilm_id ) );
@@ -197,6 +200,8 @@ if ($action == 'view') {
  	
 	$str .= $link_no.'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$link_yes."</center>";
 	
+	
+	$PAGE->set_docs_path('http://docs.moodle.org/en/iAssign');
 	
 	$settings->add ( new admin_setting_heading ( 'iassign', get_string ( 'upgrade_ilm_title', 'iassign' ), $str ) );
 		
@@ -436,9 +441,8 @@ if ($action == 'view') {
 	}
 	$str .= '</table>';
 	
+	$PAGE->set_docs_path('http://docs.moodle.org/en/iAssign');
+	
 	$settings->add ( new admin_setting_heading ( 'iassign', $ilm->name.'&nbsp;', $str ) );
 }
-
-$PAGE->set_docs_path('http://docs.moodle.org/en/iAssign');
-
 ?>
