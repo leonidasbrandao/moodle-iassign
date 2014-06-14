@@ -17,4 +17,4 @@ Install
 
 For more information about code see in https://github.com/leonidasbrandao/iAssign/wiki.
 
-Note: this branch is under development and should not be used in a production moodle.
+**Note: this branch is under development and should not be used in a production moodle.**
