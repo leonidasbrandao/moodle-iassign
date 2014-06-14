@@ -495,7 +495,10 @@ function iassign_pluginfile($course, $cm, $context, $filearea, $args, $forcedown
         return false;
     }
 
-
+    $forcedownload = false;
+    if($filearea == 'ilm')
+    	$forcedownload = false;
+    
     $fs = get_file_storage();
     $postid = (int) array_shift($args);
     $relativepath = implode('/', $args);
@@ -506,7 +509,7 @@ function iassign_pluginfile($course, $cm, $context, $filearea, $args, $forcedown
     }
 
     // finally send the file
-    send_stored_file($file, 0, 0, true); // download MUST be forced - security!
+    send_stored_file($file, 0, 0, $forcedownload); // download MUST be forced - security!
 
     return false;
 }

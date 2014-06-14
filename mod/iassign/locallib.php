@@ -2520,48 +2520,51 @@ class iassign {
 			
 			foreach ( $messages as $iassigndata ) {
 				
-				$iassign = $DB->get_record( 'iassign', array ('id' => $iassigndata->id ));
+				if(count(get_object_vars($iassigndata))) {
 				
-				echo '<table id="outlinetable" class="generaltable boxaligncenter" cellpadding="5" width="100%">' . "\n";
-				echo '<tr><th colspan=2 class="header c1">' . $iassign->name . '</th></tr>' . "\n";
-				echo '<tr>' . "\n";
-				echo "<td class=\"cell c0 actvity\">";
-				
-				foreach ( $iassigndata->data as $message ) {
-				
-					$iassign_statement = $DB->get_record( 'iassign_statement', array ('id' => $message['statement'] ));
+					$iassign = $DB->get_record( 'iassign', array ('id' => $iassigndata->id ));
 					
-					$user_ilm = $DB->get_record ( 'user', array ('id' => $message['student'] ) );
+					echo '<table id="outlinetable" class="generaltable boxaligncenter" cellpadding="5" width="100%">' . "\n";
+					echo '<tr><th colspan=2 class="header c1">' . $iassign->name . '</th></tr>' . "\n";
+					echo '<tr>' . "\n";
+					echo "<td class=\"cell c0 actvity\">";
 					
+					foreach ( $iassigndata->data as $message ) {
 					
-					echo '<table cellpadding="5" width="100%">' . "\n";
-					echo '<tr><th colspan=2>' . $iassign_statement->name . '</th></tr>' . "\n";
-					
-					echo "  <td width='20%'>" . $user_ilm->firstname .' '. $user_ilm->lastname . "</td>\n";
-					
-					$comments = '';
-					foreach ( $message['comments'] as $comment ) {
+						$iassign_statement = $DB->get_record( 'iassign_statement', array ('id' => $message['statement'] ));
 						
-						$url = "" . $CFG->wwwroot . "/mod/iassign/view.php?action=viewsubmission&id=" . $id . "&iassign_submission_current=" . $message['iassign_submission'] . "&userid_iassign=" . $user_ilm->id . "&iassign_current=" . $iassign_statement->id . "&view_iassign=" . $iassign->id;
-						$url .= "&row=".$message['row']."&column=".$message['column'];
+						$user_ilm = $DB->get_record ( 'user', array ('id' => $message['student'] ) );
 						
-						if($comment->status == 0)
-							$comments .= icons::insert ( 'comment_unread');
-						else
-							$comments .= icons::insert ( 'comment_read');
-						$comments .= '&nbsp;&nbsp; <a href="' . $url . '">' . $comment->comment.'</a> ('.$comment->date.') <br>';
 						
-					} 
+						echo '<table cellpadding="5" width="100%">' . "\n";
+						echo '<tr><th colspan=2>' . $iassign_statement->name . '</th></tr>' . "\n";
+						
+						echo "  <td width='20%'>" . $user_ilm->firstname .' '. $user_ilm->lastname . "</td>\n";
+						
+						$comments = '';
+						foreach ( $message['comments'] as $comment ) {
+							
+							$url = "" . $CFG->wwwroot . "/mod/iassign/view.php?action=viewsubmission&id=" . $id . "&iassign_submission_current=" . $message['iassign_submission'] . "&userid_iassign=" . $user_ilm->id . "&iassign_current=" . $iassign_statement->id . "&view_iassign=" . $iassign->id;
+							$url .= "&row=".$message['row']."&column=".$message['column'];
+							
+							if($comment->status == 0)
+								$comments .= icons::insert ( 'comment_unread');
+							else
+								$comments .= icons::insert ( 'comment_read');
+							$comments .= '&nbsp;&nbsp; <a href="' . $url . '">' . $comment->comment.'</a> ('.$comment->date.') <br>';
+							
+						} 
+						
+						echo "  <td>" . $comments . "</td>\n";
+						echo ' </tr>' . "\n";
+						echo "</table>";
+						
+					}
 					
-					echo "  <td>" . $comments . "</td>\n";
+					echo "</td>";
 					echo ' </tr>' . "\n";
-					echo "</table>";
-					
+					echo '</table>' . "\n";
 				}
-				
-				echo "</td>";
-				echo ' </tr>' . "\n";
-				echo '</table>' . "\n";
 					
 			}
 		} else {
@@ -3923,7 +3926,7 @@ class ilm_settings {
 				}
 				// TODO: Change to object, tag applet was deprecated.
 				//$html .= '<applet name="iLM" archive="'.implode(",", $file_url).'" code="' . $iassign_ilm->file_class . '" width="' . $iassign_ilm->width . '" height="' . $iassign_ilm->height . '" vspace=10 hspace=10>' . chr ( 13 );
-				$html .= '<object type="application/x-java-applet;version=1.4.1" name="iLM" id="iLM" width="' . $iassign_ilm->width . '" height="' . $iassign_ilm->height . '" vspace=10 hspace=10>';
+				$html .= '<object type="application/x-java-applet;version=1.4.1" name="iLM" id="iLM" width="' . $iassign_ilm->width . '" height="' . $iassign_ilm->height . '" vspace=10 hspace=10>' . chr ( 13 );
 				$html .= '<param name="archive" value="'.implode(",", $file_url).'"/>' . chr ( 13 );
 				$html .= '<param name="code" value="' . $iassign_ilm->file_class . '"/>' . chr ( 13 );
 				$html .= '<param name="lang" value="' . $lang . '"/>' . chr ( 13 );
@@ -3938,24 +3941,25 @@ class ilm_settings {
 								$html .= '<param name="'.$ilm_config->param_name.'" value="'.$ilm_config->param_value.'"/>' . chr ( 13 );
 							}
 						}
+						if(!empty($options['Proposition']))
+							$html .= '<param name="MA_PARAM_Proposition" value="'.$options['Proposition'].'"/>' . chr ( 13 );
 						break;
 					case "filter":
 						if ($options['toolbar'] == "disable")
-							$html .="<param name='SOH_ADD' value='ADD'>";
+							$html .="<param name='SOH_ADD' value='ADD'/>";
 						$html .= '<param name="MA_PARAM_PropositionURL" value="true"/>' . chr ( 13 );
 						$html .= '<param name="MA_PARAM_notSEND" value="'.$options['notSEND'].'"/>' . chr ( 13 );
-						$html .= '<param name="MA_PARAM_addresPOST" value>' . chr ( 13 );
-						$html .= '<param name="MA_PARAM_Proposition" value="'.$options['Proposition'].'">' . chr ( 13 );
+						$html .= '<param name="MA_PARAM_Proposition" value="'.$options['Proposition'].'"/>' . chr ( 13 );
 						break;
 					case "activity":
 						$html .= '<param name="MA_PARAM_PropositionURL" value="true"/>' . chr ( 13 );
 						$html .= '<param name="MA_PARAM_notSEND" value="'.$options['notSEND'].'"/>' . chr ( 13 );
-						$html .= '<param name="MA_PARAM_addresPOST" value="'.$options['addresPOST'].'">' . chr ( 13 );
-						$html .= '<param name="MA_PARAM_Proposition" value="'.$options['Proposition'].'">' . chr ( 13 );
+						$html .= '<param name="MA_PARAM_addresPOST" value="'.$options['addresPOST'].'"/>' . chr ( 13 );
+						$html .= '<param name="MA_PARAM_Proposition" value="'.$options['Proposition'].'"/>' . chr ( 13 );
 						$html .= '<param name="MA_POST_ArchiveTeacher" value="true"/>';
 						$html .= '<param name="iLM_PARAM_Authoring" value="true"/>';
 						if($options['special_param'] == 1) {
-							$html .= '<param name="TIPO_SCRIPT" value="1">' . chr ( 13 );
+							$html .= '<param name="TIPO_SCRIPT" value="1"/>' . chr ( 13 );
 							$html .= '<param name="BOTAOSCR1" value="'.$options['student_answer'].'" />' . chr ( 13 );
 						}
 						
@@ -3972,7 +3976,7 @@ class ilm_settings {
 							break;
 					case "editor_update":
 						$html .= '<param name="MA_PARAM_PropositionURL" value="true"/>' . chr ( 13 );
-						$html .= '<param name="MA_PARAM_Proposition" value="'.$options['Proposition'].'">' . chr ( 13 );
+						$html .= '<param name="MA_PARAM_Proposition" value="'.$options['Proposition'].'"/>' . chr ( 13 );
 						$html .= '<param name="MA_PARAM_notSEND" value="false"/>' . chr ( 13 );
 						break;
 					case "qtype":
@@ -3995,6 +3999,22 @@ class ilm_settings {
 			}
 		}
 		return $html;
+	}
+	/**
+	 * Function for get if iLM file exists.
+	 * @param string $file_jar String with Ids of iLM files.
+	 * @return boolean Return if file exist.
+	 */
+	static function applet_exists($file_jar){
+		$exists = true;
+		$fs = get_file_storage();
+		$files_jar = explode(",", $file_jar);
+		foreach($files_jar as $fj) {
+			$file = $fs->get_file_by_id($fj);
+			if (!$file)
+				$exists = $exists && false;
+		}
+		return $exists;
 	}
 	/**
 	 * Function for get modified date of iLM file.
@@ -4991,7 +5011,16 @@ class ilm_settings {
 				
 				//print_r($options);
 				
+				$str .= '<form method="POST" enctype="multipart/form-data">';
+								
 				$str .= '<tr class=\'cell c0 actvity\'><td  colspan=3 align=center bgcolor="#F5F5F5">';
+				
+				$str .= 'Arquivo de Atividade: <input type="file" name="upload_file" id="upload_file"><input type="submit" value="Abrir"/><br>';
+				
+				if(!empty($_FILES))
+					if(!empty($_FILES['upload_file']))
+						$options['Proposition'] = file_get_contents($_FILES['upload_file']['tmp_name']);
+				
 				$str .= ilm_settings::applet_ilm($iassign_ilm->id, $options);		
 				
 				
@@ -5003,8 +5032,6 @@ class ilm_settings {
 				
 				if($iassign_ilm_config) {
 				
-					$str .= '<form  method="POST">';
-						
 					$str .= '<table width="100%" class="generaltable boxaligncenter" >';
 					$str .= '<tr>' . chr ( 13 );
 					$str .= '<th colspan=5><center><strong>' . get_string ( 'config_param', 'iassign' ) . '</strong></center></th>';
@@ -5082,10 +5109,11 @@ class ilm_settings {
 						$str .= '</tr>' . chr ( 13 );
 					}
 						
-					$str .= '<tr><td colspan=5><input type="submit" value="Atualizar"/></td></tr>';
-						
-					$str .= '</form>';
+				$str .= '<tr><td colspan=5><input type="submit" value="' . get_string ( 'param_refresh', 'iassign' ) . '"/></td></tr>';
+				$str .= '</table>';
+				
 				}
+				$str .= '</form>';
 				
 			} else {
 				
@@ -5785,7 +5813,8 @@ class ilm_manager {
 		$tmp = explode(".", $file->get_filename());
 		$extension = $tmp[1];
 		
-		$ilm_id = 0;
+		$ilm_id = new stdClass();
+		$ilm_id->id = 0;
 		$iassign_ilm = $DB->get_records("iassign_ilm", array('enable' => 1, 'parent' => 0));
 		foreach($iassign_ilm as $value) {
 			$extensions = explode(",", $value->extension);
@@ -5794,7 +5823,7 @@ class ilm_manager {
 		}
 		
 		// log event -----------------------------------------------------
-		log::add_log('add_filter', 'Tag: '.$tag_filter, $context->id, $ilm_id);
+		log::add_log('add_filter', 'Tag: '.$tag_filter, $context->id, $ilm_id->id);
 		// log event -----------------------------------------------------
 		
 		$output = "<script type='text/javascript'>
@@ -6335,19 +6364,19 @@ class ilm_manager {
 					}
 				}
 				
+				$iassign_ilm = new stdClass ();
+				$iassign_ilm->id = $ilmid;
 				$iassign_ilms = $DB->get_records ( "iassign_ilm", array ('parent' => '0', 'enable' => '1' ) );
-				if($iassign_ilms) {
+				if($iassign_ilms && !empty($filetype)) {
 					foreach ( $iassign_ilms as $tmp ) {
 						if(strpos($tmp->extension, $filetype) !== false )
 							$iassign_ilm = $tmp;
 					}
-				} else {
-					$iassign_ilm = new stdClass ();
-					$iassign_ilm->id = $ilmid;
 				}
 				
-				$url = "{$CFG->wwwroot}/pluginfile.php/{$value->get_contextid()}/mod_iassign/activity";
-				$fileurl = $url . '/' . $value->get_itemid () . $filepath  . $filename;
+				//$url = "{$CFG->wwwroot}/pluginfile.php/{$value->get_contextid()}/mod_iassign/activity";
+				//$fileurl = $url . '/' . $value->get_itemid () . $filepath  . $filename;
+				$fileurl = moodle_url::make_pluginfile_url($value->get_contextid(), $value->get_component(), $value->get_filearea(), $value->get_itemid(), $value->get_filepath(), $value->get_filename());
 				$dirurl = new moodle_url ( $this->url ).'&ilmid='.$iassign_ilm->id.'&dirid='.$fileid;
 				
 				$link_add_ilm_iassign = "&nbsp;&nbsp;<a href='$CFG->wwwroot/mod/iassign/ilm_manager.php?from=$this->from&id=$this->id&action=addilm&fileid=$fileid&filename=$filename'>" . icons::insert ( 'add_ilm_iassign' ) . "</a>";
@@ -6478,12 +6507,11 @@ class icons {
 	 */
 	static function insert($icon, $legend = "") {
 		global $CFG;
-		if(!empty(get_string($icon, 'iassign'))) {
-			if($legend == "")
+		if($legend == "") {
+			if(get_string_manager()->string_exists('iassign', $icon))			
 				$legend = get_string($icon, 'iassign');
-			else
+		} else
 				$legend = get_string($legend, 'iassign');
-		}
 		
 		$string = '<img src="' . $CFG->wwwroot . '/mod/iassign/icon/' . $icon . '.gif" title="' . $legend . '" alt="' . $legend . '"/>';
 		return $string;
@@ -6605,26 +6633,29 @@ class log {
 		 * @param int $ilmid Id of iLM.
 		 */
 		static function add_log($action, $information = "", $cmid = 0, $ilmid = 0) {
-		global $COURSE, $CFG, $USER, $DB;
-		
-		$newentry = new stdClass ();
-		$newentry->time = time();
-		$newentry->userid = $USER->id;
-		$newentry->ip = $_SERVER['REMOTE_ADDR'];
-		$newentry->course = $COURSE->id;
-		$newentry->cmid = $cmid;
-		$newentry->ilmid = $ilmid;
-		$newentry->action = $action;
-		$newentry->info = $information;
-		$newentry->language = current_language();
-		$newentry->user_agent = $_SERVER['HTTP_USER_AGENT'];
-		if(ini_get("browscap") && function_exists('get_browse')) { 
-			$browser = get_browse(null, true);
-			$newentry->javascript = $browser['javascript'];
-			$newentry->java = $browser['javaapplets'];
-		}
-		if (! $newentry->id = $DB->insert_record ( "iassign_log", $newentry ))
-			print_error ( 'error_add_log', 'iassign' );
+			global $COURSE, $CFG, $USER, $DB;
+			
+			$newentry = new stdClass ();
+			$newentry->time = time();
+			$newentry->userid = $USER->id;
+			$newentry->ip = $_SERVER['REMOTE_ADDR'];
+			$newentry->course = $COURSE->id;
+			$newentry->cmid = $cmid;
+			$newentry->ilmid = $ilmid;
+			$newentry->action = $action;
+			$newentry->info = $information;
+			$newentry->language = current_language();
+			$newentry->user_agent = $_SERVER['HTTP_USER_AGENT'];
+			if(ini_get("browscap") && function_exists('get_browse')) { 
+				$browser = get_browse(null, true);
+				$newentry->javascript = $browser['javascript'];
+				$newentry->java = $browser['javaapplets'];
+			} 
+			
+			//print_r($newentry);
+			
+			if (! $newentry->id = $DB->insert_record ( "iassign_log", $newentry ))
+				print_error ( 'error_add_log', 'iassign' );
 	}
 }
 /**
@@ -6688,3 +6719,4 @@ class messages {
 	}
 }
 ?>
+

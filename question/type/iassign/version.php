@@ -17,8 +17,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'qtype_iassign';
-$plugin->version   = 2014022700;
 $plugin->release = '1.1.23 (Build: 2014022700)';
-$plugin->requires  = 2012120300;
+$plugin->version   = 2014022700;
+$plugin->requires  = 2013051406;    // Requires this Moodle 2.5.x version 2013051406 (http://docs.moodle.org/dev/Releases)
 $plugin->maturity  = MATURITY_ALPHA;
 $plugin->dependencies = array('mod_iassign' => 2014022600);

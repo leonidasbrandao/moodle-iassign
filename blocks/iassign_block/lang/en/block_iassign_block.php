@@ -14,7 +14,7 @@
  
 $string['block_iassign_block'] = 'Manager Interactive Activities of iAssign';
 $string['pluginname'] = 'Manager Interactive Activities of iAssign';
-$string['blocktitle'] = 'Repositório iTarefa';
+$string['blocktitle'] = 'iAssign Repository';
 $string['new_edit'] ='New/Edit';
-$string['alert_iassign'] ='ERRO: o módulo do iTarefa não está instalado, o bloco não pode funcionar sem o módulo!';
+$string['alert_iassign'] ='ERROR: iAssign module is not installed, the block can not work without the module!';
 ?>

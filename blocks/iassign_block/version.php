@@ -62,10 +62,10 @@
  */
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2014022600;    // The current module version (Date: YYYYMMDDXX)
-$plugin->requires = 2012120300;    // Requires this Moodle 2.4.x version 2012120300 (http://docs.moodle.org/dev/Releases)
 $plugin->component = 'block_iassign_block'; // Full name of the plugin (used for diagnostics)
-$plugin->release = '2.1.55 (Build: 2014022600)';	// Human-readable version name
+$plugin->release = '2.2.00 (Build: 2014041600)';	// Human-readable version name
+$plugin->version = 2014041600;    // The current module version (Date: YYYYMMDDXX)
+$plugin->requires = 2013051406;    // Requires this Moodle 2.5.x version 2013051406 (http://docs.moodle.org/dev/Releases)
 $plugin->maturity = MATURITY_BETA;	// How stable the plugin is: MATURITY_ALPHA, MATURITY_BETA, MATURITY_RC, MATURITY_STABLE (Moodle 2.0 and above)
 $plugin->dependencies = array('mod_iassign' => 2014022600);
 ?>

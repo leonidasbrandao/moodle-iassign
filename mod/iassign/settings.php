@@ -71,23 +71,24 @@ if ($action == 'export_update') {
 $str = '';
 
 if(!file_exists($CFG->dirroot . '/filter/iassign_filter/version.php')){
-	$str .=  $OUTPUT->box_start();
-	$str .= '<center>'.$OUTPUT->error_text(get_string ( 'error_check_iassign_filter', 'iassign' )).'</center>';
-	$str .=  $OUTPUT->box_end();
+	$str .= $OUTPUT->error_text(get_string ( 'error_check_iassign_filter', 'iassign' )).'</br>';
 }
 if(!file_exists($CFG->dirroot . '/blocks/iassign_block/version.php')){
-	$str .=  $OUTPUT->box_start();
-	$str .= '<center>'.$OUTPUT->error_text(get_string ( 'error_check_iassign_block', 'iassign' )).'</center>';
-	$str .=  $OUTPUT->box_end();
+	$str .= $OUTPUT->error_text(get_string ( 'error_check_iassign_block', 'iassign' )).'</br>';
 }
-if(!file_exists($CFG->dirroot . '/lib/editor/tinymce/plugins/iassign/version.php')){
-	$str .=  $OUTPUT->box_start();
-	$str .= '<center>'.$OUTPUT->error_text(get_string ( 'error_check_iassign_tinymce', 'iassign' )).'</center>';
-	$str .=  $OUTPUT->box_end();
+if(!file_exists($CFG->dirroot . '/lib/editor/tinymce/plugins/iassign/version.php') && !file_exists($CFG->dirroot . '/lib/editor/atto/plugins/iassign/version.php')){
+	$str .= $OUTPUT->error_text(get_string ( 'error_check_iassign_tinymce', 'iassign' )).'</br>';
 }
 
 
 if ($action == 'view') {
+	
+	if(class_exists('plugin_manager'))
+		$pluginman = plugin_manager::instance();
+	else
+		$pluginman = core_plugin_manager::instance();
+	$plugins = $pluginman->get_plugins();
+	$str .= '<br><span class="form-shortname">'.get_string ( 'version_ilm', 'iassign' ).': '.$plugins['mod']['iassign']->versiondb."</span>";
 	
 	$url_add = new moodle_url ( '/mod/iassign/settings_ilm.php', array ('action' => 'add' ) );
 	$action_add = new popup_action ( 'click', $url_add, 'popup', array ('width' => 900,'height' => 650 ) );
@@ -103,8 +104,8 @@ if ($action == 'view') {
               WHERE s.parent = 0" );
 
 	$str .= '<table id="outlinetable" class="generaltable boxaligncenter" cellpadding="5" width="100%">' . chr ( 13 );
-	$str .= '<tr><td colspan=2 align=left>' . $link_add . '</td>';
-	$str .= '<td colspan=2 align=right>' . $link_import. '</td></tr>';
+	$str .= '<tr><td colspan=3 align=left>' . $link_add . '</td>';
+	$str .= '<td colspan=1 align=right>' . $link_import. '</td></tr>';
 	if ($iassign_ilms) {
 		foreach ( $iassign_ilms as $ilm ) {
 			
@@ -145,24 +146,22 @@ if ($action == 'view') {
 				}
 			}
 			
+			$alert_ilm_file = "";
+			if(!ilm_settings::applet_exists($ilm->files)) {
+				$alert_ilm_file = icons::insert('alert', 'error_confirms_jar');
+			}
+			
 			$str .= '<tr>';
-			$str .= '<td class="header c1" width=75%><strong>' . $ilm->name . '<br>' . language::get_description_lang(current_language(), $ilm->description) . '</strong></td>' . chr ( 13 );
+			$str .= '<td class="header c1" width=70%><strong>' . $ilm->name . '<br>' . language::get_description_lang(current_language(), $ilm->description) . '</strong></td>' . chr ( 13 );
 			$str .= '<td class="header c1" width=10% ><strong>' . get_string ( 'versions_ilm', 'iassign' ) . ':</strong>&nbsp;' . $ilm_count . '</td>' . chr ( 13 );
 			$str .= '<td class="header c1" width=10% ><strong>' . get_string ( 'activities', 'iassign' ) . ':</strong>&nbsp;' . $iassign_count . '</td>' . chr ( 13 );
-			$str .= '<td class="header c1" width=5% align=center valign=bottom>' . $link_upgrade .'&nbsp;&nbsp;'. $link_config. '</td>' . chr ( 13 );
+			$str .= '<td class="header c1" width=10% align=center valign=bottom>' . $link_upgrade .'&nbsp;&nbsp;'. $link_config. '&nbsp;&nbsp;'. $alert_ilm_file . '</td>' . chr ( 13 );
 			$str .= '</tr>';
 		}
 	}
 	$str .= '</table>';
 	
-	if(class_exists('plugin_manager'))
-		$pluginman = plugin_manager::instance();
-	else
-		$pluginman = core_plugin_manager::instance();
-	$plugins = $pluginman->get_plugins();
-	$version_text = '<br><span class="form-shortname" style="align: right;">'.get_string ( 'version_ilm', 'iassign' ).': '.$plugins['mod']['iassign']->versiondb."</span>";
-	
-	$settings->add ( new admin_setting_heading ( 'iassign', get_string ( 'config_ilm', 'iassign' ).$OUTPUT->help_icon ( 'modulename', 'iassign' ).$version_text, $str ) );
+	$settings->add(new admin_setting_heading('iassign', icons::insert('icon').'&nbsp;&nbsp;'.get_string('config_ilm', 'iassign').$OUTPUT->help_icon('modulename', 'iassign'), $str));
 } else if ($action == 'confirm_upgrade') {
 	
 	$ilm = $DB->get_record ( 'iassign_ilm', array ('id' => $ilm_id ) );
@@ -234,7 +233,7 @@ if ($action == 'view') {
 			} else
 				$link_default = $OUTPUT->action_link ( $url_default, icons::insert ( 'default_ilm_disabled' ));
 			
-			//if ($ilm_parent->file_jar != $ilm_parent->id) {
+			//if ($ilm_parent->files != $ilm_parent->id) {
 				$url_view = new moodle_url ( '/mod/iassign/settings_ilm.php', array ('action' => 'view','ilm_id' => $ilm_parent->id ,'from' => 'admin' ) );
 				$action_view = new popup_action ( 'click', $url_view, 'iplookup', array ('title' => get_string ( 'view_ilm', 'iassign' ),'width' => 1200,'height' => 650 ) );
 				$link_view = $OUTPUT->action_link ( $url_view, icons::insert ( 'view_ilm' ), $action_view );
@@ -276,11 +275,11 @@ if ($action == 'view') {
 			$action_copy = new popup_action ( 'click', $url_copy, 'iplookup', array ('title' => get_string ( 'copy_ilm', 'iassign' ),'width' => 900,'height' => 650 ) );
 			$link_copy = $OUTPUT->action_link ( $url_copy, icons::insert ( 'copy_ilm' ), $action_copy );
 			
-			if($total == 0 && ($ilm_parent->parent != 0 || count($iassign_ilm_parent) == 1) && !ilm_settings::applet_default($ilm_parent->file_jar))
+			if($total == 0 && ($ilm_parent->parent != 0 || count($iassign_ilm_parent) == 1) && !ilm_settings::applet_default($ilm_parent->files))
 			{
 				$url_delete = new moodle_url ( '/mod/iassign/settings_ilm.php', array ('action' => 'confirm_delete_ilm','ilm_id' => $ilm_parent->id,'ilm_parent' => $ilm->id ));
 				$link_delete = $OUTPUT->action_link ( $url_delete, icons::insert ( 'delete_ilm' ));
-			} else if(ilm_settings::applet_default($ilm_parent->file_jar))
+			} else if(ilm_settings::applet_default($ilm_parent->files))
 				$link_delete = "";
 			else
 				$link_delete = icons::insert ( 'delete_ilm_disable' );
@@ -305,8 +304,8 @@ if ($action == 'view') {
 			else
 				$url_ilm = $ilm_parent->url;
 			
-			if ($ilm_parent->file_jar == $ilm_parent->id) {
-				$ilm_parent->file_jar = "";
+			if ($ilm_parent->files == $ilm_parent->id) {
+				$ilm_parent->files = "";
 			}
 			
 			$str .= '<tr>' . chr ( 13 );
@@ -332,11 +331,11 @@ if ($action == 'view') {
 			$str .= '<tr><td width="50%"><strong>' . get_string ( 'language_label', 'iassign' ) . ':</strong>&nbsp;' . language::get_all_lang($ilm_parent->description) . '</td>';
 			$str .= '<td width="50%"><strong>' . get_string ( 'repository_files', 'iassign' ) . ':</strong>&nbsp;' . $count_files_ilm . '</td></tr>';
 			
-			$file_jar = ilm_settings::applet_fileinfo($ilm_parent->file_jar);
-
+			$file_jar = ilm_settings::applet_fileinfo($ilm_parent->files);
+			
 			$str .= '<tr><td  colspan=3><strong>' . get_string ( 'url_ilm', 'iassign' ) . ':</strong>&nbsp;<a href="' . $url_ilm . '" target="_blank">' . $url_ilm . '</a></td></tr>';
 			$str .= '<tr><td width="50%"><strong>' . get_string ( 'file_jar', 'iassign' ) . '</strong>&nbsp;' . $file_jar . '</td>';
-			$str .= '<td width="50%"><strong>' . get_string ( 'file_class', 'iassign' ) . ':</strong>&nbsp;' . $ilm_parent->file_class . '</td></tr>';
+			$str .= '<td width="50%"><strong>' . get_string ( 'file_class', 'iassign' ) . ':</strong>&nbsp;' . $ilm_parent->file_main . '</td></tr>';
 			
 			$str .= '<tr><td width="50%"><strong>' . get_string ( 'extension', 'iassign' ) . ':</strong>&nbsp;' . $ilm_parent->extension . '</td>';
 			$str .= '<td width="50%"><strong>' . get_string ( 'width', 'iassign' ) . ':</strong>&nbsp;' . $ilm_parent->width;
@@ -363,7 +362,7 @@ if ($action == 'view') {
 			$user_ilm = $DB->get_record ( 'user', array ('id' => $ilm_parent->author ) );
 			$str .= '<tr>' . chr ( 13 );
 			$str .= '<td width="50%"><strong>' . get_string ( 'author', 'iassign' ) . ':</strong>&nbsp;' . $user_ilm->firstname.'&nbsp;'.$user_ilm->lastname . '</td>';
-			$str .= '<td width="50%"><strong>' . get_string ( 'license', 'iassign' ) . ':</strong>&nbsp;' . ilm_settings::applet_license($ilm_parent->file_jar) . '</td>' . chr ( 13 );
+			$str .= '<td width="50%"><strong>' . get_string ( 'license', 'iassign' ) . ':</strong>&nbsp;' . ilm_settings::applet_license($ilm_parent->files) . '</td>' . chr ( 13 );
 			$str .= '</tr>' . chr ( 13 );
 			
 			$str .= '<tr>' . chr ( 13 );
@@ -439,5 +438,7 @@ if ($action == 'view') {
 	
 	$settings->add ( new admin_setting_heading ( 'iassign', $ilm->name.'&nbsp;', $str ) );
 }
+
+$PAGE->set_docs_path('http://docs.moodle.org/en/iAssign');
 
 ?>

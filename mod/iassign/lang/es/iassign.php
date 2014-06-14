@@ -357,7 +357,7 @@ $string['ok_import_ilm_version'] = 'O iMA foi importado com sucesso!';
 $string['error_upload_ilm'] = 'ERRO: tipo do pacote não aceito, entre com um pacote compactado do iTarefa (ipz).';
 $string['error_check_iassign_filter'] = 'Atenção: o filtro do iTarefa não está instalado, o módulo do iTarefa não funcionará corretamente.';
 $string['error_check_iassign_block'] = 'Atenção: o bloco do iTarefa não está instalado, o módulo do iTarefa não funcionará corretamente.';
-$string['error_check_iassign_tinymce'] = 'Atenção: o botão do iTarefa do editor TinyMCE não está instalado, o módulo do iTarefa não funcionará corretamente.';
+$string['error_check_iassign_tinymce'] = 'Atenção: o botão do iTarefa do editor TinyMCE ou do editor Atto não estão instalados, o módulo do iTarefa não funcionará corretamente.';
 $string['no_permission_iassign']='Visitantes somente podem visualizar atividades!';
 $string['error_add_log'] = 'ERRO: não foi possível inserir o log de eventos do iTarefa.';
 $string['comment_unread_one']='Recado novo';
@@ -421,4 +421,8 @@ $string['author_license'] = 'Autor';
 $string['error_import_ilm'] = 'ERRO: Não foi possível importar o iMA, o pacote pode estar corrompido !!!';
 $string['error_iassign_name']='Erro: Já existe uma atividade com esse título.';
 $string['repository_files'] = 'Arquivos no Repositório';
+$string['pluginadministration'] = 'iTarefa';
+$string['comment_unread_legend'] = 'Comentário não lido';
+$string['param_refresh'] = 'Atualizar';
+$string['error_get_string']='Erro: string não inserida no arquivo de idiomas. Entre em contato com o desenvolvedor';
 ?>
