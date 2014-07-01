@@ -9,10 +9,10 @@ Install
 
 1) Be sure to have the latest language package, such as English (en), Portuguese (pt_br), Spanish (es)(dev), or French (fr)(dev) (these are the current languages for iAssign)
 
-2) Download iAssign package here from button "Download Zip" (https://github.com/leonidasbrandao/iAssign);
+2) Download iAssign package here from button "Download Zip" (https://github.com/leonidasbrandao/moodle-iassign);
 
-3) Unpack 'iAssign-master.zip' moving folders blocks, filter, mod and lib directly in Moodle root folder;
+3) Unpack 'master.zip' moving folders blocks, filter, mod and lib directly in Moodle root folder;
 
 4) Under role "administrator", go to the 'Site administration' and click on 'Notifications'.
 
-For more information about code see in https://github.com/leonidasbrandao/iAssign/wiki.
+For more information about code see in https://github.com/leonidasbrandao/moodle-iassign/wiki.
