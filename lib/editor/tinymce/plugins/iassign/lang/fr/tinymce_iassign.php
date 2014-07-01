@@ -9,6 +9,5 @@
  */
 
 $string['pluginname'] = 'Insert interactive activity (iAssign) by TinyMCE editor';
-
 /* All lang strings used from TinyMCE JavaScript code must be named 'pluginname:stringname', no need to create langs/en_dlg.js */
 $string['iassign:desc'] = 'Insert interactive activity (iAssign)';

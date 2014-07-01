@@ -14,7 +14,7 @@
  * @package iassign_filter
  * @since 2010/11/28
  * @copyright iMatica (<a href="http://www.matematica.br">iMath</a>) - Computer Science Dep. of IME-USP (Brazil)
- * @license http://opensource.org/licenses/gpl-license.php GNU Public License
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @see moodle_text_filter
  */
 
@@ -30,4 +30,3 @@ function xmldb_filter_iassign_filter_install() {
 	filter_set_global_state('filter/iassign_filter', TEXTFILTER_ON);
 	filter_set_applies_to_strings('filter/iassign_filter', true);
 }
-?>

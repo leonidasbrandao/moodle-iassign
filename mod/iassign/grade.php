@@ -10,7 +10,7 @@
  * @copyright iMatica (<a href="http://www.matematica.br">iMath</a>) - Computer Science Dep. of IME-USP (Brazil)
  * 
  * <b>License</b> 
- *  - http://opensource.org/licenses/gpl-license.php GNU Public License
+ *  - http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 require_once("../../config.php");
 
@@ -73,4 +73,3 @@ if (has_capability('mod/iassign:viewreport', context_module::instance($cm->id)))
     $iainstance->stats_students();
 else
     $iainstance->view();
-?>

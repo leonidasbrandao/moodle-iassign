@@ -21,7 +21,7 @@
  * @copyright iMatica (<a href="http://www.matematica.br">iMath</a>) - Computer Science Dep. of IME-USP (Brazil)
  *
  * <b>License</b>
- *  - http://opensource.org/licenses/gpl-license.php GNU Public License
+ *  - http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 require_once ($CFG->dirroot . '/mod/iassign/locallib.php');
 
@@ -81,7 +81,7 @@ function xmldb_iassign_install() {
 						'component' => 'mod_iassign',     // usually = table name
 						'filearea' => 'ilm',     // usually = table name
 						'itemid' => 0, 
-						'filepath' => '/iassign/ilm/'.utils::format_pathname($name_ilm).'/'.utils::format_pathname($version_ilm).'/',           // any path beginning and ending in /
+						'filepath' => '/iassign/ilm/'.iassign_utils::format_pathname($name_ilm).'/'.iassign_utils::format_pathname($version_ilm).'/',           // any path beginning and ending in /
 						'filename' => $filename); // any filename
 				$file_ilm = $fs->create_file_from_string($file_ilm, file_get_contents($ilm_path.$filename));
 
@@ -98,7 +98,7 @@ function xmldb_iassign_install() {
 		}
 	}
 
-	$is_delete &= @unlink($ilm_path . "index.html");
+	$is_delete &= @unlink($ilm_path . "index.*");
 
 	if($is_delete && is_dir($ilm_path))
 		@rmdir($ilm_path);
@@ -110,7 +110,7 @@ function xmldb_iassign_install() {
 	else
 		$pluginman = core_plugin_manager::instance();
 	$plugins = $pluginman->get_plugins();
-	log::add_log('install', 'version: '.$plugins['mod']['iassign']->versiondb);
+	iassign_log::add_log('install', 'version: '.$plugins['mod']['iassign']->versiondb);
 	// log event -----------------------------------------------------
 
 }

@@ -5,7 +5,7 @@
  * Release Notes:
  * - v 4.1 2013/12/13
  * 		+ Insert log in iAssign actions.
- * 		+ Allow use the language in iLM description (ilm_settings::new_file_ilm, ilm_settings::new_ilm, ilm_settings::edit_ilm, ilm_settings::copy_new_version_ilm, ilm_settings::add_edit_copy_ilm, language::get_description_lang, language::get_all_lang).
+ * 		+ Allow use the language in iLM description (ilm_settings::new_file_ilm, ilm_settings::new_ilm, ilm_settings::edit_ilm, ilm_settings::copy_new_version_ilm, ilm_settings::add_edit_copy_ilm, iassign_language::get_description_lang, iassign_language::get_all_lang).
  * 		+ Insert class for Log actions in system.
  * - v 4.0 2013/10/31
  * 		+ Insert support of export iLM in zip packages (ilm_settings::export_ilm).
@@ -34,7 +34,7 @@
  * - v 3.2 2013/08/21
  * 		+ Change title link with message for get file for donwload file (ilm_manager::view_files_ilm).
  * 		+ Change functions for import files for ilm_manager.php.
- * 		+ Create static utils class for functions system utils (utils::format_filename, utils::version_filename).
+ * 		+ Create static utils class for functions system utils (iassign_utils::format_filename, iassign_utils::version_filename).
  * - v 3.1 2013/08/15
  * 		+ Change return file selected (ilm_manager::add_ilm).
  * 		+ Insert functions for import files, export files and remove selected files (ilm_manager::view_files_ilm, ilm_manager::import_files_ilm, ilm_manager::export_files_ilm, ilm_manager::delete_selected_ilm).
@@ -64,7 +64,7 @@
  * @copyright iMatica (<a href="http://www.matematica.br">iMath</a>) - Computer Science Dep. of IME-USP (Brazil)
  * 
  * <b>License</b> 
- *  - http://opensource.org/licenses/gpl-license.php GNU Public License
+ *  - http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
@@ -93,7 +93,7 @@ class iassign {
 	function iassign($iassign, $cm, $course) {
 		global $COURSE, $CFG, $USER, $DB;
 		
-		$botton = optional_param ( 'botton', NULL, PARAM_TEXT );
+		$botton = optional_param ( 'botton', NULL, PARAM_ALPHANUMEXT );
 		if (! is_null ( $botton ))
 			$USER->iassignEdit = $botton;
 		
@@ -102,7 +102,7 @@ class iassign {
 		$this->iassign_down = optional_param ( 'iassign_down', 0, PARAM_INT );
 		$this->iassign_submission_current = optional_param ( 'iassign_submission_current', 0, PARAM_INT );
 		$this->write_solution = optional_param ( 'write_solution', 0, PARAM_INT );
-		$this->action = optional_param ( 'action', NULL, PARAM_TEXT );
+		$this->action = optional_param ( 'action', NULL, PARAM_ALPHANUMEXT );
 		
 		if ($cm) {
 			$this->cm = $cm;
@@ -138,7 +138,7 @@ class iassign {
 		$this->return = $CFG->wwwroot . "/mod/iassign/view.php?id=" . $this->cm->id;
 		$this->bottonPost = 0;
 		$this->view_iassign = optional_param ( 'action', false, PARAM_BOOL );
-		$this->activity = new activity ( optional_param ( 'iassign_current', NULL, PARAM_TEXT ) );
+		$this->activity = new activity ( optional_param ( 'iassign_current', NULL, PARAM_ALPHANUMEXT ) );
 		$this->view ();
 	}
 	
@@ -153,7 +153,7 @@ class iassign {
 		// If this user has no capability to View 'iassign': stop here
 		require_capability ( 'mod/iassign:view', $this->context );
 		
-		add_to_log ( $this->course->id, "iassign", "view", "view.php?id={$this->cm->id}", utils::remove_code_message($this->iassign->name), $this->cm->id, $USER->id );
+		add_to_log ( $this->course->id, "iassign", "view", "view.php?id={$this->cm->id}", iassign_utils::remove_code_message($this->iassign->name), $this->cm->id, $USER->id );
 		
 		if ($this->action) {
 			$this->action();
@@ -205,7 +205,7 @@ class iassign {
 	function get_answer() {
 		global $USER, $CFG, $DB, $OUTPUT;
 		$id = $this->cm->id;
-		$submission_comment = optional_param ( 'submission_comment', NULL, PARAM_TEXT );
+		$submission_comment = optional_param ( 'submission_comment', NULL, PARAM_ALPHANUMEXT );
 		$comment = false;
 		if ($submission_comment)
 			$comment = $this->write_comment_submission ();
@@ -217,7 +217,7 @@ class iassign {
 		$iassign_submission = $DB->get_record ( "iassign_submission", array ("iassign_statementid" => $this->activity->get_activity ()->id,"userid" => $this->userid_iassign ) ); // data about student solution
 		                                                                                                                                                                     // receives post and get
 		$MA_POST_Value = optional_param ( 'MA_POST_Value', 0, PARAM_INT ); // 1 - activity evaluated as correct / 0 - activity evaluated as incorrect
-		$MA_POST_Archive = optional_param ( 'MA_POST_Archive', NULL, PARAM_TEXT ); // answer file (string)
+		$MA_POST_Archive = optional_param ( 'MA_POST_Archive', NULL, PARAM_ALPHANUMEXT ); // answer file (string)
 		$MA_POST_Info = optional_param ( 'MA_POST_Info', NULL, PARAM_FORMAT );
 		$MA_POST_SystemData = optional_param ( 'MA_POST_SystemData', NULL, PARAM_FORMAT );
 		$return_get_answer = optional_param ( 'return_get_answer', 0, PARAM_INT );
@@ -233,11 +233,11 @@ class iassign {
 		echo $OUTPUT->box_start ();
 		$return = "" . $CFG->wwwroot . "/mod/iassign/view.php?action=view&id=" . $id . "&iassign_submission_current=" . $this->iassign_submission_current . "&userid_iassign=" . $this->userid_iassign . "&iassign_current=" . $this->activity->get_activity ()->id;
 		
-		// icons::insert ($icon)
+		// iassign_icons::insert ($icon)
 		// $return_last = "&nbsp;<a href='" . $return . "'>" . $this->icon_return . '&nbsp;' . get_string('return_iassign', 'iassign') . "</a>";
-		$return_last = "&nbsp;<a href='" . $return . "'>" . icons::insert ( 'return_home' ) . '&nbsp;' . get_string ( 'return_iassign', 'iassign' ) . "</a>";
+		$return_last = "&nbsp;<a href='" . $return . "'>" . iassign_icons::insert ( 'return_home' ) . '&nbsp;' . get_string ( 'return_iassign', 'iassign' ) . "</a>";
 		
-		$link_return = "&nbsp;<a href='" . $this->return . "'>" . icons::insert ( 'home' ) . '&nbsp;' . get_string ( 'activities_page', 'iassign' ) . "</a>";
+		$link_return = "&nbsp;<a href='" . $this->return . "'>" . iassign_icons::insert ( 'home' ) . '&nbsp;' . get_string ( 'activities_page', 'iassign' ) . "</a>";
 		echo '<table  width=100% >';
 		
 		if ($MA_POST_Archive == - 1 or empty ( $MA_POST_Archive )) { // if ($MA_POST_Value == -1) {
@@ -252,7 +252,7 @@ class iassign {
 				if (intval ( $MA_POST_Value ) == 1) {
 					$status = 3;
 					$grade_student = $this->activity->get_activity ()->grade; // evaluated as correct solution submitted is assigned the note pattern of activity
-					$msg = '<tr><td colspan=2>' . icons::insert ( 'feedback_correct' ) . '<br>' . get_string ( 'get_answer_correct', 'iassign' ) . '</td>';
+					$msg = '<tr><td colspan=2>' . iassign_icons::insert ( 'feedback_correct' ) . '<br>' . get_string ( 'get_answer_correct', 'iassign' ) . '</td>';
 					
 					// log record
 					$info = $iassign->name . "&nbsp;-&nbsp;" . $this->activity->get_activity ()->name . "&nbsp;-&nbsp;" . get_string ( 'feedback_correct', 'iassign' ) . "&nbsp;-&nbsp;" . get_string ( 'grade_iassign', 'iassign' ) . ":" . $grade_student;
@@ -260,7 +260,7 @@ class iassign {
 				} else {
 					$status = 2;
 					$grade_student = 0; // evaluated as incorrect solution
-					$msg = '<tr><td colspan=2>' . icons::insert ( 'feedback_incorrect' ) . '<br>' . get_string ( 'get_answer_incorrect', 'iassign' ) . '</td>';
+					$msg = '<tr><td colspan=2>' . iassign_icons::insert ( 'feedback_incorrect' ) . '<br>' . get_string ( 'get_answer_incorrect', 'iassign' ) . '</td>';
 					
 					// log record
 					$info = $iassign->name . "&nbsp;-&nbsp;" . $this->activity->get_activity ()->name . "&nbsp;-&nbsp;" . get_string ( 'feedback_incorrect', 'iassign' ) . '&nbsp;-&nbsp;' . get_string ( 'grade_iassign', 'iassign' ) . $grade_student;
@@ -268,7 +268,7 @@ class iassign {
 				} // if ($MA_POST_Value == 1)
 				
 				if ($this->activity->get_activity ()->show_answer == 0) { // not automatic evaluate
-					echo '<tr><td width=60% ><strong>' . icons::insert ( 'post' ) . get_string ( 'get_answer', 'iassign' ) . '</strong></td>';
+					echo '<tr><td width=60% ><strong>' . iassign_icons::insert ( 'post' ) . get_string ( 'get_answer', 'iassign' ) . '</strong></td>';
 					echo '<tr><td width=40% align=right>' . $return_last . '&nbsp;' . $link_return . '</td></tr>';
 					echo '<tr>';
 					// log record
@@ -283,7 +283,7 @@ class iassign {
 			} else {
 				$status = 1;
 				$grade_student = 0; // iLM not have automatic evaluator
-				echo '<tr><td colspan=2>' . icons::insert ( 'post' ) . get_string ( 'get_answer_post', 'iassign' ) . '</td>';
+				echo '<tr><td colspan=2>' . iassign_icons::insert ( 'post' ) . get_string ( 'get_answer_post', 'iassign' ) . '</td>';
 				echo '<tr><td width=40% align=right>' . $return_last . '&nbsp;' . $link_return . '</td></tr>';
 				echo '<tr>';
 				
@@ -411,13 +411,13 @@ class iassign {
 		
 		$iassign_submission = $DB->get_record ( "iassign_submission", array ("id" => $iassign_submission_id ) );
 		$iassign_statement = $DB->get_record ( "iassign_statement", array ("id" => $iassign_submission->iassign_statementid ) );
-		$name = utils::format_filename(strip_tags($iassign_statement->name));
+		$name = iassign_utils::format_filename(strip_tags($iassign_statement->name));
 		
 		$iassign_ilm = $DB->get_record ( "iassign_ilm", array ("id" => $iassign_statement->iassign_ilmid ) );
 		$extensions = explode(",", $iassign_ilm->extension);
 		
 		$iassign_user = $DB->get_record ( "user", array ("id" => $iassign_submission->userid ) );
-		$username = utils::format_filename($iassign_user->firstname.' '.$iassign_user->lastname);
+		$username = iassign_utils::format_filename($iassign_user->firstname.' '.$iassign_user->lastname);
 		
 		$name_answer = $username.'-'.$name.'-'.userdate($iassign_submission->timemodified, '%Y%m%d-%H%M').'.'.$extensions[0];
 		
@@ -439,11 +439,11 @@ class iassign {
 	
 		$iassign_id = optional_param ( 'iassign_id', NULL, PARAM_INT );
 		$iassign = $DB->get_record ( "iassign", array ("id" => $iassign_id ) );
-		$iassign_name = utils::format_filename($iassign->name);
+		$iassign_name = iassign_utils::format_filename($iassign->name);
 		
 		$userid = optional_param ( 'userid', NULL, PARAM_INT );
 		$iassign_user = $DB->get_record ( "user", array ("id" => $userid ) );
-		$username = utils::format_filename($iassign_user->firstname.' '.$iassign_user->lastname);
+		$username = iassign_utils::format_filename($iassign_user->firstname.' '.$iassign_user->lastname);
 		
 		$zip_filename = $CFG->dataroot.'/temp/package-iassign-'.$username.'-'.$iassign_name.'-'.date('Ymd-Hi').'.zip';
 		$zip = new zip_archive();
@@ -451,7 +451,7 @@ class iassign {
 		
 		$iassign_statements = $DB->get_records ( "iassign_statement", array ("iassignid" => $iassign_id ) );
 		foreach ($iassign_statements as $iassign_statement) {
-			$name = utils::format_filename(strip_tags($iassign_statement->name));
+			$name = iassign_utils::format_filename(strip_tags($iassign_statement->name));
 			
 			$iassign_ilm = $DB->get_record ( "iassign_ilm", array ("id" => $iassign_statement->iassign_ilmid ) );
 			$extensions = explode(",", $iassign_ilm->extension);
@@ -563,7 +563,7 @@ class iassign {
 			$iassign_statement = $DB->get_records_sql ( "SELECT s.id, s.name, s.dependency
                              FROM {iassign_statement} s
                              WHERE s.iassignid = :iassignid
-                             ORDER BY `s`.`position` ASC", $params ); // " - jed/excs
+                             ORDER BY s.position ASC", $params ); // " - jed/excs
 			
 			$param->iassignid = $iassignid;
 			$param->name = "";
@@ -612,10 +612,10 @@ class iassign {
 				$iassign_statement_current = $DB->get_record ( "iassign_statement", array ("id" => $this->activity->get_activity ()->id ) );
 				
 				$iassign_statement = $DB->get_records_sql ( "SELECT *
-                             FROM {$CFG->prefix}iassign_statement s
+                             FROM {iassign_statement} s
                              WHERE s.iassignid = '$iassignid'
                              AND s.id!='$iassign_statement_current->id'
-                             ORDER BY `s`.`position` ASC" );
+                             ORDER BY s.position ASC" );
 				
 				$param->iassign_id = $iassign_statement_current->id; // oculto
 				$param->iassignid = $iassign_statement_current->iassignid; // oculto
@@ -637,7 +637,7 @@ class iassign {
 							$inter [] = $iassign->id;
 				
 				$iassign_statement_dependency = $DB->get_records_sql ( "SELECT *
-                             FROM {$CFG->prefix}iassign_statement s
+                             FROM {iassign_statement} s
                              WHERE s.iassignid = '$iassignid'
                              AND s.id!='$iassign_statement_current->id'
                              AND s.dependency!=0" );
@@ -736,9 +736,6 @@ class iassign {
 			} elseif ($result->automatic_evaluate == 0)
 				$result->show_answer = 0;
 				
-				// $result->iassign_list = $_POST['iassign_list'];
-				// $result_assign_list = $_GET['iassign_list'];
-			
 			$result->iassign_list = optional_param_array ( 'iassign_list', array (), PARAM_RAW );
 			if ($result->iassign_list) {
 				foreach ( $result->iassign_list as $key => $value )
@@ -750,10 +747,12 @@ class iassign {
 			$iassign_ilm = $DB->get_record ( "iassign_ilm", array ("id" => $result->iassign_ilmid ) );
 			
 			if ($this->action == 'add') {
-				$iassign_statement_name = $DB->get_records_sql ( "SELECT *
-                             FROM {$CFG->prefix}iassign_statement s
+				/* $iassign_statement_name = $DB->get_records_sql ( "SELECT *
+                             FROM {iassign_statement} s
                              WHERE s.iassignid = '$result->iassignid'
-                             AND s.name = '$result->name'" );
+                             AND s.name = '$result->name'" ); */
+				$iassign_statement_name = $DB->get_records('iassign_statement', array('iassignid' => $result->iassignid, 'name' => $result->name));
+				
 				if ($iassign_statement_name) {
 					$this->return_home_course ( 'error_iassign_name' );
 					die ();
@@ -830,19 +829,25 @@ class iassign {
 	static function update_grade_iassign($iassignid) {
 		global $USER, $CFG, $COURSE, $DB, $OUTPUT;
 		require_once ($CFG->libdir . '/gradelib.php');
-		$sum_grade = $DB->get_records_sql ( "SELECT SUM(grade) as total
+		/* $sum_grade = $DB->get_records_sql ( "SELECT SUM(grade) as total
                              FROM {$CFG->prefix}iassign_statement s
                              WHERE s.iassignid = '$iassignid'
-                             AND s.type_iassign=3" );
+                             AND s.type_iassign=3" ); */
+		
+		$sum_grade = 0;
+		$grade = $DB->get_records('iassign_statement', array('iassignid' => $iassignid, 'type_iassign' => 3));
+		foreach ($grade as $tmp) {
+			$sum_grade += $tmp->grade;
+		}
 		
 		$grade_iassign = $DB->get_record ( "iassign", array ("id" => $iassignid ) );
 		$grades = NULL;
 		$params = array ('itemname' => $grade_iassign->name );
 		$params ['iteminstance'] = $iassignid;
 		$params ['gradetype'] = GRADE_TYPE_VALUE;
-		if (key ( $sum_grade )) {
-			$params ['grademax'] = key ( $sum_grade );
-			$params ['rawgrademax'] = key ( $sum_grade );
+		if ($sum_grade != 0) {
+			$params ['grademax'] = $sum_grade;
+			$params ['rawgrademax'] = $sum_grade;
 		} else {
 			$params ['grademax'] = 0;
 			$params ['rawgrademax'] = 0;
@@ -866,10 +871,16 @@ class iassign {
 			if ($iassign_submission)
 				$total_grade += $iassign_submission->grade;
 		} // foreach ($grade_iassign_statements as $grade_iassign_statement)
-		$sum_grade = $DB->get_records_sql ( "SELECT SUM(grade) as total
+		/* $sum_grade = $DB->get_records_sql ( "SELECT SUM(grade) as total
                              FROM {$CFG->prefix}iassign_statement s
                              WHERE s.iassignid = '$iassignid'
-                             AND s.type_iassign=3" );
+                             AND s.type_iassign=3" ); */
+		
+		$sum_grade = 0;
+		$grade = $DB->get_records('iassign_statement', array('iassignid' => $iassignid, 'type_iassign' => 3));
+		foreach ($grade as $tmp) {
+			$sum_grade += $tmp->grade;
+		}
 		
 		$grades ['userid'] = $userid;
 		$grades ['rawgrade'] = $total_grade;
@@ -877,9 +888,9 @@ class iassign {
 		$params ['iteminstance'] = $iassignid;
 		$params ['gradetype'] = GRADE_TYPE_VALUE;
 		
-		if (key ( $sum_grade )) {
-			$params ['grademax'] = key ( $sum_grade );
-			$params ['rawgrademax'] = key ( $sum_grade );
+		if ( $sum_grade != 0 ) {
+			$params ['grademax'] = $sum_grade;
+			$params ['rawgrademax'] = $sum_grade;
 		} else {
 			$params ['grademax'] = 0;
 			$params ['rawgrademax'] = 0;
@@ -905,25 +916,25 @@ class iassign {
 			// helpbutton('legend', get_string('legend', 'iassign'), 'iassign', $image = true, $linktext = false, $text = '', $return = false,
 			// $imagetext = '');
 		echo '<strong>' . get_string ( 'legend', 'iassign' ) . '</strong>';
-		echo '&nbsp;' . icons::insert ( 'correct' ) . '&nbsp;' . get_string ( 'correct', 'iassign' );
-		echo '&nbsp;' . icons::insert ( 'incorrect' ) . '&nbsp;' . get_string ( 'incorrect', 'iassign' );
-		echo '&nbsp;' . icons::insert ( 'post' ) . '&nbsp;' . get_string ( 'post', 'iassign' );
-		echo '&nbsp;' . icons::insert ( 'not_post' ) . '&nbsp;' . get_string ( 'not_post', 'iassign' );
-		echo '&nbsp;' . icons::insert ( 'comment_unread' ) . '&nbsp;' . get_string ( 'comment_unread', 'iassign' );
+		echo '&nbsp;' . iassign_icons::insert ( 'correct' ) . '&nbsp;' . get_string ( 'correct', 'iassign' );
+		echo '&nbsp;' . iassign_icons::insert ( 'incorrect' ) . '&nbsp;' . get_string ( 'incorrect', 'iassign' );
+		echo '&nbsp;' . iassign_icons::insert ( 'post' ) . '&nbsp;' . get_string ( 'post', 'iassign' );
+		echo '&nbsp;' . iassign_icons::insert ( 'not_post' ) . '&nbsp;' . get_string ( 'not_post', 'iassign' );
+		echo '&nbsp;' . iassign_icons::insert ( 'comment_unread' ) . '&nbsp;' . get_string ( 'comment_unread', 'iassign' );
 		
 		if (has_capability ( 'mod/iassign:viewreport', $this->context, $USER->id ) && $this->action == 'report') {
-			echo '&nbsp;' . icons::insert ( 'comment_read' ) . '&nbsp;' . get_string ( 'comment_read', 'iassign' );
+			echo '&nbsp;' . iassign_icons::insert ( 'comment_read' ) . '&nbsp;' . get_string ( 'comment_read', 'iassign' );
 			echo '</td>' . "\n";
 			if ($this->action != 'print') {
-				$link_print = "<a href='" . $CFG->wwwroot . "/mod/iassign/view.php?id=" . $id . "&action=print&iassignid=" . $this->iassign->id . "'>" . icons::insert ( 'print' ) . '&nbsp;' . get_string ( 'print', 'iassign' ) . "</a>";
-				$link_stats = "<a href='" . $CFG->wwwroot . "/mod/iassign/view.php?id=" . $id . "&action=stats&iassignid=" . $this->iassign->id . "'>" . icons::insert ( 'results' ) . '&nbsp;' . get_string ( 'graphic', 'iassign' ) . "</a>";
+				$link_print = "<a href='" . $CFG->wwwroot . "/mod/iassign/view.php?id=" . $id . "&action=print&iassignid=" . $this->iassign->id . "'>" . iassign_icons::insert ( 'print' ) . '&nbsp;' . get_string ( 'print', 'iassign' ) . "</a>";
+				$link_stats = "<a href='" . $CFG->wwwroot . "/mod/iassign/view.php?id=" . $id . "&action=stats&iassignid=" . $this->iassign->id . "'>" . iassign_icons::insert ( 'results' ) . '&nbsp;' . get_string ( 'graphic', 'iassign' ) . "</a>";
 				echo '<td width=15% align="right">' . $link_stats . '</td>' . "\n";
 				echo '<td width=15% align="right">' . $link_print . '</td>' . "\n";
 			} // if ($this->action != 'print')
 			echo '</tr></table>' . "\n";
 		} 		// if (has_capability('mod/iassign:viewreport', $this->context, $USER->id) and $this->action == 'report')
 		elseif (has_capability ( 'mod/iassign:submitiassign', $this->context, $USER->id )) {
-			$link_stats = "<a href='" . $CFG->wwwroot . "/mod/iassign/view.php?id=" . $id . "&action=stats_student&iassignid=" . $this->iassign->id . "'>" . icons::insert ( 'results' ) . '&nbsp;' . get_string ( 'results', 'iassign' ) . "</a>";
+			$link_stats = "<a href='" . $CFG->wwwroot . "/mod/iassign/view.php?id=" . $id . "&action=stats_student&iassignid=" . $this->iassign->id . "'>" . iassign_icons::insert ( 'results' ) . '&nbsp;' . get_string ( 'results', 'iassign' ) . "</a>";
 			echo '<td width=15% align="right">' . $link_stats . '</td>' . "\n";
 			echo '</tr></table>' . "\n";
 		} 		// elseif (has_capability('mod/iassign:submitiassign', $this->context, $USER->id))
@@ -1002,30 +1013,30 @@ class iassign {
 			$row = optional_param ( 'row', 0, PARAM_INT );
 			$column = optional_param ( 'column', 0, PARAM_INT );
 			
-			$link_next = icons::insert ( 'right_disable' );
-			$link_previous = icons::insert ( 'left_disable' );
-			$link_up = icons::insert ( 'up_disable' );
-			$link_down = icons::insert ( 'down_disable' );
+			$link_next = iassign_icons::insert ( 'right_disable' );
+			$link_previous = iassign_icons::insert ( 'left_disable' );
+			$link_up = iassign_icons::insert ( 'up_disable' );
+			$link_down = iassign_icons::insert ( 'down_disable' );
 			
 			// next_activity
 			if ($USER->matrix_iassign [$row] [$column]->iassign_next != - 1) {
 				$url_next = "view.php?action=viewsubmission&id=$id&iassign_submission_current=" . $USER->matrix_iassign [$row] [$column + 1]->iassign_submission_current . "&userid_iassign=$this->userid_iassign&iassign_current=" . $USER->matrix_iassign [$row] [$column]->iassign_next . "&view_iassign=report&row=" . ($row) . "&column=" . ($column + 1);
-				$link_next = "<a href='" . $url_next . "'>" . (icons::insert ( 'next_activity' )) . "</a>";
+				$link_next = "<a href='" . $url_next . "'>" . (iassign_icons::insert ( 'next_activity' )) . "</a>";
 			}
 			// previous_activity
 			if ($USER->matrix_iassign [$row] [$column]->iassign_previous != - 1) {
 				$url_previous = "view.php?action=viewsubmission&id=$id&iassign_submission_current=" . $USER->matrix_iassign [$row] [$column - 1]->iassign_submission_current . "&userid_iassign=$this->userid_iassign&iassign_current=" . $USER->matrix_iassign [$row] [$column]->iassign_previous . "&view_iassign=report&row=" . ($row) . "&column=" . ($column - 1);
-				$link_previous = "<a href='" . $url_previous . "'>" . (icons::insert ( 'previous_activity' )) . "</a>";
+				$link_previous = "<a href='" . $url_previous . "'>" . (iassign_icons::insert ( 'previous_activity' )) . "</a>";
 			}
 			// previous_student
 			if ($USER->matrix_iassign [$row] [$column]->user_next != - 1) {
 				$url_down = "view.php?action=viewsubmission&id=$id&iassign_submission_current=" . $USER->matrix_iassign [$row + 1] [$column]->iassign_submission_current . "&userid_iassign=" . $USER->matrix_iassign [$row] [$column]->user_next . "&iassign_current=" . $this->activity->get_activity ()->id . "&view_iassign=report&row=" . ($row + 1) . "&column=" . ($column);
-				$link_down = "<a href='" . $url_down . "'>" . (icons::insert ( 'previous_student' )) . "</a>";
+				$link_down = "<a href='" . $url_down . "'>" . (iassign_icons::insert ( 'previous_student' )) . "</a>";
 			}
 			// next_student
 			if ($USER->matrix_iassign [$row] [$column]->user_previous != - 1) {
 				$url_up = "view.php?action=viewsubmission&id=$id&iassign_submission_current=" . $USER->matrix_iassign [$row - 1] [$column]->iassign_submission_current . "&userid_iassign=" . $USER->matrix_iassign [$row] [$column]->user_previous . "&iassign_current=" . $this->activity->get_activity ()->id . "&view_iassign=report&row=" . ($row - 1) . "&column=" . ($column);
-				$link_up = "<a href='" . $url_up . "'>" . (icons::insert ( 'next_student' )) . "</a>";
+				$link_up = "<a href='" . $url_up . "'>" . (iassign_icons::insert ( 'next_student' )) . "</a>";
 			}
 			if ($iassign_submission)
 				$answer = $iassign_submission->answer;
@@ -1078,20 +1089,20 @@ class iassign {
 				if ($iassign_submission) {
 					switch ($iassign_submission->status) {
 						case 3 :
-							echo icons::insert ( 'correct' ) . '&nbsp;' . get_string ( 'correct', 'iassign' ) . '&nbsp;' . $comment;
+							echo iassign_icons::insert ( 'correct' ) . '&nbsp;' . get_string ( 'correct', 'iassign' ) . '&nbsp;' . $comment;
 							break;
 						case 2 :
-							echo icons::insert ( 'incorrect' ) . '&nbsp;' . get_string ( 'incorrect', 'iassign' ) . '&nbsp;' . $comment;
+							echo iassign_icons::insert ( 'incorrect' ) . '&nbsp;' . get_string ( 'incorrect', 'iassign' ) . '&nbsp;' . $comment;
 							break;
 						case 1 :
-							echo icons::insert ( 'post' ) . '&nbsp;' . get_string ( 'post', 'iassign' ) . '&nbsp;' . $comment;
+							echo iassign_icons::insert ( 'post' ) . '&nbsp;' . get_string ( 'post', 'iassign' ) . '&nbsp;' . $comment;
 							break;
 						default :
-							echo icons::insert ( 'not_post' ) . '&nbsp;' . get_string ( 'not_post', 'iassign' ) . '&nbsp;' . $comment;
+							echo iassign_icons::insert ( 'not_post' ) . '&nbsp;' . get_string ( 'not_post', 'iassign' ) . '&nbsp;' . $comment;
 							$last_iassign = get_string ( 'no_MA_POST_Archive', 'iassign' );
 					} // switch ($iassign_submission->status)
 				} else {
-					echo icons::insert ( 'not_post' ) . '&nbsp;' . get_string ( 'not_post', 'iassign' ) . '&nbsp;' . $comment;
+					echo iassign_icons::insert ( 'not_post' ) . '&nbsp;' . get_string ( 'not_post', 'iassign' ) . '&nbsp;' . $comment;
 					$last_iassign = get_string ( 'no_MA_POST_Archive', 'iassign' );
 				}
 				
@@ -1146,7 +1157,7 @@ class iassign {
 					echo "</form>";
 					
 					$url_answer = "" . $CFG->wwwroot . "/mod/iassign/view.php?" . "action=download_answer&iassign_submission_id=" . $iassign_submission->id. "&id=" . $id;
-					echo '<p><strong>' . get_string ( 'experiment', 'iassign' ) . '</strong>&nbsp;' . $iassign_submission->experiment . ' <a href="' . $url_answer . '">' . icons::insert ( 'download_assign' ) . '</a></p>';
+					echo '<p><strong>' . get_string ( 'experiment', 'iassign' ) . '</strong>&nbsp;' . $iassign_submission->experiment . ' <a href="' . $url_answer . '">' . iassign_icons::insert ( 'download_assign' ) . '</a></p>';
 					
 					echo '<p><strong>' . get_string ( 'timemodified', 'iassign' ) . '</strong>&nbsp;' . userdate ( $iassign_submission->timemodified ) . '</p>';
 					$teacher = $DB->get_record ( "user", array ('id' => $iassign_submission->teacher ) );
@@ -1229,10 +1240,10 @@ class iassign {
 					} else {
 						$last_iassign = get_string ( 'last_iassign', 'iassign' );
 						if ($iassign_submission) {
-							$repeat = "<a href='view.php?action=repeat&id=" . $id . "&userid_iassign=$USER->id&iassign_current=" . $this->activity->get_activity ()->id . "&iassign_submission_current=" . $iassign_submission->id . "'>" . icons::insert ( 'repeat' ) . '&nbsp;' . get_string ( 'repeat', 'iassign' ) . "</a>";
+							$repeat = "<a href='view.php?action=repeat&id=" . $id . "&userid_iassign=$USER->id&iassign_current=" . $this->activity->get_activity ()->id . "&iassign_submission_current=" . $iassign_submission->id . "'>" . iassign_icons::insert ( 'repeat' ) . '&nbsp;' . get_string ( 'repeat', 'iassign' ) . "</a>";
 							$answer = $iassign_submission->answer;
 						} else {
-							$repeat = "<a href='view.php?action=repeat&id=" . $id . "&userid_iassign=$USER->id&iassign_current=" . $this->activity->get_activity ()->id . "'>" . icons::insert ( 'repeat' ) . '&nbsp;' . get_string ( 'repeat', 'iassign' ) . "</a>";
+							$repeat = "<a href='view.php?action=repeat&id=" . $id . "&userid_iassign=$USER->id&iassign_current=" . $this->activity->get_activity ()->id . "'>" . iassign_icons::insert ( 'repeat' ) . '&nbsp;' . get_string ( 'repeat', 'iassign' ) . "</a>";
 						}
 					}
 				} elseif ($iassign_statement->test == 1) { // allowed to test after of deadline
@@ -1242,10 +1253,10 @@ class iassign {
 					} else {
 						$last_iassign = get_string ( 'last_iassign', 'iassign' );
 						if ($iassign_submission) {
-							$repeat = "<a href='view.php?action=repeat&id=" . $id . "&userid_iassign=$USER->id&iassign_current=" . $this->activity->get_activity ()->id . "&iassign_submission_current=" . $iassign_submission->id . "'>" . icons::insert ( 'repeat' ) . '&nbsp;' . get_string ( 'repeat', 'iassign' ) . "</a>";
+							$repeat = "<a href='view.php?action=repeat&id=" . $id . "&userid_iassign=$USER->id&iassign_current=" . $this->activity->get_activity ()->id . "&iassign_submission_current=" . $iassign_submission->id . "'>" . iassign_icons::insert ( 'repeat' ) . '&nbsp;' . get_string ( 'repeat', 'iassign' ) . "</a>";
 							$answer = $iassign_submission->answer;
 						} else {
-							$repeat = "<a href='view.php?action=repeat&id=" . $id . "&userid_iassign=$USER->id&iassign_current=" . $this->activity->get_activity ()->id . "'>" . icons::insert ( 'repeat' ) . '&nbsp;' . get_string ( 'repeat', 'iassign' ) . "</a>";
+							$repeat = "<a href='view.php?action=repeat&id=" . $id . "&userid_iassign=$USER->id&iassign_current=" . $this->activity->get_activity ()->id . "'>" . iassign_icons::insert ( 'repeat' ) . '&nbsp;' . get_string ( 'repeat', 'iassign' ) . "</a>";
 						}
 					}
 				}				// elseif ($iassign_statement->test == 1)
@@ -1285,19 +1296,19 @@ class iassign {
 								$dependencysubmissions = $DB->get_record ( "iassign_submission", array ("iassign_statementid" => $dependencyiassign->id,'userid' => $USER->id ) );
 								if ($dependencysubmissions) {
 									if ($dependencysubmissions->status == 3)
-										$icon = icons::insert ( 'correct' );
+										$icon = iassign_icons::insert ( 'correct' );
 									elseif ($dependencysubmissions->status == 2) {
-										$icon = icons::insert ( 'incorrect' );
+										$icon = iassign_icons::insert ( 'incorrect' );
 										$flag_dependency = false;
 									} elseif ($dependencysubmissions->status == 1) {
-										$icon = icons::insert ( 'post' );
+										$icon = iassign_icons::insert ( 'post' );
 										$flag_dependency = false;
 									} elseif ($dependencysubmissions->status == 0) {
-										$icon = icons::insert ( 'not_post' );
+										$icon = iassign_icons::insert ( 'not_post' );
 										$flag_dependency = false;
 									}
 								} else {
-									$icon = icons::insert ( 'not_post' );
+									$icon = iassign_icons::insert ( 'not_post' );
 									$flag_dependency = false;
 								} // if ($dependencysubmissions)
 								
@@ -1323,7 +1334,7 @@ class iassign {
 						if ($iassign_submission) {
 							$verify_message = $DB->get_record ( 'iassign_submission_comment', array ('iassign_submissionid' => $iassign_submission->id,'return_status' => 0,'receiver' => 2 ) );
 							if ($verify_message)
-								$comment = icons::insert ( 'comment_unread' );
+								$comment = iassign_icons::insert ( 'comment_unread' );
 						}
 						echo '<td width=40% valign="top" align="left">';
 						echo '<strong>' . get_string ( 'status', 'iassign' ) . '</strong>' . "\n";
@@ -1334,21 +1345,21 @@ class iassign {
 							if ($iassign_submission) {
 								switch ($iassign_submission->status) {
 									case 3 :
-										echo icons::insert ( 'correct' ) . '&nbsp;' . get_string ( 'correct', 'iassign' ) . '&nbsp;' . $comment;
+										echo iassign_icons::insert ( 'correct' ) . '&nbsp;' . get_string ( 'correct', 'iassign' ) . '&nbsp;' . $comment;
 										break;
 									case 2 :
-										echo icons::insert ( 'incorrect' ) . '&nbsp;' . get_string ( 'incorrect', 'iassign' ) . '&nbsp;' . $comment;
+										echo iassign_icons::insert ( 'incorrect' ) . '&nbsp;' . get_string ( 'incorrect', 'iassign' ) . '&nbsp;' . $comment;
 										break;
 									case 1 :
-										echo icons::insert ( 'post' ) . '&nbsp;' . get_string ( 'post', 'iassign' ) . '&nbsp;' . $comment;
+										echo iassign_icons::insert ( 'post' ) . '&nbsp;' . get_string ( 'post', 'iassign' ) . '&nbsp;' . $comment;
 										break;
 									default :
-										echo icons::insert ( 'not_post' ) . '&nbsp;' . get_string ( 'not_post', 'iassign' ) . '&nbsp;' . $comment;
+										echo iassign_icons::insert ( 'not_post' ) . '&nbsp;' . get_string ( 'not_post', 'iassign' ) . '&nbsp;' . $comment;
 										$repeat = "";
 										$last_iassign = "";
 								} // switch ($iassign_submission->status)
 							} else {
-								echo icons::insert ( 'not_post' ) . '&nbsp;' . get_string ( 'not_post', 'iassign' ) . '&nbsp;' . $comment;
+								echo iassign_icons::insert ( 'not_post' ) . '&nbsp;' . get_string ( 'not_post', 'iassign' ) . '&nbsp;' . $comment;
 								$repeat = "";
 								$last_iassign = "";
 							}
@@ -1379,11 +1390,11 @@ class iassign {
 						} 						// if ($iassign_statement->show_answer==1)
 						else {
 							if ($iassign_submission->status == 0) {
-								echo icons::insert ( 'not_post' ) . '&nbsp;' . get_string ( 'not_post', 'iassign' ) . '&nbsp;' . $comment;
+								echo iassign_icons::insert ( 'not_post' ) . '&nbsp;' . get_string ( 'not_post', 'iassign' ) . '&nbsp;' . $comment;
 								$repeat = "";
 								$last_iassign = "";
 							} elseif ($iassign_submission->status == 1) {
-								echo icons::insert ( 'post' ) . '&nbsp;' . get_string ( 'post', 'iassign' ) . '&nbsp;' . $comment;
+								echo iassign_icons::insert ( 'post' ) . '&nbsp;' . get_string ( 'post', 'iassign' ) . '&nbsp;' . $comment;
 							}
 						}
 						
@@ -1482,7 +1493,7 @@ class iassign {
 			echo '<table border=1 width="100%">' . "\n";
 		else
 			echo '<table id="outlinetable" class="generaltable boxaligncenter" cellpadding="5" width="100%">' . "\n";
-		echo '<tr><th colspan=2 class="header c1">' . utils::remove_code_message($this->iassign->name) . '</th></tr>' . "\n";
+		echo '<tr><th colspan=2 class="header c1">' . iassign_utils::remove_code_message($this->iassign->name) . '</th></tr>' . "\n";
 		// $num = array();
 		$i = 1;
 		$num = array ();
@@ -1524,7 +1535,7 @@ class iassign {
               WHERE s.shortname = :shortname', $params ); // " - jed/emacs
 			
 			/*
-			 * $students = $DB->get_records_sql("SELECT s.userid, a.firstname, a.lastname FROM {$CFG->prefix}role_assignments s, {$CFG->prefix}user a WHERE s.contextid = '$context->id' AND s.userid = a.id AND s.roleid = '$role->id' ORDER BY `a`.`firstname` ASC,`a`.`lastname` ASC");
+			 * $students = $DB->get_records_sql("SELECT s.userid, a.firstname, a.lastname FROM {$CFG->prefix}role_assignments s, {$CFG->prefix}user a WHERE s.contextid = '$context->id' AND s.userid = a.id AND s.roleid = '$role->id' ORDER BY a.firstname ASC,a.lastname ASC");
 			 */
 			$params = array ('contextid' => $context->id,'roleid' => $role->id );
 			$students = $DB->get_records_sql ( 'SELECT s.userid, a.firstname, a.lastname
@@ -1532,7 +1543,7 @@ class iassign {
                              WHERE s.contextid = :contextid
                              AND s.userid = a.id
                              AND s.roleid = :roleid
-                             ORDER BY `a`.`firstname` ASC,`a`.`lastname` ASC', $params ); // " - jed/emacs
+                             ORDER BY a.firstname ASC,a.lastname ASC', $params ); // " - jed/emacs
 			
 			echo '<tr><th class="header c1">' . get_string ( 'students', 'iassign' ) . '</th>' . "\n";
 			for($j = 1; $j < $i; $j ++) {
@@ -1544,7 +1555,7 @@ class iassign {
 			echo '</tr>' . "\n";
 			$total = 0;
 			$sum_student = 0;
-			$comment = icons::insert ( 'comment_read' );
+			$comment = iassign_icons::insert ( 'comment_read' );
 			$sum_comment = 0;
 			$sum_correct_iassign = array ();
 			$sum_correct_student = array ();
@@ -1635,23 +1646,23 @@ class iassign {
 									$sum_verify_message = $tmp;
 							
 							if ($sum_verify_message > 0)
-								$comment = icons::insert ( 'comment_unread' );
+								$comment = iassign_icons::insert ( 'comment_unread' );
 							else
-								$comment = icons::insert ( 'comment_read' );
+								$comment = iassign_icons::insert ( 'comment_read' );
 							
 							if ($student_submissions->status == 3) {
 								$sum_iassign_correct [$j] ++;
 								$total_student++;
-								$feedback = icons::insert ( 'correct' );
+								$feedback = iassign_icons::insert ( 'correct' );
 							} 							// if ($student_submissions->status == 3)
 							elseif ($student_submissions->status == 2) {
-								$feedback = icons::insert ( 'incorrect' );
+								$feedback = iassign_icons::insert ( 'incorrect' );
 							}							// elseif ($student_submissions->status == 2)
 							elseif ($student_submissions->status == 1) {
-								$feedback = icons::insert ( 'post' );
+								$feedback = iassign_icons::insert ( 'post' );
 							}							// elseif ($student_submissions->status == 1)
 							elseif ($student_submissions->status == 0) {
-								$feedback = icons::insert ( 'not_post' );
+								$feedback = iassign_icons::insert ( 'not_post' );
 							} // elseif ($student_submissions->status == 0)
 							
 							if ($this->action != 'print') {
@@ -1704,7 +1715,7 @@ class iassign {
 							
 							$url = "" . $CFG->wwwroot . "/mod/iassign/view.php?action=viewsubmission&id=" . $id . "&userid_iassign=" . $users_array [$x]->userid . "&iassign_current=" . $num [$j]->iassignid . "&view_iassign=" . $this->view_iassign;
 							$url .= $position;
-							$feedback = icons::insert ( 'not_post' );
+							$feedback = iassign_icons::insert ( 'not_post' );
 							if ($this->action == 'print')
 								echo $feedback . '&nbsp;(0)<br>' . $comment . '&nbsp;(' . $sum_comment . ')&nbsp;' . "\n";
 							else {
@@ -1738,9 +1749,9 @@ class iassign {
 					
 					if($tentativas != 0 && $tentativas != null) {
 						$url_answer = "" . $CFG->wwwroot . "/mod/iassign/view.php?"."action=download_all_answer&iassign_id=" . $this->iassign->id. "&userid=" . $users_array [$x]->userid. "&id=" . $id;
-						echo '  <td  align="center"><a href="' . $url_answer . '">' . icons::insert ( 'download_all_assign' ) . '</a></td>' . "\n";
+						echo '  <td  align="center"><a href="' . $url_answer . '">' . iassign_icons::insert ( 'download_all_assign' ) . '</a></td>' . "\n";
 					} else {
-						echo '  <td  align="center">' . icons::insert ( 'download_all_assign_disabled' ) . '</td>' . "\n";
+						echo '  <td  align="center">' . iassign_icons::insert ( 'download_all_assign_disabled' ) . '</td>' . "\n";
 					}
 					
 					echo '</tr>' . "\n";
@@ -1813,7 +1824,7 @@ class iassign {
               WHERE s.shortname = :shortname', $params ); // " - jed/emacs
 			
 			/*
-			 * $students = $DB->get_records_sql("SELECT s.userid, a.firstname, a.lastname FROM {$CFG->prefix}role_assignments s, {$CFG->prefix}user a WHERE s.contextid = '$context->id' AND s.userid = a.id AND s.roleid = '$role->id' ORDER BY `a`.`firstname` ASC,`a`.`lastname` ASC");
+			 * $students = $DB->get_records_sql("SELECT s.userid, a.firstname, a.lastname FROM {$CFG->prefix}role_assignments s, {$CFG->prefix}user a WHERE s.contextid = '$context->id' AND s.userid = a.id AND s.roleid = '$role->id' ORDER BY a.firstname ASC,a.lastname ASC");
 			 */
 			
 			$params = array ('contextid' => $context->id,'roleid' => $role->id );
@@ -1822,7 +1833,7 @@ class iassign {
                              WHERE s.contextid = :contextid
                              AND s.userid = a.id
                              AND s.roleid = :roleid
-                             ORDER BY `a`.`firstname` ASC,`a`.`lastname` ASC', $params ); // " - jed/emacs
+                             ORDER BY a.firstname ASC,a.lastname ASC', $params ); // " - jed/emacs
 			
 			$total = 0;
 			$sum_student = 0;
@@ -1870,8 +1881,8 @@ class iassign {
 		if ($this->action != 'printstats') {
 			$title = get_string ( 'graphic', 'iassign' );
 			echo $OUTPUT->header ();
-			$link_report = "<a href='" . $CFG->wwwroot . "/mod/iassign/view.php?id=" . $id . "&action=report&iassignid=" . $this->iassign->id . "'>" . icons::insert ( 'view_report' ) . '&nbsp;' . get_string ( 'report', 'iassign' ) . "</a>";
-			$link_print_stats = "<a href='" . $CFG->wwwroot . "/mod/iassign/view.php?id=" . $id . "&action=printstats&&iassignid=" . $this->iassign->id . "'>" . icons::insert ( 'print' ) . '&nbsp;' . get_string ( 'print', 'iassign' ) . "</a>";
+			$link_report = "<a href='" . $CFG->wwwroot . "/mod/iassign/view.php?id=" . $id . "&action=report&iassignid=" . $this->iassign->id . "'>" . iassign_icons::insert ( 'view_report' ) . '&nbsp;' . get_string ( 'report', 'iassign' ) . "</a>";
+			$link_print_stats = "<a href='" . $CFG->wwwroot . "/mod/iassign/view.php?id=" . $id . "&action=printstats&&iassignid=" . $this->iassign->id . "'>" . iassign_icons::insert ( 'print' ) . '&nbsp;' . get_string ( 'print', 'iassign' ) . "</a>";
 			echo '<table width=100%><tr>';
 			echo '<td align="right">' . $link_print_stats . '</td>' . "\n";
 			echo '<td width=15% align="right">' . $link_report . '</td>';
@@ -1880,7 +1891,7 @@ class iassign {
 			echo "<br><br>";
 			echo '<table id="outlinetable" class="generaltable boxaligncenter" cellpadding="5" width="100%">' . "\n";
 			echo '<tr><th colspan=5 class="header c1">' . get_string ( 'distribution_activity', 'iassign' ) . '</th></tr>' . "\n";
-			echo '<tr><td class=\'cell c0 actvity\' width=35%><strong>' . utils::remove_code_message($this->iassign->name) . '</strong></td>' . "\n";
+			echo '<tr><td class=\'cell c0 actvity\' width=35%><strong>' . iassign_utils::remove_code_message($this->iassign->name) . '</strong></td>' . "\n";
 			echo '<td class=\'cell c0 actvity\' width=35%><strong>' . get_string ( 'percentage_correct', 'iassign' ) . '</strong></td>';
 			echo '<td class=\'cell c0 actvity\' width=10% align="right"><strong>' . get_string ( 'proportion_correct', 'iassign' ) . '</strong>';
 			echo '<td class=\'cell c0 actvity\' width=10% align="right"><strong>' . get_string ( 'sum_experiment', 'iassign' ) . '</strong></td>';
@@ -1898,8 +1909,8 @@ class iassign {
 					$sum_correct += $sum;
 					if ($sum > 0) {
 						for($i = 1; $i < $percent * 2; $i ++)
-							$bar .= icons::insert ( 'hbar_blue' );
-						$bar .= icons::insert ( 'hbar_blue_r' );
+							$bar .= iassign_icons::insert ( 'hbar_blue' );
+						$bar .= iassign_icons::insert ( 'hbar_blue_r' );
 					} // if ($sum > 0)
 					echo '<tr ><td class=\'cell c0 actvity\'width=35%>' . $iassign->name . '</td>' . "\n";
 					echo '<td class=\'cell c0 actvity\' width=35%>' . $bar . '&nbsp;' . $text . '</td>';
@@ -1913,7 +1924,7 @@ class iassign {
 			echo "<br><br>";
 			echo '<table id="outlinetable" class="generaltable boxaligncenter" cellpadding="5" width="100%">' . "\n";
 			echo '<tr><th colspan=3 class="header c1">' . get_string ( 'distribution_student', 'iassign' ) . '</th></tr>' . "\n";
-			echo '<tr><td class=\'cell c0 actvity\' width=50%><strong>' . utils::remove_code_message($this->iassign->name) . '</strong></td>' . "\n";
+			echo '<tr><td class=\'cell c0 actvity\' width=50%><strong>' . iassign_utils::remove_code_message($this->iassign->name) . '</strong></td>' . "\n";
 			echo '<td class=\'cell c0 actvity\' width=40%><strong>' . get_string ( 'percentage_correct', 'iassign' ) . '</strong></td>';
 			echo '<td class=\'cell c0 actvity\' width=10% align="right"><strong>' . get_string ( 'sum_correct', 'iassign' ) . '</strong></td>';
 			echo '</tr>' . "\n";
@@ -1926,8 +1937,8 @@ class iassign {
 				$sum_correct += $sum;
 				if ($sum > 0) {
 					for($i = 1; $i < $percent * 2; $i ++)
-						$bar .= icons::insert ( 'hbar_blue' );
-					$bar .= icons::insert ( 'hbar_blue_r' );
+						$bar .= iassign_icons::insert ( 'hbar_blue' );
+					$bar .= iassign_icons::insert ( 'hbar_blue_r' );
 				} // if ($sum > 0)
 				echo '<tr ><td class=\'cell c0 actvity\'width=50%>' . $student->name . '</td>' . "\n";
 				echo '<td class=\'cell c0 actvity\' width=40%>' . $bar . '&nbsp;' . $text . '</td>';
@@ -1982,7 +1993,7 @@ class iassign {
 			
 			echo '<table border=1 width=100%>' . "\n";
 			echo '<tr><td colspan=3 align="center"><strong>' . get_string ( 'distribution_activity', 'iassign' ) . '</strong></td></tr>' . "\n";
-			echo '<tr><td width=50%><strong>' . utils::remove_code_message($this->iassign->name) . '</strong></td>' . "\n";
+			echo '<tr><td width=50%><strong>' . iassign_utils::remove_code_message($this->iassign->name) . '</strong></td>' . "\n";
 			echo '<td width=40%><strong>' . get_string ( 'percentage_correct', 'iassign' ) . '</strong></td>';
 			echo '<td width=10% align="right"><strong>' . get_string ( 'sum_correct', 'iassign' ) . '</strong></td>';
 			echo '</tr>' . "\n";
@@ -1995,8 +2006,8 @@ class iassign {
 				$sum_correct += $sum;
 				if ($sum > 0) {
 					for($i = 1; $i < $percent * 2; $i ++)
-						$bar .= icons::insert ( 'hbar_blue' );
-					$bar .= icons::insert ( 'hbar_blue_r' );
+						$bar .= iassign_icons::insert ( 'hbar_blue' );
+					$bar .= iassign_icons::insert ( 'hbar_blue_r' );
 				} // if ($sum > 0)
 				echo '<tr><td width=50%>' . $iassign->name . '</td>' . "\n";
 				echo '<td width=40%>' . $bar . '&nbsp;' . $text . '</td>';
@@ -2007,7 +2018,7 @@ class iassign {
 			echo "<br><br>";
 			echo '<table border=1 class="boldtable" width=100%>' . "\n";
 			echo '<tr><td colspan=3 align="center" ><strong>' . get_string ( 'distribution_student', 'iassign' ) . '</strong></td></tr>' . "\n";
-			echo '<tr><td width=50%><strong>' . utils::remove_code_message($this->iassign->name) . '</strong></td>' . "\n";
+			echo '<tr><td width=50%><strong>' . iassign_utils::remove_code_message($this->iassign->name) . '</strong></td>' . "\n";
 			echo '<td  width=40%><strong>' . get_string ( 'percentage_correct', 'iassign' ) . '</strong></td>';
 			echo '<td  width=10% align="right"><strong>' . get_string ( 'sum_correct', 'iassign' ) . '</strong></td>';
 			echo '</tr>' . "\n";
@@ -2020,8 +2031,8 @@ class iassign {
 				$sum_correct += $sum;
 				if ($sum > 0) {
 					for($i = 1; $i < $percent * 2; $i ++)
-						$bar .= icons::insert ( 'hbar_blue' );
-					$bar .= icons::insert ( 'hbar_blue_r' );
+						$bar .= iassign_icons::insert ( 'hbar_blue' );
+					$bar .= iassign_icons::insert ( 'hbar_blue_r' );
 				} // if ($sum > 0)
 				echo '<tr><td width=50%>' . $student->name . '</td>' . "\n";
 				echo '<td width=40%>' . $bar . '&nbsp;' . $text . '</td>';
@@ -2070,10 +2081,10 @@ class iassign {
 		global $USER, $CFG, $DB, $OUTPUT;
 		$id = $this->cm->id;
 		$iassign_statement = $DB->get_records_sql ( "SELECT *
-                             FROM {$CFG->prefix}iassign_statement s
+                             FROM {iassign_statement} s
                              WHERE s.iassignid = '{$this->iassign->id}'
                              AND s.type_iassign=3
-                             ORDER BY `s`.`position`" );
+                             ORDER BY s.position" );
 		
 		$title = get_string ( 'results', 'iassign' );
 		// echo $OUTPUT->header();
@@ -2112,8 +2123,8 @@ class iassign {
 		
 		if ($sum_correct > 0) {
 			for($i = 1; $i < $percent_correct * 2; $i ++)
-				$bar_correct .= icons::insert ( 'hbar_green' );
-			$bar_correct .= icons::insert ( 'hbar_green_r' );
+				$bar_correct .= iassign_icons::insert ( 'hbar_green' );
+			$bar_correct .= iassign_icons::insert ( 'hbar_green_r' );
 		} // if ($sum_correct > 0)
 		
 		if ($sum_iassign > 0) {
@@ -2123,8 +2134,8 @@ class iassign {
 		
 		if ($sum_incorrect > 0) {
 			for($i = 1; $i < $percent_incorrect * 2; $i ++)
-				$bar_incorrect .= icons::insert ( 'hbar_red' );
-			$bar_incorrect .= icons::insert ( 'hbar_red_r' );
+				$bar_incorrect .= iassign_icons::insert ( 'hbar_red' );
+			$bar_incorrect .= iassign_icons::insert ( 'hbar_red_r' );
 		} // if ($sum_incorrect > 0)
 		
 		if ($sum_iassign > 0) {
@@ -2133,8 +2144,8 @@ class iassign {
 		}
 		if ($sum_post > 0) {
 			for($i = 1; $i < $percent_post * 2; $i ++)
-				$bar_post .= icons::insert ( 'hbar_blue' );
-			$bar_post .= icons::insert ( 'hbar_blue_r' );
+				$bar_post .= iassign_icons::insert ( 'hbar_blue' );
+			$bar_post .= iassign_icons::insert ( 'hbar_blue_r' );
 		} // if ($sum_post > 0)
 		
 		if ($sum_iassign > 0) {
@@ -2143,12 +2154,12 @@ class iassign {
 		}
 		if ($sum_nopost > 0) {
 			for($i = 1; $i < $percent_nopost * 2; $i ++)
-				$bar_nopost .= icons::insert ( 'hbar_orange' );
-			$bar_nopost .= icons::insert ( 'hbar_orange_r' );
+				$bar_nopost .= iassign_icons::insert ( 'hbar_orange' );
+			$bar_nopost .= iassign_icons::insert ( 'hbar_orange_r' );
 		} // if ($sum_nopost > 0)
 		
 		echo $OUTPUT->header ();
-		$link_return = "&nbsp;<a href='" . $this->return . "'>" . icons::insert ( 'home' ) . get_string ( 'activities_page', 'iassign' ) . "</a>";
+		$link_return = "&nbsp;<a href='" . $this->return . "'>" . iassign_icons::insert ( 'home' ) . get_string ( 'activities_page', 'iassign' ) . "</a>";
 		echo '<table width=100%><tr>';
 		echo '<td align="right">' . $link_return . '</td>' . "\n";
 		echo '</td></tr></table>' . "\n";
@@ -2159,7 +2170,7 @@ class iassign {
 		echo '<tr><th colspan=3 class="header c1">';
 		// helpbutton('legend', get_string('legend', 'iassign'), 'iassign', $image = true, $linktext = false, $text = '', $return = false,
 		// $imagetext = '');
-		echo utils::remove_code_message($this->iassign->name) . '</th></tr>' . "\n";
+		echo iassign_utils::remove_code_message($this->iassign->name) . '</th></tr>' . "\n";
 		
 		echo '<tr ><td class=\'cell c0 actvity\'width=50%>' . get_string ( 'correct', 'iassign' ) . '</td>' . "\n";
 		echo '<td class=\'cell c0 actvity\' width=40%>' . $bar_correct . '&nbsp;' . $text_correct . '</td>';
@@ -2183,7 +2194,7 @@ class iassign {
 		echo "<br><br>";
 		echo '<table id="outlinetable" class="generaltable boxaligncenter" cellpadding="5" width="100%">' . "\n";
 		echo '<tr><th colspan=3 class="header c1">' . get_string ( 'grades', 'iassign' ) . '</th></tr>' . "\n";
-		echo '<tr><td class=\'cell c0 actvity\' width=50%><strong>' . utils::remove_code_message($this->iassign->name) . '</strong></td>' . "\n";
+		echo '<tr><td class=\'cell c0 actvity\' width=50%><strong>' . iassign_utils::remove_code_message($this->iassign->name) . '</strong></td>' . "\n";
 		echo '<td class=\'cell c0 actvity\' width=25% align=right><strong>' . get_string ( 'grade_student', 'iassign' ) . '</strong></td>' . "\n";
 		echo '<td class=\'cell c0 actvity\' width=25% align=right><strong>' . get_string ( 'grade_iassign', 'iassign' ) . '</strong></tr>' . "\n";
 		
@@ -2227,7 +2238,7 @@ class iassign {
 		
 		$iassign_list = $DB->get_records_list ( 'iassign_statement', 'iassignid', array ('iassignid' => $this->iassign->id ), 'position ASC' );
 		
-		$notice= optional_param('notice', '', PARAM_TEXT);
+		$notice= optional_param('notice', '', PARAM_ALPHANUMEXT);
 		if(strpos($notice, 'error'))
 			echo($OUTPUT->notification(get_string ( $notice, 'iassign' ), 'notifyproblem'));
 		else if($notice != '')
@@ -2239,9 +2250,9 @@ class iassign {
 		$url_help = new moodle_url ( '/mod/iassign/settings_ilm.php', array ('action' => 'list','ilm_id' => 1 ) );
 		$action_help = new popup_action ( 'click', $url_help, 'iplookup', array ('title' => get_string ( 'help_ilm', 'iassign' ),'width' => 1200,'height' => 700 ) );
 		
-		$link_help = $OUTPUT->action_link ( $url_help, icons::insert ( 'help_ilm' ) . get_string ( 'help_ilm', 'iassign' ), $action_help );
-		$link_add = "<a href='" . $CFG->wwwroot . "/mod/iassign/view.php?id=" . $id . "&action=add&iassignid=" . $this->iassign->id . "'>" . icons::insert ( 'add_iassign' ) . get_string ( 'add_iassign', 'iassign' ) . "</a>";
-		$link_report = "<a href='" . $CFG->wwwroot . "/mod/iassign/view.php?id=" . $id . "&action=report&iassignid=" . $this->iassign->id . "'>" . icons::insert ( 'view_report' ) . get_string ( 'report', 'iassign' ) . "</a>";
+		$link_help = $OUTPUT->action_link ( $url_help, iassign_icons::insert ( 'help_ilm' ) . get_string ( 'help_ilm', 'iassign' ), $action_help );
+		$link_add = "<a href='" . $CFG->wwwroot . "/mod/iassign/view.php?id=" . $id . "&action=add&iassignid=" . $this->iassign->id . "'>" . iassign_icons::insert ( 'add_iassign' ) . get_string ( 'add_iassign', 'iassign' ) . "</a>";
+		$link_report = "<a href='" . $CFG->wwwroot . "/mod/iassign/view.php?id=" . $id . "&action=report&iassignid=" . $this->iassign->id . "'>" . iassign_icons::insert ( 'view_report' ) . get_string ( 'report', 'iassign' ) . "</a>";
 		
 		// TODO: esta consulta esta sendo feita novamente na linha +/- 2258
 		if (has_capability ( 'mod/iassign:viewiassignall', $this->context, $USER->id )) { // could be "has_capability('mod/iassign:viewiassignall', $this->context, $USER->id)"
@@ -2403,7 +2414,7 @@ class iassign {
 					$comment_unread_message = get_string ( 'comment_unread', 'iassign' );
 					if($sum_comment == 1)
 						$comment_unread_message = get_string ( 'comment_unread_one', 'iassign' );
-					$comment_unread = "&nbsp;<a href='" . $CFG->wwwroot . "/mod/iassign/view.php?id=" . $id . "&action=report&iassignid=" . $this->iassign->id . "'><font color='red'>" . icons::insert ( 'comment_unread' ) ."&nbsp;($sum_comment&nbsp;". $comment_unread_message . ")</font></a>";
+					$comment_unread = "&nbsp;<a href='" . $CFG->wwwroot . "/mod/iassign/view.php?id=" . $id . "&action=report&iassignid=" . $this->iassign->id . "'><font color='red'>" . iassign_icons::insert ( 'comment_unread' ) ."&nbsp;($sum_comment&nbsp;". $comment_unread_message . ")</font></a>";
 				}
 				
 				if ($j == $i - 1)
@@ -2421,12 +2432,12 @@ class iassign {
 				$links .= $comment_unread;
 				if (has_capability ( 'mod/iassign:editiassign', $this->context, $USER->id ) and $USER->iassignEdit == 1) {
 					$aux = "&id=$id&iassign_current=$iassign_current&iassign_up=$iassign_up&iassign_down=$iassign_down";
-					$link_up = "&nbsp;<a href='view.php?action=up$aux'>" . icons::insert ( 'move_up_iassign' ) . "</a>";
-					$link_down = "&nbsp;<a href='view.php?action=down$aux'>" . icons::insert ( 'move_down_iassign' ) . "</a>";
-					$link_delete = "&nbsp;<a href='view.php?action=delete$aux'>" . icons::insert ( 'delete_iassign' ) . "</a>";
-					$link_visible_hide = "&nbsp;<a href='view.php?action=visible$aux'>" . icons::insert ( 'hide_iassign' ) . "</a>";
-					$link_visible_show = "&nbsp;<a href='view.php?action=visible$aux'>" . icons::insert ( 'show_iassign' ) . "</a>";
-					$link_edit = "&nbsp;<a href='view.php?action=edit$aux'>" . icons::insert ( 'edit_iassign' ) . "</a>";
+					$link_up = "&nbsp;<a href='view.php?action=up$aux'>" . iassign_icons::insert ( 'move_up_iassign' ) . "</a>";
+					$link_down = "&nbsp;<a href='view.php?action=down$aux'>" . iassign_icons::insert ( 'move_down_iassign' ) . "</a>";
+					$link_delete = "&nbsp;<a href='view.php?action=delete$aux'>" . iassign_icons::insert ( 'delete_iassign' ) . "</a>";
+					$link_visible_hide = "&nbsp;<a href='view.php?action=visible$aux'>" . iassign_icons::insert ( 'hide_iassign' ) . "</a>";
+					$link_visible_show = "&nbsp;<a href='view.php?action=visible$aux'>" . iassign_icons::insert ( 'show_iassign' ) . "</a>";
+					$link_edit = "&nbsp;<a href='view.php?action=edit$aux'>" . iassign_icons::insert ( 'edit_iassign' ) . "</a>";
 					if (count ( $iassign_array ) > 1) {
 						if ($j == 0)
 							$links .= $link_down;
@@ -2484,31 +2495,31 @@ class iassign {
 							$comment_unread_message = get_string ( 'comment_unread', 'iassign' );
 							if($sum_comment == 1)
 								$comment_unread_message = get_string ( 'comment_unread_one', 'iassign' );
-							$icon_comment = "&nbsp;<font color='red'>" . icons::insert ( 'comment_unread' ) ."&nbsp;($sum_comment&nbsp;". $comment_unread_message . ")</font>";
+							$icon_comment = "&nbsp;<font color='red'>" . iassign_icons::insert ( 'comment_unread' ) ."&nbsp;($sum_comment&nbsp;". $comment_unread_message . ")</font>";
 						}
-							//$icon_comment = icons::insert ( 'comment_unread' );
+							//$icon_comment = iassign_icons::insert ( 'comment_unread' );
 						
 						if ($iassign_array [$j]->type_iassign == 3) {
 							if ($iassign_array [$j]->show_answer == 1) {
 								if ($iassign_submission->status == 3)
-									$icon_status = icons::insert ( 'correct' );
+									$icon_status = iassign_icons::insert ( 'correct' );
 								elseif ($iassign_submission->status == 2)
-									$icon_status = icons::insert ( 'incorrect' );
+									$icon_status = iassign_icons::insert ( 'incorrect' );
 								elseif ($iassign_submission->status == 1)
-									$icon_status = icons::insert ( 'post' );
+									$icon_status = iassign_icons::insert ( 'post' );
 								elseif ($iassign_submission->status == 0)
-									$icon_status = icons::insert ( 'not_post' );
+									$icon_status = iassign_icons::insert ( 'not_post' );
 							} 							// if ($iassign_array[$j]->show_answer==1)
 							else {
 								if ($iassign_submission->status == 0)
-									$icon_status = icons::insert ( 'not_post' );
+									$icon_status = iassign_icons::insert ( 'not_post' );
 								else
-									$icon_status = icons::insert ( 'post' );
+									$icon_status = iassign_icons::insert ( 'post' );
 							}
 						} // if ($iassign_array[$j]->type_iassign == 3)
 					} 					// if ($iassign_submission)
 					elseif ($iassign_array [$j]->type_iassign == 3) {
-						$icon_status = icons::insert ( 'not_post' );
+						$icon_status = iassign_icons::insert ( 'not_post' );
 					} // if ($iassign_array[$j]->type_iassign == 3)
 					echo '<p>' . $icon_status . '&nbsp;' . $links . '&nbsp;' . $icon_comment . '</p>' . "\n";
 				} // if ($iassign_array[$j]->visible == 1)
@@ -2539,7 +2550,7 @@ class iassign {
 	 */
 	function return_home_course($message) {
 // 		global $DB, $OUTPUT;
-// 		$link_return = "&nbsp;<a href='" . $this->return . "'>" . icons::insert ( 'home' ) . get_string ( 'activities_page', 'iassign' ) . "</a>";
+// 		$link_return = "&nbsp;<a href='" . $this->return . "'>" . iassign_icons::insert ( 'home' ) . get_string ( 'activities_page', 'iassign' ) . "</a>";
 // 		echo $OUTPUT->box_start ();
 // 		echo '<table width=100% border=0 valign="top">' . "\n";
 // 		echo '<tr><td align="left"><strong>' . "\n";
@@ -2612,7 +2623,7 @@ class iassign {
 	function write_comment_submission() {
 		global $USER, $CFG, $DB, $OUTPUT;
 		$id = $this->cm->id;
-		$submission_comment = optional_param ( 'submission_comment', NULL, PARAM_TEXT );
+		$submission_comment = optional_param ( 'submission_comment', NULL, PARAM_ALPHANUMEXT );
 		$row = optional_param ( 'row', 0, PARAM_INT );
 		$column = optional_param ( 'column', 0, PARAM_INT );
 		
@@ -2620,7 +2631,7 @@ class iassign {
 		
 		$return = "" . $CFG->wwwroot . "/mod/iassign/view.php?action=viewsubmission&id=" . $id . "&iassign_submission_current=" . $this->iassign_submission_current . "&userid_iassign=" . $this->userid_iassign . "&iassign_current=" . $this->activity->get_activity ()->id . "&row=" . ($row) . "&column=" . ($column);
 		
-		$link_return = "&nbsp;<a href='" . $return . "'>" . icons::insert ( 'return_home' ) . get_string ( 'return', 'iassign' ) . "</a>";
+		$link_return = "&nbsp;<a href='" . $return . "'>" . iassign_icons::insert ( 'return_home' ) . get_string ( 'return', 'iassign' ) . "</a>";
 		
 		$str1 = trim ( $submission_comment );
 		$str2 = trim ( get_string ( 'box_comment_message', 'iassign' ) );
@@ -2914,7 +2925,7 @@ class activity {
 				iassign::update_grade_iassign ( $param->iassignid );
 			
 			// log event --------------------------------------------------------------------------------------
-			log::add_log('add_iassign_exercise', 'name: '.$param->name, $id, $param->iassign_ilmid);
+			iassign_log::add_log('add_iassign_exercise', 'name: '.$param->name, $id, $param->iassign_ilmid);
 			// log event --------------------------------------------------------------------------------------
 			
 			return $id;
@@ -3078,7 +3089,7 @@ class activity {
 		}
 		
 		// log event --------------------------------------------------------------------------------------
-		log::add_log('update_iassign_exercise', 'name: '.$param->name, $param->iassign_id, $param->iassign_ilmid);
+		iassign_log::add_log('update_iassign_exercise', 'name: '.$param->name, $param->iassign_id, $param->iassign_ilmid);
 		// log event --------------------------------------------------------------------------------------
 		
 		return $newentry->id;
@@ -3121,7 +3132,7 @@ class activity {
 		global $USER, $CFG, $DB, $OUTPUT;
 		
 		$return = $CFG->wwwroot . "/mod/iassign/view.php?id=" . $USER->cm;
-		$link_return = "&nbsp;<a href='" . $return . "'>" . icons::insert ( 'home' ) . get_string ( 'activities_page', 'iassign' ) . "</a>";
+		$link_return = "&nbsp;<a href='" . $return . "'>" . iassign_icons::insert ( 'home' ) . get_string ( 'activities_page', 'iassign' ) . "</a>";
 		$status_iassign = "";
 		$status_iassign1 = "";
 		$status_iassign2 = "";
@@ -3167,7 +3178,7 @@ class activity {
 		if (has_capability ( 'mod/iassign:viewiassignall', $USER->context, $USER->id ) && ($this->activity->type_iassign == 3)) {
 			
 			// Link (with icon) to report survey of this batch of these insteractivy exercises
-			$link_report = "<a href='" . $CFG->wwwroot . "/mod/iassign/view.php?id=" . $USER->cm . "&action=report&iassignid=" . $this->activity->iassign_ilmid . "'>" . icons::insert ( 'view_report' ) . '&nbsp;' . get_string ( 'report', 'iassign' ) . "</a>";
+			$link_report = "<a href='" . $CFG->wwwroot . "/mod/iassign/view.php?id=" . $USER->cm . "&action=report&iassignid=" . $this->activity->iassign_ilmid . "'>" . iassign_icons::insert ( 'view_report' ) . '&nbsp;' . get_string ( 'report', 'iassign' ) . "</a>";
 			$output .= '<td width=40% align="right">' . '&nbsp;' . $link_report . '</td>' . "\n";
 		} else {
 			
@@ -3180,11 +3191,11 @@ class activity {
 			// previous_activity
 			if ($iassign_previous) {
 				$url_previous = "view.php?id=$USER->cm&userid_iassign=$USER->id&action=view&iassign_current=$iassign_previous->id";
-				$link_previous = "<a href='" . $url_previous . "'>" . (icons::insert ( 'previous_student_activity' )) . "</a>";
+				$link_previous = "<a href='" . $url_previous . "'>" . (iassign_icons::insert ( 'previous_student_activity' )) . "</a>";
 			} // next_activity
 			if ($iassign_next) {
 				$url_next = "view.php?id=$USER->cm&userid_iassign=$USER->id&action=view&iassign_current=$iassign_next->id";
-				$link_next = "<a href='" . $url_next . "'>" . (icons::insert ( 'next_student_activity' )) . "</a>";
+				$link_next = "<a href='" . $url_next . "'>" . (iassign_icons::insert ( 'next_student_activity' )) . "</a>";
 			}
 			
 			$output .= '<td width=40% align="right">' . $link_previous . '&nbsp;&nbsp;&nbsp;' . $link_return . '&nbsp;&nbsp;&nbsp;' . $link_next . '</td>' . "\n";
@@ -3581,7 +3592,7 @@ class ilm_settings {
 							'component' => 'mod_iassign',
 							'filearea' => 'ilm', 
 							'itemid' => rand(1, 999999999),
-							'filepath' => '/iassign/ilm/'.utils::format_pathname($iassign_ilm->name).'/'.utils::format_pathname($iassign_ilm->version).'/', 
+							'filepath' => '/iassign/ilm/'.iassign_utils::format_pathname($iassign_ilm->name).'/'.iassign_utils::format_pathname($iassign_ilm->version).'/', 
 							'filename' => $value->get_filename ());
 					
 					$file_ilm = $fs->create_file_from_storedfile($file_ilm, $value);
@@ -3649,7 +3660,7 @@ class ilm_settings {
 			$newentry->id = $DB->insert_record ( "iassign_ilm", $newentry );
 			
 			// log event --------------------------------------------------------------------------------------
-			log::add_log('add_iassign_ilm', 'name: '.$param->name.' '.$param->version, 0, $newentry->id);
+			iassign_log::add_log('add_iassign_ilm', 'name: '.$param->name.' '.$param->version, 0, $newentry->id);
 			// log event --------------------------------------------------------------------------------------
 		}
 	}
@@ -3690,7 +3701,7 @@ class ilm_settings {
 			$DB->update_record ( "iassign_ilm", $updentry );
 			
 			// log event --------------------------------------------------------------------------------------
-			log::add_log('update_iassign_ilm', 'name: '.$param->name.' '.$param->version, 0, $param->id);
+			iassign_log::add_log('update_iassign_ilm', 'name: '.$param->name.' '.$param->version, 0, $param->id);
 			// log event --------------------------------------------------------------------------------------
 		}
 		
@@ -3735,7 +3746,7 @@ class ilm_settings {
 			$newentry->id = $DB->insert_record ( "iassign_ilm", $newentry );
 			
 			// log event --------------------------------------------------------------------------------------
-			log::add_log('copy_iassign_ilm', 'name: '.$param->name.' '.$param->version, 0, $newentry->id);
+			iassign_log::add_log('copy_iassign_ilm', 'name: '.$param->name.' '.$param->version, 0, $newentry->id);
 			// log event --------------------------------------------------------------------------------------
 		}
 	}
@@ -3842,7 +3853,7 @@ class ilm_settings {
 		$DB->delete_records ( "iassign_ilm", array ('id' => $ilm_id ) );
 		
 		// log event --------------------------------------------------------------------------------------
-		log::add_log('delete_iassign_ilm', 'name: '.$iassign_ilm->name.' '.$iassign_ilm->version, 0, $iassign_ilm->id);
+		iassign_log::add_log('delete_iassign_ilm', 'name: '.$iassign_ilm->name.' '.$iassign_ilm->version, 0, $iassign_ilm->id);
 		// log event --------------------------------------------------------------------------------------
 		
 		return $iassign_ilm->parent;
@@ -3857,7 +3868,7 @@ class ilm_settings {
 	
 		$iassign_ilm = $DB->get_record ( 'iassign_ilm', array ('id' => $ilm_id ) );
 	
-		$zip_filename = $CFG->dataroot.'/temp/ilm-'.utils::format_pathname($iassign_ilm->name.'-v'.$iassign_ilm->version).'_'.date("Ymd-Hi").'.ipz';
+		$zip_filename = $CFG->dataroot.'/temp/ilm-'.iassign_utils::format_pathname($iassign_ilm->name.'-v'.$iassign_ilm->version).'_'.date("Ymd-Hi").'.ipz';
 		$zip = new zip_archive();
 		$zip->open($zip_filename);
 		$fs = get_file_storage ();
@@ -3920,7 +3931,7 @@ class ilm_settings {
 					'component' => 'mod_iassign',
 					'filearea' => 'ilm',
 					'itemid' => rand(1, 999999999),
-					'filepath' => '/iassign/ilm/'.utils::format_pathname($application_xml->name).'/'.utils::format_pathname($application_xml->version).'/',
+					'filepath' => '/iassign/ilm/'.iassign_utils::format_pathname($application_xml->name).'/'.iassign_utils::format_pathname($application_xml->version).'/',
 					'filename' => $value);
 	
 			$file_ilm = $fs->create_file_from_pathname($file_ilm, $CFG->dataroot.'/temp/'.$value);
@@ -4020,7 +4031,7 @@ class ilm_settings {
 			foreach ( $iassign_ilm as $ilm ) {
 				
 				$url_view = new moodle_url ( '/mod/iassign/settings_ilm.php', array ('action' => 'view','ilm_id' => $ilm->id ) );
-				$link_view = $OUTPUT->action_link ( $url_view, icons::insert ( 'view_ilm' ).' '.get_string ( 'read_more', 'iassign' ) );
+				$link_view = $OUTPUT->action_link ( $url_view, iassign_icons::insert ( 'view_ilm' ).' '.get_string ( 'read_more', 'iassign' ) );
 				
 				$str .= '<tr><td>';
 				$str .= '<table class="generaltable boxaligncenter" width="100%">';
@@ -4030,7 +4041,7 @@ class ilm_settings {
 				$str .= '<td><strong>' . get_string ( 'version_ilm', 'iassign' ) . ':</strong>&nbsp;' . $ilm->version . '</td>' . chr ( 13 );
 				$str .= '<td align=right>' . $link_view . '</td>' . chr ( 13 );
 				$str .= '</tr>';
-				$str .= '<tr><td colspan=3>' . language::get_description_lang(current_language(), $ilm->description) . '</td></tr>';
+				$str .= '<tr><td colspan=3>' . iassign_language::get_description_lang(current_language(), $ilm->description) . '</td></tr>';
 				$str .= '<tr><td colspan=3><a href="'.$ilm->url.'">' . $ilm->url . '</a></td></tr>';
 				
 				$str .= '</table>';
@@ -4140,7 +4151,7 @@ class ilm_settings {
 				$str .= '<td class=\'cell c0 actvity\' ><strong>' . get_string ( 'activities', 'iassign' ) . ':</strong>&nbsp;' . $total . '</td>' . chr ( 13 );
 				$str .= '<td><strong>' . get_string ( 'url_ilm', 'iassign' ) . ':</strong>&nbsp;<a href="' . $iassign_ilm->url . '">' . $iassign_ilm->url . '</a></td>';
 				$str .= '</tr>' . chr ( 13 );
-				$str .= '<tr><td colspan=2><strong>' . get_string ( 'description', 'iassign' ) . ':</strong>&nbsp;' . language::get_description_lang(current_language(), $iassign_ilm->description) . '</td></tr>';
+				$str .= '<tr><td colspan=2><strong>' . get_string ( 'description', 'iassign' ) . ':</strong>&nbsp;' . iassign_language::get_description_lang(current_language(), $iassign_ilm->description) . '</td></tr>';
 				$str .= '<tr><td width="50%"><strong>' . get_string ( 'extension', 'iassign' ) . ':</strong>&nbsp;' . $iassign_ilm->extension . '</td>';
 				$str .= '<td width="50%"><strong>' . get_string ( 'width', 'iassign' ) . ':</strong>&nbsp;' . $iassign_ilm->width;
 				$str .= '&nbsp;&nbsp;<strong>' . get_string ( 'height', 'iassign' ) . ':</strong>&nbsp;' . $iassign_ilm->height . '</td></tr>';
@@ -4361,12 +4372,13 @@ class ilm_manager {
 		}
 		
 		$temp = explode(",", $iassign->extension);
-        $extension = $temp[0]; 
+    $extension = $temp[0]; 
 
-		if (! empty ( $_POST )) {
-			$string = $_POST ['MA_POST_Archive'];
-			$filename = optional_param ( 'filename', NULL, PARAM_TEXT );
-			$filename = utils::format_filename ( $filename );
+    $string = optional_param ( 'MA_POST_Archive', NULL, PARAM_ALPHANUMEXT );
+		if ($string != NULL) {
+			//$string = $_POST ['MA_POST_Archive'];
+			$filename = optional_param ( 'filename', NULL, PARAM_ALPHANUMEXT );
+			$filename = iassign_utils::format_filename ( $filename );
 			$arrayfilename = explode ( ".", $filename );
 			if (count ( $arrayfilename ) == 1)
 				$filename = $arrayfilename [0] . '.' . $extension;
@@ -4465,7 +4477,7 @@ class ilm_manager {
 		
 		$ilmid = optional_param ( 'ilmid', NULL, PARAM_INT ); // iAssign ID
 		$dirid = optional_param ( 'dirid', NULL, PARAM_INT );
-		$fileid = optional_param ( 'fileid', NULL, PARAM_TEXT );
+		$fileid = optional_param ( 'fileid', NULL, PARAM_ALPHANUMEXT );
 		$iassign = $DB->get_record ( "iassign_ilm", array ("id" => $ilmid ) );
 		$returnurl = "$CFG->wwwroot/mod/iassign/ilm_manager.php?from=$this->from&id=$this->id&dirid=$dirid&ilmid=$ilmid";
 		
@@ -4480,10 +4492,11 @@ class ilm_manager {
 		$end_file = '';
 		$file = $fs->get_file_by_id ( $fileid );
 		if ($file)
-			$filename = utils::format_filename ( $file->get_filename () );
+			$filename = iassign_utils::format_filename ( $file->get_filename () );
 		
-		if (! empty ( $_POST )) {
-			$string = $_POST ['MA_POST_Archive'];
+		$string = optional_param ( 'MA_POST_Archive', NULL, PARAM_ALPHANUMEXT );
+		if ($string != NULL) {
+			//$string = $_POST ['MA_POST_Archive'];
 			$this->update_file_iassign ( $string, $filename, $fileid );
 			die ();
 		} else {
@@ -4656,7 +4669,7 @@ class ilm_manager {
 		$ilmid = optional_param ( 'ilmid', NULL, PARAM_INT );
 		
 		$fs = get_file_storage ();
-		$fileid = optional_param ( 'fileid', NULL, PARAM_TEXT );
+		$fileid = optional_param ( 'fileid', NULL, PARAM_ALPHANUMEXT );
 		$file = $fs->get_file_by_id ( $fileid );
 		if ($file)
 			$file->delete();
@@ -4670,7 +4683,7 @@ class ilm_manager {
 		$ilmid = optional_param ( 'ilmid', NULL, PARAM_INT );
 		$fs = get_file_storage ();
 		$context = context_course::instance($this->id );
-		$files_id = explode(",", optional_param ( 'files_id', '', PARAM_TEXT ));
+		$files_id = explode(",", optional_param ( 'files_id', '', PARAM_ALPHANUMEXT ));
 		$dirid = $this->get_dir_ilm('dirid');
 		foreach ($files_id as $file_id) {
 			$file = $fs->get_file_by_id ($file_id);
@@ -4697,7 +4710,7 @@ class ilm_manager {
 		$ilmid = optional_param ( 'ilmid', NULL, PARAM_INT );
 		$fs = get_file_storage ();
 		$fileid = optional_param ( 'fileid', NULL, PARAM_INT );
-		$filename = optional_param ( 'filename', NULL, PARAM_TEXT );
+		$filename = optional_param ( 'filename', NULL, PARAM_ALPHANUMEXT );
 		
 		$file = $fs->get_file_by_id ( $fileid );
 		$context = context_course::instance($this->id );
@@ -4722,7 +4735,7 @@ class ilm_manager {
 		$ilmid = optional_param ( 'ilmid', NULL, PARAM_INT );
 		$fs = get_file_storage ();
 		$fileid = optional_param ( 'fileid', NULL, PARAM_INT );
-		$filename = optional_param ( 'filename', NULL, PARAM_TEXT );
+		$filename = optional_param ( 'filename', NULL, PARAM_ALPHANUMEXT );
 	
 		$file = $fs->get_file_by_id ( $fileid );
 		
@@ -4736,7 +4749,7 @@ class ilm_manager {
 	 */
 	function add_ilm() {
 		$fileid = optional_param ( 'fileid', NULL, PARAM_INT );
-		$filename = optional_param ( 'filename', NULL, PARAM_TEXT );
+		$filename = optional_param ( 'filename', NULL, PARAM_ALPHANUMEXT );
 
 		$output = "<script type='text/javascript'>
 		//<![CDATA[
@@ -4755,7 +4768,7 @@ class ilm_manager {
 	 */
 	function preview_ilm() {
 		
-		$fileid = optional_param ( 'fileid', NULL, PARAM_TEXT );
+		$fileid = optional_param ( 'fileid', NULL, PARAM_ALPHANUMEXT );
 		
 		$tag_filter = $this->tag_ilm($fileid);
 		
@@ -4792,7 +4805,7 @@ class ilm_manager {
 		global $CFG;
 		$context = context_course::instance($this->id );
 		
-		$files_id = explode(",", optional_param ( 'files_id', '', PARAM_TEXT ));
+		$files_id = explode(",", optional_param ( 'files_id', '', PARAM_ALPHANUMEXT ));
 		
 		$zip_filename = $CFG->dataroot.'/temp/backup-iassign-files-'.date("Ymd-Hi").'.zip';
 		$zip = new zip_archive();
@@ -4875,7 +4888,7 @@ class ilm_manager {
 		
 		$ilmid = optional_param ( 'ilmid', NULL, PARAM_INT );
 		
-		$dirname = optional_param ( 'dirname', NULL, PARAM_TEXT );
+		$dirname = optional_param ( 'dirname', NULL, PARAM_ALPHANUMEXT );
 		$dir_base = $this->get_dir_ilm('dir_base');
 		
 		$context = context_course::instance($this->id );
@@ -4916,7 +4929,7 @@ class ilm_manager {
 		$context = context_course::instance($this->id );
 		$dir = $fs->get_file_by_id ( $this->get_dir_ilm('dirid') );
 		$dir_parent = $this->get_dir_ilm('dir_parent');
-		$dirname = optional_param ( 'dirname', NULL, PARAM_TEXT );
+		$dirname = optional_param ( 'dirname', NULL, PARAM_ALPHANUMEXT );
 	
 		$pathname = explode("/", substr($dir->get_filepath (), 0, strlen($dir->get_filepath ())-1));
 		if ($dir->is_directory()) {
@@ -4940,7 +4953,7 @@ class ilm_manager {
 		$ilmid = optional_param ( 'ilmid', NULL, PARAM_INT );
 		$dirid = $this->get_dir_ilm('dirid');
 		$dir_base = $this->get_dir_ilm('dir_base');
-		$files_id = explode(",", optional_param ( 'files_id', '', PARAM_TEXT ));
+		$files_id = explode(",", optional_param ( 'files_id', '', PARAM_ALPHANUMEXT ));
 		
 		$code_javascript_ilm = "
 		<script type='text/javascript'>
@@ -4959,7 +4972,7 @@ class ilm_manager {
 	     		if(getRadiobutton() != '') {
 		     		resp=confirm('" . get_string ( 'question_move_dir', 'iassign' ) . "');
 		     		if(resp)
-		        		window.location='$CFG->wwwroot/mod/iassign/ilm_manager.php?from=$this->from&id=$this->id&action=move&ilmid=$ilmid&dirid=$dirid&files_id=".optional_param ( 'files_id', '', PARAM_TEXT )."&dir_move='+getRadiobutton();
+		        		window.location='$CFG->wwwroot/mod/iassign/ilm_manager.php?from=$this->from&id=$this->id&action=move&ilmid=$ilmid&dirid=$dirid&files_id=".optional_param ( 'files_id', '', PARAM_ALPHANUMEXT )."&dir_move='+getRadiobutton();
 		  		} else
 		  			alert('" . get_string ( 'error_dir_not_selected_to_move', 'iassign' ) . "');
 	   		}
@@ -4981,9 +4994,9 @@ class ilm_manager {
 			$file = $fs->get_file_by_id ($file_id);
 			if ($file) {
 				if (!$file->is_directory())
-					echo "<p>".icons::insert ('file' )."&nbsp;".$file->get_filepath().$file->get_filename()."</p>";
+					echo "<p>".iassign_icons::insert ('file' )."&nbsp;".$file->get_filepath().$file->get_filename()."</p>";
 				else {
-					echo "<p>".icons::insert ('dir' )."&nbsp;".$file->get_filepath()."</p>";
+					echo "<p>".iassign_icons::insert ('dir' )."&nbsp;".$file->get_filepath()."</p>";
 					array_push($dir_paths, $file->get_filepath());
 				}
 			}
@@ -4991,7 +5004,7 @@ class ilm_manager {
 		echo $OUTPUT->heading(get_string ( 'select_move_ilm', 'iassign' ), 3, 'move', 'move_files');
 		if($dir_base != '/') {
 			$check_select = "<input name='selected_dir' type='radio' value='".$this->get_dir_ilm('dir_home')."'/>";
-			echo $check_select."&nbsp;".icons::insert ('dir' )."&nbsp;/<br>";
+			echo $check_select."&nbsp;".iassign_icons::insert ('dir' )."&nbsp;/<br>";
 		}
 		$files_tree = $fs->get_directory_files($context->id, 'mod_iassign', 'activity', 0, '/', true, true, 'filepath');
 		foreach ($files_tree as $file) {
@@ -5007,7 +5020,7 @@ class ilm_manager {
 				}
 				if($is_parent == false) {
 					$check_select = "<input name='selected_dir' type='radio' value='".$file->get_id()."'/>";
-					echo "<p>".$check_select."&nbsp;".icons::insert ('dir' )."&nbsp;".$file->get_filepath()."</p>";
+					echo "<p>".$check_select."&nbsp;".iassign_icons::insert ('dir' )."&nbsp;".$file->get_filepath()."</p>";
 				}
 			}
 		}
@@ -5029,7 +5042,7 @@ class ilm_manager {
 		$ilmid = optional_param ( 'ilmid', NULL, PARAM_INT );
 		$dirid = $this->get_dir_ilm('dirid');
 		$dir_move = $fs->get_file_by_id(optional_param ( 'dir_move', 0, PARAM_INT ));
-		$files_id = explode(",", optional_param ( 'files_id', '', PARAM_TEXT ));
+		$files_id = explode(",", optional_param ( 'files_id', '', PARAM_ALPHANUMEXT ));
 		
 		foreach ($files_id as $file_id) {
 			$file = $fs->get_file_by_id ($file_id);
@@ -5343,27 +5356,27 @@ class ilm_manager {
 				$fileurl = $url . '/' . $value->get_itemid () . $filepath  . $filename;
 				$dirurl = new moodle_url ( $this->url ).'&ilmid='.$iassign_ilm->id.'&dirid='.$fileid;
 				
-				$link_add_ilm_iassign = "&nbsp;&nbsp;<a href='$CFG->wwwroot/mod/iassign/ilm_manager.php?from=$this->from&id=$this->id&action=addilm&fileid=$fileid&filename=$filename&nbsp;&nbsp;&nbsp;'>" . icons::insert ( 'add_ilm_iassign' ) . "</a>";
-				$link_add_ilm_tinymce = "&nbsp;&nbsp;<a href='$CFG->wwwroot/mod/iassign/ilm_manager.php?from=$this->from&id=$this->id&action=tinymceilm&fileid=$fileid'>" . icons::insert ( 'add_ilm_iassign' ) . "</a>";
+				$link_add_ilm_iassign = "&nbsp;&nbsp;<a href='$CFG->wwwroot/mod/iassign/ilm_manager.php?from=$this->from&id=$this->id&action=addilm&fileid=$fileid&filename=$filename&nbsp;&nbsp;&nbsp;'>" . iassign_icons::insert ( 'add_ilm_iassign' ) . "</a>";
+				$link_add_ilm_tinymce = "&nbsp;&nbsp;<a href='$CFG->wwwroot/mod/iassign/ilm_manager.php?from=$this->from&id=$this->id&action=tinymceilm&fileid=$fileid'>" . iassign_icons::insert ( 'add_ilm_iassign' ) . "</a>";
 				
 				$check_select = "";
 				$link_rename = "";
 				$link_delete = "";
-				$link_duplicate = "&nbsp;&nbsp;<a href='#' onclick='duplicate_ilm(\"$iassign_ilm->id\", \"$filename\"," . $fileid . ");'>" . icons::insert ( 'duplicate_iassign' ) . "</a>";
-				$link_edit = "&nbsp;&nbsp;".icons::insert ( 'no_edit_iassign' );
-				$link_filter = "&nbsp;&nbsp;<a href='#' onclick='preview_ilm(" . $fileid . ");'>" . icons::insert ( 'preview_iassign' ) . "</a>";
+				$link_duplicate = "&nbsp;&nbsp;<a href='#' onclick='duplicate_ilm(\"$iassign_ilm->id\", \"$filename\"," . $fileid . ");'>" . iassign_icons::insert ( 'duplicate_iassign' ) . "</a>";
+				$link_edit = "&nbsp;&nbsp;".iassign_icons::insert ( 'no_edit_iassign' );
+				$link_filter = "&nbsp;&nbsp;<a href='#' onclick='preview_ilm(" . $fileid . ");'>" . iassign_icons::insert ( 'preview_iassign' ) . "</a>";
 				
 				if ($value->get_userid () == $USER->id) {
 					if ($iassign_statements) {
 						$check_select = "";
-						$link_edit = icons::insert ( 'edit_iassign_disable' );
-						$link_delete = "&nbsp;&nbsp;" . icons::insert ( 'delete_iassign_disable' );
+						$link_edit = iassign_icons::insert ( 'edit_iassign_disable' );
+						$link_delete = "&nbsp;&nbsp;" . iassign_icons::insert ( 'delete_iassign_disable' );
 						$link_rename = "";
 					} else {
 						$check_select = "<input name='selected_file' type='checkbox' value='$fileid'/>";
-						$link_edit = "&nbsp;&nbsp;<a href='#' onclick='update_ilm(\"$iassign_ilm->id\", $fileid)'>" . icons::insert ( 'edit_iassign' ) . "</a>";
-						$link_delete = "&nbsp;&nbsp;<a href='#' onclick='delete_ilm(\"$iassign_ilm->id\", $fileid);'>" . icons::insert ( 'delete_iassign' ) . "</a>";
-						$link_rename = "&nbsp;&nbsp;<a href='#' onclick='rename_ilm(\"$iassign_ilm->id\", \"$filename\"," . $fileid . ");'>" . icons::insert ( 'rename_iassign' ) . "</a>";
+						$link_edit = "&nbsp;&nbsp;<a href='#' onclick='update_ilm(\"$iassign_ilm->id\", $fileid)'>" . iassign_icons::insert ( 'edit_iassign' ) . "</a>";
+						$link_delete = "&nbsp;&nbsp;<a href='#' onclick='delete_ilm(\"$iassign_ilm->id\", $fileid);'>" . iassign_icons::insert ( 'delete_iassign' ) . "</a>";
+						$link_rename = "&nbsp;&nbsp;<a href='#' onclick='rename_ilm(\"$iassign_ilm->id\", \"$filename\"," . $fileid . ");'>" . iassign_icons::insert ( 'rename_iassign' ) . "</a>";
 					}
 				}
 				if(!in_array($filetype, $extensions_allow)) {
@@ -5374,10 +5387,10 @@ class ilm_manager {
 				} 
 				
 				if ($value->is_directory()) {
-					$link_delete = "&nbsp;&nbsp;<a href='#' onclick='delete_dir_ilm(\"$iassign_ilm->id\", $fileid);'>" . icons::insert ( 'delete_dir' ) . "</a>";
-					$link_rename = "&nbsp;&nbsp;<a href='#' onclick='rename_dir_ilm(\"$iassign_ilm->id\", \"" . $pathname . "\"," . $fileid . ");'>" . icons::insert ( 'rename_dir' ) . "</a>";
+					$link_delete = "&nbsp;&nbsp;<a href='#' onclick='delete_dir_ilm(\"$iassign_ilm->id\", $fileid);'>" . iassign_icons::insert ( 'delete_dir' ) . "</a>";
+					$link_rename = "&nbsp;&nbsp;<a href='#' onclick='rename_dir_ilm(\"$iassign_ilm->id\", \"" . $pathname . "\"," . $fileid . ");'>" . iassign_icons::insert ( 'rename_dir' ) . "</a>";
 					$output .= "<tr><td>$check_select$link_rename$link_delete</td>
-					<td><a href='$dirurl' title='".get_string ( 'dir', 'iassign' ).$pathname."'>".icons::insert ('dir' ).'&nbsp;'.$pathname."</a></td>
+					<td><a href='$dirurl' title='".get_string ( 'dir', 'iassign' ).$pathname."'>".iassign_icons::insert ('dir' ).'&nbsp;'.$pathname."</a></td>
 					<td><center>$author</center></td>
 					<td><center>$timecreated</center></td>
 					<td><center>$timemodified</center></td></tr>";
@@ -5418,7 +5431,7 @@ class ilm_manager {
 				}
 			}
 		}
-		$html =  $OUTPUT->heading(icons::insert ('open_dir' ).$header, 2, 'dirtitle', 'iassign');
+		$html =  $OUTPUT->heading(iassign_icons::insert ('open_dir' ).$header, 2, 'dirtitle', 'iassign');
 		$select_all="<input id='select_all' type='checkbox' onclick='select_all_ilm();'/>";
 		$html .= "
             <table id='outlinetable' class='generaltable boxaligncenter' cellpadding='5' width='100%'>
@@ -5449,7 +5462,7 @@ class ilm_manager {
 /**
  * Class to insert of icons
  */
-class icons {
+class iassign_icons {
 	static function insert($icon) {
 		global $CFG;
 		$string = '<img src="' . $CFG->wwwroot . '/mod/iassign/icon/' . $icon . '.gif" title="' . get_string ( $icon, 'iassign' ) . '" alt="' . get_string ( $icon, 'iassign' ) . '"/>';
@@ -5459,7 +5472,7 @@ class icons {
 /**
  * Class with util functions for plugin manage.
  */
-class utils {
+class iassign_utils {
 	/**
 	 * Function for format filename remove special caracters.
 	 * @param string $text String for clean.
@@ -5513,7 +5526,7 @@ class utils {
 /**
  * Class with language functions for plugin manage.
  */
-class language {
+class iassign_language {
 	/**
 	 * Function for return text in language or get default language (en).
 	 * @param string $lang Code of language
@@ -5550,7 +5563,7 @@ class language {
 /**
  * Class with log functions for plugin manage.
  */
-class log {
+class iassign_log {
 		/**
 		 * Function for insert log event.
 		 * @param string $action Code action of event.
@@ -5559,26 +5572,25 @@ class log {
 		 * @param int $ilmid Id of iLM.
 		 */
 		static function add_log($action, $information = "", $cmid = 0, $ilmid = 0) {
-		global $COURSE, $CFG, $USER, $DB;
-		
-		$newentry = new stdClass ();
-		$newentry->time = time();
-		$newentry->userid = $USER->id;
-		$newentry->ip = $_SERVER['REMOTE_ADDR'];
-		$newentry->course = $COURSE->id;
-		$newentry->cmid = $cmid;
-		$newentry->ilmid = $ilmid;
-		$newentry->action = $action;
-		$newentry->info = $information;
-		$newentry->language = current_language();
-		$newentry->user_agent = $_SERVER['HTTP_USER_AGENT'];
-		if(ini_get("browscap") && function_exists('get_browse')) { 
-			$browser = get_browse(null, true);
-			$newentry->javascript = $browser['javascript'];
-			$newentry->java = $browser['javaapplets'];
-		}
-		if (! $newentry->id = $DB->insert_record ( "iassign_log", $newentry ))
-			print_error ( 'error_add_log', 'iassign' );
+			global $COURSE, $CFG, $USER, $DB;
+			
+			$newentry = new stdClass ();
+			$newentry->time = time();
+			$newentry->userid = $USER->id;
+			$newentry->ip = $_SERVER['REMOTE_ADDR'];
+			$newentry->course = $COURSE->id;
+			$newentry->cmid = $cmid;
+			$newentry->ilmid = $ilmid;
+			$newentry->action = $action;
+			$newentry->info = $information;
+			$newentry->language = current_language();
+			$newentry->user_agent = $_SERVER['HTTP_USER_AGENT'];
+			if(ini_get("browscap") && function_exists('get_browse')) { 
+				$browser = get_browse(null, true);
+				$newentry->javascript = $browser['javascript'];
+				$newentry->java = $browser['javaapplets'];
+			}
+			if (! $newentry->id = $DB->insert_record ( "iassign_log", $newentry ))
+				print_error ( 'error_add_log', 'iassign' );
 	}
 }
-?>

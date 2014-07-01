@@ -8,7 +8,7 @@
  * @package iassign_block_db
  * @since 2012/01/10
  * @copyright iMatica (<a href="http://www.matematica.br">iMath</a>) - Computer Science Dep. of IME-USP (Brazil)
- * @license http://opensource.org/licenses/gpl-license.php GNU Public License
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 $capabilities = array(
     'block/iassign_block:editingteacher' => array(
@@ -34,4 +34,3 @@ $capabilities = array(
         )
     )
 );
-?>

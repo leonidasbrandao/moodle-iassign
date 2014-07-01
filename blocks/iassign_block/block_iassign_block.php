@@ -13,7 +13,7 @@
  * @package iassign_block
  * @since 2012/01/10
  * @copyright iMatica (<a href="http://www.matematica.br">iMath</a>) - Computer Science Dep. of IME-USP (Brazil)
- * @license http://opensource.org/licenses/gpl-license.php GNU Public License
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @see block_base
  */
 
@@ -102,5 +102,3 @@ class block_iassign_block extends block_base {
 	}
 
 }
-
-?>

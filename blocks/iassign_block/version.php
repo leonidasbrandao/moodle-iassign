@@ -43,7 +43,7 @@
  * @copyright iMatica (<a href="http://www.matematica.br">iMath</a>) - Computer Science Dep. of IME-USP (Brazil)
  *
  * <b>License</b>
- *  - http://opensource.org/licenses/gpl-license.php GNU Public License
+ *  - http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  *
  *  <br><br><a href="../index.html"><b>Return to iAssign Documentation</b></a>
  */
@@ -57,13 +57,12 @@
  * @package iassign_block_version
  * @since 2012/10/10
  * @copyright iMatica (<a href="http://www.matematica.br">iMath</a>) - Computer Science Dep. of IME-USP (Brazil)
- * @license http://opensource.org/licenses/gpl-license.php GNU Public License
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 $plugin->component = 'block_iassign_block'; // Full name of the plugin (used for diagnostics)
-$plugin->release = '2.1.70 (Build: 2014060900)';	// Human-readable version name
-$plugin->version = 2014060900;    // The current module version (Date: YYYYMMDDXX)
+$plugin->release = '2.1.87 (Build: 2014070100)';	// Human-readable version name
+$plugin->version = 2014070100;    // The current module version (Date: YYYYMMDDXX)
 $plugin->requires = 2012112900;    // Requires this Moodle version
 $plugin->maturity = MATURITY_STABLE;	// How stable the plugin is: MATURITY_ALPHA, MATURITY_BETA, MATURITY_RC, MATURITY_STABLE (Moodle 2.0 and above)
 $plugin->dependencies = array('mod_iassign' => 2014012100);
-?>

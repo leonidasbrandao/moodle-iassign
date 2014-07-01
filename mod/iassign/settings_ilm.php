@@ -21,7 +21,7 @@
  * @copyright iMatica (<a href="http://www.matematica.br">iMath</a>) - Computer Science Dep. of IME-USP (Brazil)
  * 
  * <b>License</b> 
- *  - http://opensource.org/licenses/gpl-license.php GNU Public License
+ *  - http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 global $CFG, $USER, $PAGE, $OUTPUT, $DB;
@@ -39,9 +39,9 @@ require_login();
 $ilm_id = optional_param('ilm_id', 0, PARAM_INT);
 $ilm_parent = optional_param('ilm_parent', 0, PARAM_INT);
 $status = optional_param('status', 0, PARAM_INT);
-$action = optional_param('action', NULL, PARAM_TEXT);
+$action = optional_param('action', NULL, PARAM_ALPHANUMEXT);
 $url = new moodle_url('/admin/settings.php', array('section' => 'modsettingiassign'));
-$from = optional_param('from', NULL, PARAM_TEXT);
+$from = optional_param('from', NULL, PARAM_ALPHANUMEXT);
 
 $contextuser = context_user::instance($USER->id);
 
@@ -249,4 +249,3 @@ if ($action == 'view') {
     echo $OUTPUT->footer();
     die;
 }
-?>

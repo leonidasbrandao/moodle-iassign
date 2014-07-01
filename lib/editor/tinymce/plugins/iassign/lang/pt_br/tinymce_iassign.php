@@ -9,6 +9,5 @@
  */
 
 $string['pluginname'] = 'Insere uma atividade interativa (iTarefa) pelo editor TinyMCE';
-
 /* All lang strings used from TinyMCE JavaScript code must be named 'pluginname:stringname', no need to create langs/en_dlg.js */
 $string['iassign:desc'] = 'Insere uma atividade interativa (iTarefa)';

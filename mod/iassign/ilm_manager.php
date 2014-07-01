@@ -42,7 +42,7 @@
  * @copyright iMatica (<a href="http://www.matematica.br">iMath</a>) - Computer Science Dep. of IME-USP (Brazil)
  * 
  * <b>License</b> 
- *  - http://opensource.org/licenses/gpl-license.php GNU Public License
+ *  - http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 require_once("../../config.php");
 require_once ($CFG->dirroot . '/mod/iassign/lib.php');
@@ -59,8 +59,8 @@ if(session_id() === "")
 
 //Parameters GET e POST (parâmetros GET e POST)
 $id = optional_param('id', 0, PARAM_INT); // Course Module ID
-$action = optional_param('action', NULL, PARAM_TEXT);
-$from = optional_param('from', NULL, PARAM_TEXT);
+$action = optional_param('action', NULL, PARAM_ALPHANUMEXT);
+$from = optional_param('from', NULL, PARAM_ALPHANUMEXT);
 $ilmid = optional_param('ilmid', 1, PARAM_INT);
 
 $contextuser = context_user::instance($USER->id);
@@ -74,9 +74,9 @@ if (empty($iassign_ilm)) {
 	$iassign_ilm->name = "";
 	$iassign_ilm->extension = "";
 }
-
-if(!isset($_SESSION['returnurl']))
-	$_SESSION['returnurl'] = optional_param('returnurl', "$CFG->wwwroot/course/view.php?id=$id", PARAM_TEXT);
+$returnurl = optional_param('returnurl', NULL, PARAM_ALPHANUMEXT);
+if($returnurl != NULL)
+	$_SESSION['returnurl'] = optional_param('returnurl', "$CFG->wwwroot/course/view.php?id=$id", PARAM_ALPHANUMEXT);
 
 $title = get_string('ilm_manager_title', 'iassign');
 
@@ -185,13 +185,13 @@ if (has_capability('mod/iassign:editiassign', $context, $USER->id)) {
 	
 	            if ($files_course) {
 	                foreach ($files_course as $value) {
-	                    if ($value->get_filename() == utils::format_filename($newfilename))
-	                    	$filename = utils::version_filename($value->get_filename());
+	                    if ($value->get_filename() == iassign_utils::format_filename($newfilename))
+	                    	$filename = iassign_utils::version_filename($value->get_filename());
 	                }
 	            }
 	            $extensions = explode(",", $iassign_ilm->extension);
 	            if(in_array($extension[1], $extensions))
-            		$file = $mform->save_stored_file('file', $context->id, 'mod_iassign', 'activity', 0, $dir_base, utils::format_filename($filename), 0, $USER->id);
+            		$file = $mform->save_stored_file('file', $context->id, 'mod_iassign', 'activity', 0, $dir_base, iassign_utils::format_filename($filename), 0, $USER->id);
 	            else 
 	            	$url .= "&error=incompatible_extension_file";
         	} else {
@@ -202,26 +202,26 @@ if (has_capability('mod/iassign:editiassign', $context, $USER->id)) {
 	        	$zip_files = $zip->list_files($zip_filename);
 	        	$files = $fs->get_directory_files($context->id, 'mod_iassign', 'activity', 0, $dir_base, false, true, 'filename');
 	        	
-	        	$rename_files = array();
+	        	/* $rename_files = array();
 	        	foreach($zip_files as $zip_file) {
 	        		foreach($files as $file) {
-	        			if(utils::format_filename($zip_file->original_pathname) == $file->get_filename())
-	        				$rename_files = array_merge($rename_files, array(utils::version_filename(utils::format_filename($zip_file->original_pathname)) => utils::format_filename($zip_file->original_pathname)));
+	        			if(iassign_utils::format_filename($zip_file->original_pathname) == $file->get_filename())
+	        				$rename_files = array_merge($rename_files, array(iassign_utils::version_filename(iassign_utils::format_filename($zip_file->original_pathname)) => iassign_utils::format_filename($zip_file->original_pathname)));
 	        		}
 	        	
-	        	}
+	        	} */
 	        	
 	        	$zip->extract_to_storage($zip_filename, $context->id, 'mod_iassign', 'activity', 0, $dir_base, $USER->id); 
-	        	$files = $fs->get_area_files($context->id, 'mod_iassign', 'activity', 0, 'filename');
+	        	/* $files = $fs->get_area_files($context->id, 'mod_iassign', 'activity', 0, 'filename');
 	        	foreach($files as $file) {
 	        		if($file->get_author() == "") {
 	        			$file->set_author($USER->firstname.' '.$USER->lastname);
 	        			if($new_name = array_search($file->get_filename(), $rename_files))
 	        				$file->rename($dir_base, $new_name);
-	        			else if($file->get_filename() != '.' && $file->get_filename() != utils::format_filename($file->get_filename()))
-	        				$file->rename($dir_base, utils::format_filename($file->get_filename()));
+	        			else if($file->get_filename() != '.' && $file->get_filename() != iassign_utils::format_filename($file->get_filename()))
+	        				$file->rename($dir_base, iassign_utils::format_filename($file->get_filename()));
 	        		}
-	        	}
+	        	} */
 	        	unlink($zip_filename);
         	}
         	
@@ -245,7 +245,7 @@ if (has_capability('mod/iassign:editiassign', $context, $USER->id)) {
     	echo('<div width=100% align=right style="margin: 20px 20px 20px 20px;"><input type=button value="' . get_string ( 'close', 'iassign' ) . '"  onclick="javascript:window.close ();"></div>');
     }
     
-    if(!is_null($error = optional_param('error', NULL, PARAM_TEXT)))
+    if(!is_null($error = optional_param('error', NULL, PARAM_ALPHANUMEXT)))
     	echo($OUTPUT->notification(get_string ( $error, 'iassign' ), 'notifyproblem'));
     
     $mform->display();
@@ -253,4 +253,3 @@ if (has_capability('mod/iassign:editiassign', $context, $USER->id)) {
     echo $OUTPUT->footer();
     die;
 }
-?>

@@ -10,7 +10,7 @@
  * @copyright iMatica (<a href="http://www.matematica.br">iMath</a>) - Computer Science Dep. of IME-USP (Brazil)
  * 
  * <b>License</b> 
- *  - http://opensource.org/licenses/gpl-license.php GNU Public License
+ *  - http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 $string['action']='Action';
 $string['activities']='Activities';
@@ -23,7 +23,7 @@ $string['add_file'] = 'Save file';
 $string['add_file_jar']='File new JAR:';
 $string['add_ilm'] = 'Choose file...';
 $string['add_ilm_iassign'] ='Add iLM';
-$string['add_ilm_iassign_help'] ='O que é um iLM';
+$string['add_ilm_iassign_help'] ='What is a iLM';
 $string['answer'] = 'answer';
 $string['applet'] = 'E-E-Learning Modules(Applet)';
 $string['area_available'] = 'Assessment area';
@@ -39,7 +39,7 @@ $string['author_empht']='Author unknown';
 $string['author_id']='Author activity:';
 $string['author_id_modified']='Last modified by:';
 $string['auto_evaluate']='It has automatic evaluator?';
-$string['auto_evaluate_help']='O que é avaliação automática do iLM.';
+$string['auto_evaluate_help']='What is automatic evaluation of ILM.';
 $string['auto_result'] = 'Result of automatic evaluation:';
 $string['automatic_evaluate'] = 'Using automatic evaluation activity?';
 $string['availabledate'] = 'Available from';
@@ -342,7 +342,6 @@ $string['width'] = 'Width';
 $string['Y'] = 'S';
 $string['Y_legend'] = '(according to what the teacher expected)';
 $string['yes'] = 'Yes';
-/// @todo Conferir tradução
 $string['iassign:deleteiassignnotnull'] = 'Delete Activity not empty';
 $string['iassign:deleteiassignnull'] = 'Delete empty activities';
 $string['iassign:editiassign'] = 'Edit activities';
@@ -451,4 +450,3 @@ $string['error_check_iassign_tinymce'] = 'Warning: the iAssign TinyMCE editor bu
 $string['no_permission_iassign'] = 'Visitors can only view activities!';
 $string['error_add_log'] = 'ERROR: Could not insert the event log iAssign.';
 $string['comment_unread_one'] = 'New Comment';
-?>

@@ -9,7 +9,7 @@
  * @package iassign_block_lang
  * @since 2013/05/15
  * @copyright iMatica (<a href="http://www.matematica.br">iMath</a>) - Computer Science Dep. of IME-USP (Brazil)
- * @license http://opensource.org/licenses/gpl-license.php GNU Public License
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
  
 $string['block_iassign_block'] = 'Gestionnaire des Activités Interactives des iTâche';
@@ -17,4 +17,3 @@ $string['pluginname'] = 'Gestionnaire des Activités Interactives des iTâche';
 $string['blocktitle'] = 'Repositório iTarefa';
 $string['new_edit'] ='Nouveau/Éditer';
 $string['alert_iassign'] ='ERRO: o módulo do iTarefa não está instalado, o bloco não pode funcionar sem o módulo!';
-?>

@@ -29,7 +29,7 @@
  * @copyright iMatica (<a href="http://www.matematica.br">iMath</a>) - Computer Science Dep. of IME-USP (Brazil)
  * 
  * <b>License</b> 
- *  - http://opensource.org/licenses/gpl-license.php GNU Public License
+ *  - http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  *  
  * @param $oldversion Number of the old version. 
  */
@@ -163,10 +163,8 @@ function xmldb_iassign_upgrade($oldversion) {
 	else
 		$pluginman = core_plugin_manager::instance();
     $plugins = $pluginman->get_plugins();
-    log::add_log('upgrade', 'version: '.$plugins['mod']['iassign']->versiondisk);
+    iassign_log::add_log('upgrade', 'version: '.$plugins['mod']['iassign']->versiondisk);
     // log event -----------------------------------------------------
     
     return true;
 }
-
-?>

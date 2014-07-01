@@ -25,7 +25,7 @@
  * @copyright iMatica (<a href="http://www.matematica.br">iMath</a>) - Computer Science Dep. of IME-USP (Brazil)
  * 
  * <b>License</b> 
- *  - http://opensource.org/licenses/gpl-license.php GNU Public License
+ *  - http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 /**
  * Moodle core defines constant MOODLE_INTERNAL which shall be used to make sure that the script is included and not called directly.
@@ -62,13 +62,15 @@ class mod_iassign_form extends moodleform {
         foreach ($igeom as $item)
             $idigeom = $item->id;
 
-        $tmps = $DB->get_records_sql("SELECT s.id, s.name, s.evaluate
+        /* $tmps = $DB->get_records_sql("SELECT s.id, s.name, s.evaluate
               FROM {$CFG->prefix}iassign_ilm s
-              WHERE s.enable = 1");
+              WHERE s.enable = 1"); */
+        $tmps = $DB->get_records('iassign_ilm', array('enable' => 1));
 
-        $iassigns = $DB->get_records_sql("SELECT s.name, s.iassignid
+        /* $iassigns = $DB->get_records_sql("SELECT s.name, s.iassignid
               FROM {$CFG->prefix}iassign_statement s
-              WHERE s.iassignid = $COURSE->iassignid");
+              WHERE s.iassignid = $COURSE->iassignid"); */
+        $iassigns = $DB->get_records('iassign_statement', array('iassignid' => $COURSE->iassignid));
 
         if ($tmps) {
             $ids = "";
@@ -445,5 +447,3 @@ class mod_iassign_form extends moodleform {
     }
     
 }
-
-?>

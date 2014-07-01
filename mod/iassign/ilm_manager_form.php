@@ -27,7 +27,7 @@
  * @copyright iMatica (<a href="http://www.matematica.br">iMath</a>) - Computer Science Dep. of IME-USP (Brazil)
  * 
  * <b>License</b> 
- *  - http://opensource.org/licenses/gpl-license.php GNU Public License
+ *  - http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
@@ -73,11 +73,11 @@ class ilm_manager_form extends moodleform {
         
         if($from == 'block' || $from == 'tinymce') {
 	        // Search iMA registered in the database
-	        $sql = "SELECT s.id, s.name, s.version
+	        /* $sql = "SELECT s.id, s.name, s.version
 	          FROM {$CFG->prefix}iassign_ilm s
 	           WHERE s.enable = 1";
-	
-	        $ilms = $DB->get_records_sql($sql);
+	        $ilms = $DB->get_records_sql($sql); */
+	        $ilms = $DB->get_records('iassign_ilm', array('enable' => 1));
 	        $applets = array();
 	        foreach ($ilms as $ilm)
 	            $applets[$ilm->id] = $ilm->name.' '.$ilm->version;
@@ -119,5 +119,3 @@ class ilm_manager_form extends moodleform {
     }
 
 }
-
-?>

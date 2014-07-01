@@ -11,7 +11,7 @@
  * @copyright iMatica (<a href="http://www.matematica.br">iMath</a>) - Computer Science Dep. of IME-USP (Brazil)
  * 
  * <b>License</b> 
- *  - http://opensource.org/licenses/gpl-license.php GNU Public License
+ *  - http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 /**
  * Moodle core defines constant MOODLE_INTERNAL which shall be used to make sure that the script is included and not called directly.
@@ -73,6 +73,3 @@ class param_ilm_form extends moodleform {
     }
 
 }
-?>
-
-

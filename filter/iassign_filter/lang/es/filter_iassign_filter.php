@@ -8,11 +8,10 @@
  * @package iassign_filter_lang
  * @since 2013/05/15
  * @copyright iMatica (<a href="http://www.matematica.br">iMath</a>) - Computer Science Dep. of IME-USP (Brazil)
- * @license http://opensource.org/licenses/gpl-license.php GNU Public License
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
  
 $string['filter_iassign_filter'] = 'Filtro iTarefa';
 $string['filtername'] = 'Filtro iTarefa';
 $string['extensionnotfound'] = 'En módulos e-learning se encuentran el extensión';
 $string['filenotfound'] = 'Archivo no encontrado en la actividad. Notificar al profesor';
-?>

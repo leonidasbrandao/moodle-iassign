@@ -17,7 +17,7 @@
  * @copyright iMatica (<a href="http://www.matematica.br">iMath</a>) - Computer Science Dep. of IME-USP (Brazil)
  * 
  * <b>License</b> 
- *  - http://opensource.org/licenses/gpl-license.php GNU Public License
+ *  - http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 require_once ("$CFG->dirroot/mod/iassign/locallib.php");
 
@@ -90,9 +90,9 @@ function iassign_cm_info_view(cm_info $cm_info) {
 		if($sum_comment == 1)
 			$comment_unread_message = get_string ( 'comment_unread_one', 'iassign' );
 		if ($teacher_access)
-			$comment_unread = "&nbsp;&nbsp;<a href='" . $CFG->wwwroot . "/mod/iassign/view.php?id=" . $cm_info->id . "&action=report&iassignid=" . $cm_info->instance . "'><font color='red'>" . icons::insert ( 'comment_unread' ) ."&nbsp;($sum_comment&nbsp;". $comment_unread_message . ")</font></a>";
+			$comment_unread = "&nbsp;&nbsp;<a href='" . $CFG->wwwroot . "/mod/iassign/view.php?id=" . $cm_info->id . "&action=report&iassignid=" . $cm_info->instance . "'><font color='red'>" . iassign_icons::insert ( 'comment_unread' ) ."&nbsp;($sum_comment&nbsp;". $comment_unread_message . ")</font></a>";
 		else if ($student_access) //http://localhost/moodle24/mod/iassign/view.php?id=463&userid_iassign=4&action=view&iassign_current=1
-			$comment_unread = "&nbsp;&nbsp;<font color='red'>" . icons::insert ( 'comment_unread' ) ."&nbsp;($sum_comment&nbsp;". get_string ( 'comment_unread', 'iassign' ) . ")</font>";
+			$comment_unread = "&nbsp;&nbsp;<font color='red'>" . iassign_icons::insert ( 'comment_unread' ) ."&nbsp;($sum_comment&nbsp;". get_string ( 'comment_unread', 'iassign' ) . ")</font>";
 	}
 	
 	$cm_info->set_after_link($comment_unread);
@@ -143,7 +143,7 @@ function iassign_add_instance($data, $mform) {
     iassign_grade_item($iassign);
     
     // log event -----------------------------------------------------
-    log::add_log('add_iassign', 'name: '.$data->name, $cmid);
+    iassign_log::add_log('add_iassign', 'name: '.$data->name, $cmid);
     // log event -----------------------------------------------------
 
     return $iassign->id;
@@ -217,7 +217,7 @@ function iassign_update_instance($data, $mform) {
     iassign_grade_item_update($data->id);
     
     // log event -----------------------------------------------------
-    log::add_log('update_iassign', 'name: '.$data->name, $cmid);
+    iassign_log::add_log('update_iassign', 'name: '.$data->name, $cmid);
     // log event -----------------------------------------------------
     
     return true;
@@ -230,20 +230,25 @@ function iassign_update_instance($data, $mform) {
 function iassign_grade_item_update($iassignid) {
     global $USER, $CFG, $COURSE, $DB, $OUTPUT;
     require_once($CFG->libdir . '/gradelib.php');
-    $sum_grade = $DB->get_records_sql("SELECT SUM(grade) as total
+    /* $sum_grade = $DB->get_records_sql("SELECT SUM(grade) as total
                              FROM {$CFG->prefix}iassign_statement s
                              WHERE s.iassignid = '$iassignid'
-                             AND s.type_iassign=3");
+                             AND s.type_iassign=3"); */
 
+    $sum_grade = 0;
+    $grade = $DB->get_records('iassign_statement', array('iassignid' => $iassignid, 'type_iassign' => 3));
+    foreach ($grade as $tmp) {
+    	$sum_grade += $tmp->grade;
+    }
 
     $grade_iassign = $DB->get_record("iassign", array("id" => $iassignid));
     $grades = NULL;
     $params = array('itemname' => $grade_iassign->name);
     $params['iteminstance'] = $iassignid;
     $params['gradetype'] = GRADE_TYPE_VALUE;
-    if (key($sum_grade)) {
-        $params['gradiLMx'] = key($sum_grade);
-        $params['rawgradiLMx'] = key($sum_grade);
+    if ($sum_grade != 0) {
+        $params['gradiLMx'] = $sum_grade;
+        $params['rawgradiLMx'] = $sum_grade;
     } else {
         $params['gradiLMx'] = 0;
         $params['rawgradiLMx'] = 0;
@@ -431,11 +436,13 @@ function iassign_scale_used_anywhere($scaleid) {
  * @return array of iLM
  */
 function search_iLM($enable) {
-    global $DB, $CFG;
-    $sql = "SELECT s.id, s.name, s.version
+    global $DB;
+    /* $sql = "SELECT s.id, s.name, s.version
           FROM {$CFG->prefix}iassign_ilm s
-           WHERE s.enable = $enable";
-    return $DB->get_records_sql($sql);
+           WHERE s.enable = $enable"; */
+    $ilms = $DB->get_records('iassign_ilm', array('enable' => $enable));
+    //return $DB->get_records_sql($sql);
+    return $ilms;
 }
 
 /**
@@ -506,7 +513,7 @@ function iassign_pluginfile($course, $cm, $context, $filearea, $args, $forcedown
     }
 
     // finally send the file
-    send_stored_file($file, 0, 0, true); // download MUST be forced - security!
+    send_stored_file($file, 0, 0, false); // download MUST be forced - security!
 
     return false;
 }
@@ -530,5 +537,3 @@ function display_url_ilm($url) {
     }
     return $url;
 }
-
-?>

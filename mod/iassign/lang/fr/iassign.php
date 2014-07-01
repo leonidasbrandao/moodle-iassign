@@ -9,7 +9,7 @@
  * @copyright iMatica (<a href="http://www.matematica.br">iMath</a>) - Computer Science Dep. of IME-USP (Brazil)
  * 
  * <b>License</b> 
- *  - http://opensource.org/licenses/gpl-license.php GNU Public License
+ *  - http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 $string['action']='Action';
@@ -458,4 +458,3 @@ $string['error_check_iassign_tinymce'] = 'Atenção: o botão do iTarefa do edit
 $string['no_permission_iassign']='Visitantes somente podem visualizar atividades!';
 $string['error_add_log'] = 'ERRO: não foi possível inserir o log de eventos do iTarefa.';
 $string['comment_unread_one']='Recado novo';
-?>

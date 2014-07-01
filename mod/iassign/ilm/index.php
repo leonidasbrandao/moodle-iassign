@@ -9,4 +9,3 @@
 	echo $OUTPUT->header();
 	echo $OUTPUT->heading(get_string('error'));
 	echo '<center>'.get_string('nopermissiontoshow', 'core_error').'</center>';
-?>

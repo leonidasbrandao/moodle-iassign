@@ -54,7 +54,7 @@
  * @copyright iMatica (<a href="http://www.matematica.br">iMath</a>) - Computer Science Dep. of IME-USP (Brazil)
  *
  * <b>License</b>
- *  - http://opensource.org/licenses/gpl-license.php GNU Public License
+ *  - http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  *
  *  <br><br><a href="../index.html"><b>Return to iAssign Documentation</b></a>
  */
@@ -71,9 +71,8 @@ defined('MOODLE_INTERNAL') || die();
 
 // The current plugin version (Date: YYYYMMDDXX).
 $plugin->component = 'tinymce_iassign';
-$plugin->release = '2.1.70 (Build: 2014060900)';	// Human-readable version name
-$plugin->version   = 2014060900; // Required Moodle version.
+$plugin->release = '2.1.87 (Build: 2014070100)';	// Human-readable version name
+$plugin->version   = 2014070100; // Required Moodle version.
 $plugin->requires  = 2012112900; // Full name of the plugin (used for diagnostics).
 $plugin->maturity = MATURITY_STABLE;	// How stable the plugin is: MATURITY_ALPHA, MATURITY_BETA, MATURITY_RC, MATURITY_STABLE (Moodle 2.0 and above)
 $plugin->dependencies = array('mod_iassign' => 2014012100);
-?>

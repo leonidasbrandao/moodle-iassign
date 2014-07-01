@@ -10,7 +10,7 @@
  * @copyright iMatica (<a href="http://www.matematica.br">iMath</a>) - Computer Science Dep. of IME-USP (Brazil)
  * 
  * <b>License</b> 
- *  - http://opensource.org/licenses/gpl-license.php GNU Public License
+ *  - http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 require_once("../../config.php");
 
@@ -19,9 +19,9 @@ global $DB;
 //Debug: ATTENTION, this requests the directory './mod/iassign/ilm_debug/' with write permition to www-data !!!!
 $DEBUG = 0; //Debug: help to debug, take note of file em 'MOODLE/mod/iassign/ilm_debug/YYYY_mm_dd_m_s_int'
 
-$view = $_GET['view'];
-$token = $_GET['token'];
-$id = $_GET['id']; //id of the table iassign_security
+$view = optional_param ( 'view', NULL, PARAM_ALPHANUMEXT ); //$view = $_GET['view'];
+$token = optional_param ( 'token', NULL, PARAM_ALPHANUMEXT ); //$token = $_GET['token'];
+$id = optional_param ( 'id', NULL, PARAM_ALPHANUMEXT ); //$id = $_GET['id']; //id of the table iassign_security
 // Debug
 if ($DEBUG) {
     $file_name = "ilm_debug/" . date('Y') . "_" . date('m') . "_" . date('d') . "_" . date('H_i') . "_" . $id;
@@ -103,6 +103,3 @@ if ($DEBUG) {
     fwrite($fpointer, "From: ./mod/iassign/ilm_security.php<br/>\n" . $file_debug);
     fclose($fpointer);
 }
-
-//mysql_query("FLUSH TABLES WITH READ LOCK");
-?>

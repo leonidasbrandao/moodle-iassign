@@ -9,7 +9,7 @@
  * @package iassign_block_lang
  * @since 2012/01/10
  * @copyright iMatica (<a href="http://www.matematica.br">iMath</a>) - Computer Science Dep. of IME-USP (Brazil)
- * @license http://opensource.org/licenses/gpl-license.php GNU Public License
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
  
 $string['block_iassign_block'] = 'Manager Interactive Activities of iAssign';
@@ -17,4 +17,3 @@ $string['pluginname'] = 'Manager Interactive Activities of iAssign';
 $string['blocktitle'] = 'iAssign Repository';
 $string['new_edit'] ='New/Edit';
 $string['alert_iassign'] ='ERROR: iAssign module is not installed, the block can not work without the module!';
-?>

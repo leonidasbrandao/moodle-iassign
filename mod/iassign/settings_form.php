@@ -22,7 +22,7 @@
  * @copyright iMatica (<a href="http://www.matematica.br">iMath</a>) - Computer Science Dep. of IME-USP (Brazil)
  * 
  * <b>License</b> 
- *  - http://opensource.org/licenses/gpl-license.php GNU Public License
+ *  - http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 /**
  * Moodle core defines constant MOODLE_INTERNAL which shall be used to make sure that the script is included and not called directly.
@@ -51,15 +51,17 @@ class mod_ilm_form extends moodleform {
         if($CFG->action_ilm != 'import') {
 
 	        if ($CFG->action_ilm == 'add') {
-	            $params = array('parent' => '0');
+	            /* $params = array('parent' => '0');
 	            $tmps = $DB->get_records_sql("SELECT s.id, s.name, s.extension, s.file_jar
 	                                           FROM {iassign_ilm} s
-	                                           WHERE s.parent = :parent", $params); // " - jed/emacs
+	                                           WHERE s.parent = :parent", $params); // " - jed/emacs */
+	            $tmps = $DB->get_records('iassign_ilm', array('parent' => 0));
 	        } else {
-	            $params = array('id' => $CFG->ilm_id);
+	            /* $params = array('id' => $CFG->ilm_id);
 	            $tmps = $DB->get_records_sql("SELECT s.id, s.name, s.extension, s.file_jar
 	                                           FROM {iassign_ilm} s
-	                                           WHERE s.id != :id AND s.parent = 0", $params); // " - jed/emacs
+	                                           WHERE s.id != :id AND s.parent = 0", $params); // " - jed/emacs */
+	            $tmps = $DB->get_records('iassign_ilm', array('id' => $CFG->ilm_id));
 	        }
 	        $extensions = "";
 	        $names = "";
@@ -266,6 +268,3 @@ class mod_ilm_form extends moodleform {
     }
 
 }
-?>
-
-
