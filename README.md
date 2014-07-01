@@ -1,7 +1,7 @@
 iAssign
 =======
 
-iAssign is a free Moodle package to increase interaction during teach/lean process.
+iAssign is a free Moodle package to increase interaction during teach/learn process.
 
 Install
 =======
