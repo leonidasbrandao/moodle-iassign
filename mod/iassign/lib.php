@@ -90,9 +90,9 @@ function iassign_cm_info_view(cm_info $cm_info) {
 		if($sum_comment == 1)
 			$comment_unread_message = get_string ( 'comment_unread_one', 'iassign' );
 		if ($teacher_access)
-			$comment_unread = "&nbsp;&nbsp;<a href='" . $CFG->wwwroot . "/mod/iassign/view.php?id=" . $cm_info->id . "&action=report&iassignid=" . $cm_info->instance . "'><font color='red'>" . iassign_icons::insert ( 'comment_unread' ) ."&nbsp;($sum_comment&nbsp;". $comment_unread_message . ")</font></a>";
+			$comment_unread = "&nbsp;&nbsp;<a href='" . $CFG->wwwroot . "/mod/iassign/view.php?id=" . $cm_info->id . "&action=report&iassignid=" . $cm_info->instance . "'><font color='red'>" . icons::insert ( 'comment_unread' ) ."&nbsp;($sum_comment&nbsp;". $comment_unread_message . ")</font></a>";
 		else if ($student_access) //http://localhost/moodle24/mod/iassign/view.php?id=463&userid_iassign=4&action=view&iassign_current=1
-			$comment_unread = "&nbsp;&nbsp;<font color='red'>" . iassign_icons::insert ( 'comment_unread' ) ."&nbsp;($sum_comment&nbsp;". get_string ( 'comment_unread', 'iassign' ) . ")</font>";
+			$comment_unread = "&nbsp;&nbsp;<font color='red'>" . icons::insert ( 'comment_unread' ) ."&nbsp;($sum_comment&nbsp;". get_string ( 'comment_unread', 'iassign' ) . ")</font>";
 	}
 	
 	$cm_info->set_after_link($comment_unread);
@@ -143,7 +143,7 @@ function iassign_add_instance($data, $mform) {
     iassign_grade_item($iassign);
     
     // log event -----------------------------------------------------
-    iassign_log::add_log('add_iassign', 'name: '.$data->name, $cmid);
+    log::add_log('add_iassign', 'name: '.$data->name, $cmid);
     // log event -----------------------------------------------------
 
     return $iassign->id;
@@ -217,7 +217,7 @@ function iassign_update_instance($data, $mform) {
     iassign_grade_item_update($data->id);
     
     // log event -----------------------------------------------------
-    iassign_log::add_log('update_iassign', 'name: '.$data->name, $cmid);
+    log::add_log('update_iassign', 'name: '.$data->name, $cmid);
     // log event -----------------------------------------------------
     
     return true;
