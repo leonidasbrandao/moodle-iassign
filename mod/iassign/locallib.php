@@ -3,76 +3,78 @@
  * This class provides all the functionality for an ia (interactive activities).
  *
  * Release Notes:
+ * - v 4.6.2 2015/01/08
+ *              + Fix severe flaw (wrong name of 'class log' instead the correct 'class iassign_log'
  * - v 4.6.1 2014/10/10
- * 		+ Fix flaw in POST (now check if 'REMOTE_ADDR' and 'HTTP_USER_AGENT' is defined)
+ *              + Fix flaw in POST (now check if 'REMOTE_ADDR' and 'HTTP_USER_AGENT' is defined)
  * - v 4.6 2014/02/25
- * 		+ Fix bugs in filter function for open applets.
+ *              + Fix bugs in filter function for open applets.
  * - v 4.5 2014/02/24
- * 		+ Fix bugs in params.
- * 		+ Insert new param type.
+ *              + Fix bugs in params.
+ *              + Insert new param type.
  * - v 4.4 2014/01/24
- * 		+ Allow select type of params.
- * 		+ Insert the use of applet params specific for activities.
+ *              + Allow select type of params.
+ *              + Insert the use of applet params specific for activities.
  * - v 4.3 2014/01/23
- * 		+ Insert function for move activities for other iLM (ilm_settings::confirm_move_iassign, ilm_settings::move_iassign).
+ *              + Insert function for move activities for other iLM (ilm_settings::confirm_move_iassign, ilm_settings::move_iassign).
  * - v 4.2 2014/01/20
- * 		+ Fix bugs in editor layout.
- * 		+ Insert new applet tags 'MA_POST_ArchiveTeacher' and 'MA_PARAM_Proposition'.
- * 		+ Change button label 'save' to 'write' in forms.
+ *              + Fix bugs in editor layout.
+ *              + Insert new applet tags 'MA_POST_ArchiveTeacher' and 'MA_PARAM_Proposition'.
+ *              + Change button label 'save' to 'write' in forms.
  * - v 4.1 2013/12/13
- * 		+ Insert log in iAssign actions.
- * 		+ Allow use the language in iLM description (ilm_settings::new_file_ilm, ilm_settings::new_ilm, ilm_settings::edit_ilm, ilm_settings::copy_new_version_ilm, ilm_settings::add_edit_copy_ilm, language::get_description_lang, language::get_all_lang).
- * 		+ Insert class for Log actions in system.
+ *              + Insert log in iAssign actions.
+ *              + Allow use the language in iLM description (ilm_settings::new_file_ilm, ilm_settings::new_ilm, ilm_settings::edit_ilm, ilm_settings::copy_new_version_ilm, ilm_settings::add_edit_copy_ilm, language::get_description_lang, language::get_all_lang).
+ *              + Insert class for Log actions in system.
  * - v 4.0 2013/10/31
- * 		+ Insert support of export iLM in zip packages (ilm_settings::export_ilm).
- * 		+ Insert support of import iLM from zip packages (ilm_settings::import_ilm).
- * 		+ Fix bugs in message alert in iassign title and remove message alert of the description by cache error.
+ *              + Insert support of export iLM in zip packages (ilm_settings::export_ilm).
+ *              + Insert support of import iLM from zip packages (ilm_settings::import_ilm).
+ *              + Fix bugs in message alert in iassign title and remove message alert of the description by cache error.
  * - v 3.9 2013/10/25
- * 		+ Insert support of upgrade iLM.
- * 		+ Insert support for more than one extension in iLM.
- * 		+ Fix bugs in verion control.
+ *              + Insert support of upgrade iLM.
+ *              + Insert support for more than one extension in iLM.
+ *              + Fix bugs in verion control.
  * - v 3.8 2013/09/19
- * 		+ Get data of general fields in iassign statement table (iassign::add_edit_iassign).
+ *              + Get data of general fields in iassign statement table (iassign::add_edit_iassign).
  * - v 3.7 2013/09/12
- * 		+ Change tag APPLET in all funcions of module (ilm::view_iLM, ilm_manager::ilm_editor_new, ilm_manager::ilm_editor_update).
- * 		+ Insert tool for manage aditional params for iLM (ilm_settings::add_edit_copy_param, ilm_settings::visible_param, ilm_settings::add_param, ilm_settings::edit_param, ilm_settings::copy_param, ilm_settings::delete_param).
+ *              + Change tag APPLET in all funcions of module (ilm::view_iLM, ilm_manager::ilm_editor_new, ilm_manager::ilm_editor_update).
+ *              + Insert tool for manage aditional params for iLM (ilm_settings::add_edit_copy_param, ilm_settings::visible_param, ilm_settings::add_param, ilm_settings::edit_param, ilm_settings::copy_param, ilm_settings::delete_param).
  * - v 3.6 2013/09/05
- * 		+ Insert function ilm_settings::applet_ilm for create APPLET html tag.
- * 		+ Insert function ilm_settings::applet_filetime for get modified date of iLM file.
- * 		+ Change tag APPLET in funcion ilm_settings::view_ilm.
+ *              + Insert function ilm_settings::applet_ilm for create APPLET html tag.
+ *              + Insert function ilm_settings::applet_filetime for get modified date of iLM file.
+ *              + Change tag APPLET in funcion ilm_settings::view_ilm.
  * - v 3.5 2013/08/26
- * 		+ Fix bug in download package iassign without answers (iassign::report).
+ *              + Fix bug in download package iassign without answers (iassign::report).
  * - v 3.4 2013/08/23
- * 		+ Fix bug in export package iassign.
+ *              + Fix bug in export package iassign.
  * - v 3.3 2013/08/22
- * 		+ Insert functions for export users answer in iassign (iassign::export_file_answer, iassign::export_package_answer, iassign::view_iassign_current, iassign::report).
- * 		+ Insert function for rename iassign file (ilm_manager::rename_file_ilm, ilm_manager::view_files_ilm).
+ *              + Insert functions for export users answer in iassign (iassign::export_file_answer, iassign::export_package_answer, iassign::view_iassign_current, iassign::report).
+ *              + Insert function for rename iassign file (ilm_manager::rename_file_ilm, ilm_manager::view_files_ilm).
  * - v 3.2 2013/08/21
- * 		+ Change title link with message for get file for donwload file (ilm_manager::view_files_ilm).
- * 		+ Change functions for import files for ilm_manager.php.
- * 		+ Create static utils class for functions system utils (utils::format_filename, utils::version_filename).
+ *              + Change title link with message for get file for donwload file (ilm_manager::view_files_ilm).
+ *              + Change functions for import files for ilm_manager.php.
+ *              + Create static utils class for functions system utils (utils::format_filename, utils::version_filename).
  * - v 3.1 2013/08/15
- * 		+ Change return file selected (ilm_manager::add_ilm).
- * 		+ Insert functions for import files, export files and remove selected files (ilm_manager::view_files_ilm, ilm_manager::import_files_ilm, ilm_manager::export_files_ilm, ilm_manager::delete_selected_ilm).
+ *              + Change return file selected (ilm_manager::add_ilm).
+ *              + Insert functions for import files, export files and remove selected files (ilm_manager::view_files_ilm, ilm_manager::import_files_ilm, ilm_manager::export_files_ilm, ilm_manager::delete_selected_ilm).
  * - v 3.0 2013/08/02
- * 		+ Insert link for view informations of iLMs in teacher view, same screen of admin view but wiht some features hide (ilm_settings::list_ilm, ilm_settings::view_ilm, iassign::view_iassigns).
+ *              + Insert link for view informations of iLMs in teacher view, same screen of admin view but wiht some features hide (ilm_settings::list_ilm, ilm_settings::view_ilm, iassign::view_iassigns).
  * - v 2.9 2013/08/01
- * 		+ Fix bugs in functions ilm_settings::new_file_ilm, ilm_settings::copy_new_version_ilm, ilm_settings::add_edit_copy_ilm.
+ *              + Fix bugs in functions ilm_settings::new_file_ilm, ilm_settings::copy_new_version_ilm, ilm_settings::add_edit_copy_ilm.
  * - v 2.8 2013/07/25
- * 		+ Insert the activity name in header of view (activity::view_dates).
- * 		+ Set function default iLM in view iLMs versions (ilm_settings::default_ilm and ilm_settings::confirm_default_ilm).
+ *              + Insert the activity name in header of view (activity::view_dates).
+ *              + Set function default iLM in view iLMs versions (ilm_settings::default_ilm and ilm_settings::confirm_default_ilm).
  * - v 2.7 2013/07/24
- * 		+ Create link previous and next for student view in one activity (activity::view_dates).
- * 		+ Fix bugs for view error in iLM not on DB in function iassign::view_iassign_current.
+ *              + Create link previous and next for student view in one activity (activity::view_dates).
+ *              + Fix bugs for view error in iLM not on DB in function iassign::view_iassign_current.
  * - v 2.6 2013/07/23
- * 		+ Fix bugs for view files in function ilm_manager::view_files_ilm.
- * 		+ Fix bugs for comment on teacher view in function iassign::view_iassign_current.
+ *              + Fix bugs for view files in function ilm_manager::view_files_ilm.
+ *              + Fix bugs for comment on teacher view in function iassign::view_iassign_current.
  * - v 2.5 2013/07/12
- * 		+ Change iLM settings for accept versions (ilm_settings::new_file_ilm, ilm_settings::new_ilm, ilm_settings::edit_ilm, ilm_settings::copy_new_version_ilm).
- * 		+ Insert new informations in iLMs table: created date, modified date, author, version, modified date of JAR (ilm_settings::view_ilm).
+ *              + Change iLM settings for accept versions (ilm_settings::new_file_ilm, ilm_settings::new_ilm, ilm_settings::edit_ilm, ilm_settings::copy_new_version_ilm).
+ *              + Insert new informations in iLMs table: created date, modified date, author, version, modified date of JAR (ilm_settings::view_ilm).
  *
  * @author Patricia Alves Rodrigues
- * @author Leônidas O. Brandão
+ * @author Leo^nidas O. Branda~o
  * @author Luciano Oliveira Borges
  * @version v 4.6 2014/02/25
  * @package mod_iassign_lib
@@ -122,7 +124,7 @@ class iassign {
 
   if ($cm) {
    $this->cm = $cm;
-   } else if (! $this->cm = get_coursemodule_from_id ( 'iassign', $cmid )) {
+  } else if (! $this->cm = get_coursemodule_from_id ( 'iassign', $cmid )) {
    print_error ( 'invalidcoursemodule' );
   }
 
@@ -130,9 +132,9 @@ class iassign {
 
   if ($course) {
    $this->course = $course;
-   } else if ($this->cm->course == $COURSE->id) {
+  } else if ($this->cm->course == $COURSE->id) {
    $this->course = $COURSE;
-   } else if (! $this->course = $DB->get_record ( 'course', array ('id' => $this->cm->course ) )) {
+  } else if (! $this->course = $DB->get_record ( 'course', array ('id' => $this->cm->course ) )) {
    print_error ( 'invalidid', 'iassign' );
    }
   $this->coursecontext = context_course::instance($this->course->id );
@@ -140,7 +142,7 @@ class iassign {
 
   if ($iassign) {
    $this->iassign = $iassign;
-   } else if (! $this->iassign = $DB->get_record ( 'iassign', array ('id' => $this->cm->instance ) )) {
+  } else if (! $this->iassign = $DB->get_record ( 'iassign', array ('id' => $this->cm->instance ) )) {
    print_error ( 'invalidid', 'iassign' );
    }
   $USER->context = context_module::instance($this->cm->id );
@@ -156,7 +158,7 @@ class iassign {
   $this->view_iassign = optional_param ( 'action', false, PARAM_BOOL );
   $this->activity = new activity ( optional_param ( 'iassign_current', NULL, PARAM_TEXT ) );
   $this->view ();
-   }
+  }
 
  /**
   * Display the iAssign, used by view.php
@@ -173,15 +175,15 @@ class iassign {
 
   if ($this->action) {
    $this->action();
-   } else {
+  } else {
    echo $OUTPUT->header();
    $this->view_iassigns();
    echo $OUTPUT->footer();
    } // if ($this->action)
-    // security: delete all records with an error loading IMA
+  // security: delete all records with an error loading IMA
   $DB->delete_records ( "iassign_security", array ("userid" => $USER->id,"view" => 1 ) );
   die ();
-   }
+  }
 
  /**
   * Limited access
@@ -194,8 +196,8 @@ class iassign {
   // down - move down activity (mover atividade para baixo)
   // visible - view/hide activity (exibir/ocultar atividade)
   // delete - delete activity (excluir atividade)
-  // deleteyes - confirms exclusion of activity (confirma exclusÃ£o de atividade)
-  // deleteno - does not erase activity (nÃ£o apaga atividade)
+  // deleteyes - confirms exclusion of activity (confirma exclusao de atividade)
+  // deleteno - does not erase activity (nao apaga atividade)
   // add - add activity (adicionar atividade)
   // edit - edit activity (modificar atividade)
 
@@ -213,7 +215,7 @@ class iassign {
    eval ( $action_iassign_limit [$this->action] );
   else
    eval ( $action_iassign [$this->action] );
-   }
+  }
 
  /**
   * receives the return of iLM
@@ -241,7 +243,7 @@ class iassign {
 
   // feedback
   /*
-   * status of activities: 0 â€“ not post 1 â€“ post 2 â€“ evaluated as incorrect 3 â€“ evaluated as correct
+   * status of activities: 0 - not post; 1 - post; 2 - evaluated as incorrect; 3 - evaluated as correct
    */
 
   $title = get_string ( 'evaluate_iassign', 'iassign' );
@@ -263,7 +265,7 @@ class iassign {
    else
     echo '<tr><td colspan=2><br>' . get_string ( 'empty_answer_post', 'iassign' ) . '</td>';
    echo '<tr><td width=40% align=right>' . $return_last . '&nbsp;' . $link_return . '</td></tr>';
-   } else {
+  } else {
    if ($iassign_ilm->evaluate == 1 and $this->activity->get_activity ()->automatic_evaluate == 1) { // iLM with automatic evaluator
     if (intval ( $MA_POST_Value ) == 1) {
      $status = 3;
@@ -273,7 +275,7 @@ class iassign {
      // log record
      $info = $iassign->name . "&nbsp;-&nbsp;" . $this->activity->get_activity ()->name . "&nbsp;-&nbsp;" . get_string ( 'feedback_correct', 'iassign' ) . "&nbsp;-&nbsp;" . get_string ( 'grade_iassign', 'iassign' ) . ":" . $grade_student;
      add_to_log ( $this->course->id, "iassign", "add submission", "view.php?id={$this->cm->id }", $info, $this->cm->id, $USER->id );
-     } else {
+    } else {
      $status = 2;
      $grade_student = 0; // evaluated as incorrect solution
      $msg = '<tr><td colspan=2>' . icons::insert ( 'feedback_incorrect' ) . '<br>' . get_string ( 'get_answer_incorrect', 'iassign' ) . '</td>';
@@ -290,13 +292,13 @@ class iassign {
      // log record
      $info = $iassign->name . "&nbsp;-&nbsp;" . $this->activity->get_activity ()->name . "&nbsp;-&nbsp;" . get_string ( 'get_answer', 'iassign' );
      add_to_log ( $this->course->id, "iassign", "add submission", "view.php?id={$this->cm->id }", $info, $this->cm->id, $USER->id );
-     } else {
+    } else {
      echo '<tr><td width=60% ><strong>' . get_string ( 'auto_result', 'iassign' ) . '</strong></td>';
      echo '<td width=40% align=right>' . $return_last . '&nbsp;' . $link_return . '</td></tr>';
      echo '<tr>';
      echo $msg;
      }
-    } else {
+   } else {
     $status = 1;
     $grade_student = 0; // iLM not have automatic evaluator
     echo '<tr><td colspan=2>' . icons::insert ( 'post' ) . get_string ( 'get_answer_post', 'iassign' ) . '</td>';
@@ -328,11 +330,11 @@ class iassign {
     $newentry->experiment = 1;
     if (! $newentry->id = $DB->insert_record ( "iassign_submission", $newentry )) {
      print_error ( 'error_insert', 'iassign' );
-     } else {
+    } else {
      add_to_log ( $this->course->id, "iassign", "add submission", "view.php?id={$this->iassign->id }", $this->activity->get_activity ()->name, $this->cm->id, $USER->id );
      $this->update_grade_student ( $newentry->userid, $newentry->iassign_statementid, $this->iassign->id );
      }
-    } elseif ($iassign_submission->status != 3) {
+   } elseif ($iassign_submission->status != 3) {
     $newentry = new stdClass ();
     $newentry->id = $iassign_submission->id;
     $newentry->iassign_statementid = $iassign_submission->iassign_statementid;
@@ -349,11 +351,11 @@ class iassign {
      //D $stringAux = "ia.class.php: ".$MA_POST_Archive."<br/> ".utf8_encode($MA_POST_Archive)."<br/>".utf8_encode(utf8_encode($MA_POST_Archive))."<br/>";
      //D $fp = fopen("teste1.txt","w");
      //D fwrite($fp,$stringAux);
-     } else {
+    } else {
      add_to_log ( $this->course->id, "iassign", "update submission", "view.php?id={$this->iassign->id }", $this->activity->get_activity ()->name, $this->cm->id, $USER->id );
      $this->update_grade_student ( $newentry->userid, $newentry->iassign_statementid, $this->iassign->id );
      }
-    } else {
+   } else {
     if ($return_get_answer == 1) {
      $newentry = new stdClass ();
      $newentry->id = $iassign_submission->id;
@@ -374,24 +376,24 @@ class iassign {
       echo "<p>" . get_string ( 'iassign_update', 'iassign' ) . "</p>";
       echo $OUTPUT->box_end ();
       }
-     } elseif ($return_get_answer == 2) {
+    } elseif ($return_get_answer == 2) {
      echo $OUTPUT->box_start ();
      echo "<p>" . get_string ( 'iassign_cancel', 'iassign' ) . "</p>";
      echo $OUTPUT->box_end ();
-     } else {
+    } else {
      echo $OUTPUT->box_start ();
      echo "
  <script type='text/javascript'>
   //<![CDATA[
   function overwrite () {
-    document.formEnvio.return_get_answer.value = 1;
-    document.formEnvio.submit();
-    }
+   document.formEnvio.return_get_answer.value = 1;
+   document.formEnvio.submit();
+   }
 
   function nooverwrite () {
-    document.formEnvio.return_get_answer.value = 2;
-    document.formEnvio.submit();
-    }
+   document.formEnvio.return_get_answer.value = 2;
+   document.formEnvio.submit();
+   }
   //]]>
  </script>";
      $param_aux = "action=overwrite&iassign_submission_current=" . $iassign_submission->id . "&id=" . $id . "&iassign_current=" . $this->activity->get_activity ()->id . "&write_solution=" . $this->write_solution . "&userid_iassign=" . $USER->id;
@@ -412,7 +414,7 @@ class iassign {
      echo $OUTPUT->box_end ();
      }
     }
-   } // if ($this->write_solution == 1)
+  } // if ($this->write_solution == 1)
 
   echo $OUTPUT->footer();
   die ();
@@ -522,7 +524,7 @@ class iassign {
    $this->action = 'viewsubmission';
    $this->view_iassign_current ();
    } // if (!$DB->update_record('iassign_submission', $newentry))
-   }
+  }
 
  /**
   * Editing grade of interactive activities
@@ -542,7 +544,7 @@ class iassign {
    } // if ($newgrade >= 0)
   $this->action = 'viewsubmission';
   $this->view_iassign_current ();
-   }
+  }
 
  /**
   * Add or Edit interactive activities
@@ -578,10 +580,11 @@ class iassign {
    $iassign_data = $DB->get_record ( "iassign", array('id' => $iassignid));
 
    $params = array ('iassignid' => $iassignid );
-   $iassign_statement = $DB->get_records_sql ( "SELECT s.id, s.name, s.dependency
-                             FROM {iassign_statement } s
-                             WHERE s.iassignid = :iassignid
-                             ORDER BY `s`.`position` ASC", $params ); // " - jed/excs
+   $iassign_statement = $DB->get_records_sql (
+    "SELECT s.id, s.name, s.dependency
+     FROM {iassign_statement} s
+     WHERE s.iassignid = :iassignid
+     ORDER BY s.position ASC", $params ); // " - jed/excs
 
    $param->iassignid = $iassignid;
    $param->name = "";
@@ -618,7 +621,7 @@ class iassign {
    $param->visible = 1;
    $param->max_experiment = $iassign_data->max_experiment;
    $param->dependency = 0;
-   }   // if ($this->action == 'add')
+   } // if ($this->action == 'add')
   elseif ($this->action == 'edit') {
 
    $COURSE->iassign_list = array ();
@@ -626,11 +629,10 @@ class iassign {
    if ($this->activity->get_activity () != null) {
     $iassign_statement_current = $DB->get_record ( "iassign_statement", array ("id" => $this->activity->get_activity ()->id ) );
 
-    $iassign_statement = $DB->get_records_sql ( "SELECT *
-                             FROM {$CFG->prefix }iassign_statement s
-                             WHERE s.iassignid = '$iassignid'
-                             AND s.id!='$iassign_statement_current->id'
-                             ORDER BY `s`.`position` ASC" );
+    $iassign_statement = $DB->get_records_sql (
+     "SELECT * FROM {$CFG->prefix}iassign_statement s
+      WHERE s.iassignid = '$iassignid' AND s.id!='$iassign_statement_current->id'
+      ORDER BY s.position ASC" );
 
     $param->iassign_id = $iassign_statement_current->id; // oculto
     $param->iassignid = $iassign_statement_current->iassignid; // oculto
@@ -651,11 +653,9 @@ class iassign {
       if (in_array ( $iassign->id, $dependency ))
        $inter [] = $iassign->id;
 
-    $iassign_statement_dependency = $DB->get_records_sql ( "SELECT *
-                             FROM {$CFG->prefix }iassign_statement s
-                             WHERE s.iassignid = '$iassignid'
-                             AND s.id!='$iassign_statement_current->id'
-                             AND s.dependency!=0" );
+    $iassign_statement_dependency = $DB->get_records_sql (
+     "SELECT * FROM {$CFG->prefix}iassign_statement s
+      WHERE s.iassignid = '$iassignid' AND s.id!='$iassign_statement_current->id' AND s.dependency!=0" );
 
     $array_dependency = array ();
     $subdependency = "";
@@ -725,15 +725,17 @@ class iassign {
      foreach ($iassign_ilm_configs as $iassign_ilm_config)
       $param->{'param_'.$iassign_ilm_config->iassign_ilm_configid } = $iassign_ilm_config->param_value;
      }
-    } // elseif ($this->action == 'edit')
-   }
+   } // if ($this->activity->get_activity () != null)
+
+  } // elseif ($this->action == 'edit')
+
   // search position
   $iassign_list = $DB->get_records_list ( 'iassign_statement', 'iassignid', array ($this->iassign->id ), 'position ASC' );
 
   if ($iassign_list) {
    $end_list = array_pop ( $iassign_list );
    $param->position = $end_list->position + 1;
-   }   // if ($iassign_list)
+   } // if ($iassign_list)
   else
    $param->position = 1;
 
@@ -743,9 +745,7 @@ class iassign {
   if ($mform->is_cancelled ()) {
    $this->return_home_course ( 'iassign_cancel' );
    exit;
-   } else if ($result = $mform->get_data ()) {
-
-
+  } else if ($result = $mform->get_data ()) {
 
    $result->context = $context;
 
@@ -764,17 +764,18 @@ class iassign {
    if ($result->iassign_list) {
     foreach ( $result->iassign_list as $key => $value )
      $result->dependency .= $key . ';';
-    }    // if ($result_assign_list)
+     } // if ($result_assign_list)
    else
     $result->dependency = 0;
 
    $iassign_ilm = $DB->get_record ( "iassign_ilm", array ("id" => $result->iassign_ilmid ) );
 
    if ($this->action == 'add') {
-    $iassign_statement_name = $DB->get_records_sql ( "SELECT *
-                             FROM {$CFG->prefix }iassign_statement s
-                             WHERE s.iassignid = '$result->iassignid'
-                             AND s.name = '$result->name'" );
+    //??
+    // $iassign_statement_name = $DB->get_records_sql ("SELECT * FROM {$CFG->prefix}iassign_statement s WHERE s.iassignid = $result->iassignid AND s.name = '$result->name'" );
+    $iassign_statement_name = $DB->get_records('iassign_statement', array('iassignid' => $result->iassignid, 'name' => $result->name));
+
+    $iassign_statement_name = $DB->get_records_sql ("SELECT * FROM {$CFG->prefix }iassign_statement s WHERE s.iassignid = $result->iassignid AND s.name = '$result->name'" );
     if ($iassign_statement_name) {
      $this->return_home_course ( 'error_iassign_name' );
      die ();
@@ -785,7 +786,7 @@ class iassign {
     $this->activity->add_calendar ( $iassignid );
     add_to_log ( $this->course->id, "iassign", "add", "view.php?id=$id", $result->name, $this->cm->id, $USER->id );
     $this->return_home_course ( 'iassign_add' );
-    }    // if ($this->action == 'add')
+    } // if ($this->action == 'add')
    elseif ($this->action == 'edit') {
 
     $iassignid = $this->activity->update_iassign ( $result );
@@ -822,7 +823,7 @@ class iassign {
      } // if (in_array($search_iassing_id, $inter_dependency))
     } // foreach ($iassign_statement as $iassign)
   return $dependency;
-   }
+  }
 
  /**
   * Search subdependency
@@ -844,7 +845,7 @@ class iassign {
     } // foreach ($inter_dependency as $tmp)
    } // if ($iassign_statement)
   return $dependency;
-   }
+  }
 
  /**
   * Update grade of iAssign
@@ -852,10 +853,14 @@ class iassign {
  static function update_grade_iassign($iassignid) {
   global $USER, $CFG, $COURSE, $DB, $OUTPUT;
   require_once ($CFG->libdir . '/gradelib.php');
-  $sum_grade = $DB->get_records_sql ( "SELECT SUM(grade) as total
-                             FROM {$CFG->prefix }iassign_statement s
-                             WHERE s.iassignid = '$iassignid'
-                             AND s.type_iassign=3" );
+  //?? troquei linha abaixo pelas 5 seguintes que jah estavam na versao "velha" "4.1 2013/12/12"
+  //?? $sum_grade = $DB->get_records_sql ("SELECT SUM(grade) as total FROM {$CFG->prefix }iassign_statement s WHERE s.iassignid = '$iassignid' AND s.type_iassign=3" );
+  $grade = $DB->get_records('iassign_statement', array('iassignid' => $iassignid, 'type_iassign' => 3));
+  $sum_grade = 0;  
+  foreach ($grade as $tmp) {
+   $sum_grade += $tmp->grade;
+   }
+  //??
 
   $grade_iassign = $DB->get_record ( "iassign", array ("id" => $iassignid ) );
   $grades = NULL;
@@ -865,7 +870,7 @@ class iassign {
   if (key ( $sum_grade )) {
    $params ['grademax'] = key ( $sum_grade );
    $params ['rawgrademax'] = key ( $sum_grade );
-   } else {
+  } else {
    $params ['grademax'] = 0;
    $params ['rawgrademax'] = 0;
    }
@@ -888,10 +893,15 @@ class iassign {
    if ($iassign_submission)
     $total_grade += $iassign_submission->grade;
    } // foreach ($grade_iassign_statements as $grade_iassign_statement)
-  $sum_grade = $DB->get_records_sql ( "SELECT SUM(grade) as total
-                             FROM {$CFG->prefix }iassign_statement s
-                             WHERE s.iassignid = '$iassignid'
-                             AND s.type_iassign=3" );
+
+  //?? estava versao velha '4.1 2013/12/12' ?
+  //?? $sum_grade = $DB->get_records_sql ( "SELECT SUM(grade) as total FROM {$CFG->prefix}iassign_statement s WHERE s.iassignid = '$iassignid' AND s.type_iassign=3" );
+  $grade = $DB->get_records('iassign_statement', array('iassignid' => $iassignid, 'type_iassign' => 3));
+  $sum_grade = 0;
+  foreach ($grade as $tmp) {
+   $sum_grade += $tmp->grade;
+   }
+  //??
 
   $grades ['userid'] = $userid;
   $grades ['rawgrade'] = $total_grade;
@@ -902,12 +912,12 @@ class iassign {
   if (key ( $sum_grade )) {
    $params ['grademax'] = key ( $sum_grade );
    $params ['rawgrademax'] = key ( $sum_grade );
-   } else {
+  } else {
    $params ['grademax'] = 0;
    $params ['rawgrademax'] = 0;
    }
   grade_update ( 'mod/iassign', $grade_iassign->course, 'mod', 'iassign', $iassignid, 0, $grades, $params );
-   }
+  }
 
  /**
   * Display caption of icons
@@ -980,7 +990,7 @@ class iassign {
     $iassign_submission = $DB->get_record ( "iassign_submission", array ("id" => $this->iassign_submission_current ) ); // data about activity current
    else
     $iassign_submission = $DB->get_record ( "iassign_submission", array ("iassign_statementid" => $this->activity->get_activity ()->id,"userid" => $this->userid_iassign ) ); // data about student solution
-   } else {
+  } else {
    $iassign_submission = $DB->get_record ( "iassign_submission", array ("iassign_statementid" => $this->activity->get_activity ()->id,"userid" => $this->userid_iassign ) ); // data about student solution
   }
 
@@ -1113,9 +1123,9 @@ class iassign {
        $last_iassign = get_string ( 'no_MA_POST_Archive', 'iassign' );
       } // switch ($iassign_submission->status)
      } else {
-     echo icons::insert ( 'not_post' ) . '&nbsp;' . get_string ( 'not_post', 'iassign' ) . '&nbsp;' . $comment;
-     $last_iassign = get_string ( 'no_MA_POST_Archive', 'iassign' );
-     }
+      echo icons::insert ( 'not_post' ) . '&nbsp;' . get_string ( 'not_post', 'iassign' ) . '&nbsp;' . $comment;
+      $last_iassign = get_string ( 'no_MA_POST_Archive', 'iassign' );
+      }
 
     // update_status
     if ($iassign_submission && $iassign_submission->experiment > 0) {
@@ -1191,7 +1201,7 @@ class iassign {
      echo $ilm->view_iLM ( $iassign_statement, $answer, $enderecoPOST, false );
     // } // if ($this->confirms_jar($iassign_statement->file, $iassign_ilm->file_jar))
     echo $OUTPUT->box_end ();
-    } else {
+   } else {
     echo $OUTPUT->box ( '<p><strong>' . $last_iassign . '</strong></p>' );
     }
 
@@ -1201,7 +1211,7 @@ class iassign {
     if ($iassign_submission) {
      $enderecoPOSTcomment = "" . $CFG->wwwroot . "/mod/iassign/view.php?id=" . $id . "&action=newcomment&iassign_current=" . $this->activity->get_activity ()->id . "&iassign_submission_current=" . $iassign_submission->id . "&userid_iassign=" . $this->userid_iassign . "&row=" . ($row) . "&column=" . ($column);
      $history_comment = $this->search_comment_submission ( $iassign_submission->id );
-     } else {
+    } else {
      $enderecoPOSTcomment = "" . $CFG->wwwroot . "/mod/iassign/view.php?id=" . $id . "&action=newcomment&iassign_current=" . $this->activity->get_activity ()->id . "&userid_iassign=" . $this->userid_iassign . "&row=" . ($row) . "&column=" . ($column);
      }
 
@@ -1248,12 +1258,12 @@ class iassign {
      if ((! $iassign_submission) or $this->action == 'repeat' or ($iassign_submission and $iassign_submission->experiment < 1)) {
       $this->bottonPost = 1;
       $this->write_solution = 1;
-      } else {
+     } else {
       $last_iassign = get_string ( 'last_iassign', 'iassign' );
       if ($iassign_submission) {
        $repeat = "<a href='view.php?action=repeat&id=" . $id . "&userid_iassign=$USER->id&iassign_current=" . $this->activity->get_activity ()->id . "&iassign_submission_current=" . $iassign_submission->id . "'>" . icons::insert ( 'repeat' ) . '&nbsp;' . get_string ( 'repeat', 'iassign' ) . "</a>";
        $answer = $iassign_submission->answer;
-       } else {
+      } else {
        $repeat = "<a href='view.php?action=repeat&id=" . $id . "&userid_iassign=$USER->id&iassign_current=" . $this->activity->get_activity ()->id . "'>" . icons::insert ( 'repeat' ) . '&nbsp;' . get_string ( 'repeat', 'iassign' ) . "</a>";
        }
       }
@@ -1261,7 +1271,7 @@ class iassign {
      if ($this->action == 'repeat' or ($iassign_submission and $iassign_submission->experiment < 1)) {
       $this->bottonPost = 1;
       $this->write_solution = 0;
-      } else {
+     } else {
       $last_iassign = get_string ( 'last_iassign', 'iassign' );
       if ($iassign_submission) {
        $repeat = "<a href='view.php?action=repeat&id=" . $id . "&userid_iassign=$USER->id&iassign_current=" . $this->activity->get_activity ()->id . "&iassign_submission_current=" . $iassign_submission->id . "'>" . icons::insert ( 'repeat' ) . '&nbsp;' . get_string ( 'repeat', 'iassign' ) . "</a>";
@@ -1297,7 +1307,7 @@ class iassign {
     if ($iassign_statement->type_iassign == 3) {
      if ($iassign_statement->dependency == 0) {
       echo '<strong>' . get_string ( 'independent_activity', 'iassign' ) . '</strong>' . "\n";
-      } else {
+     } else {
       $dependencys = explode ( ';', $iassign_statement->dependency );
       echo '<p><strong>' . get_string ( 'dependency', 'iassign' ) . '</strong></p>' . "\n";
 
@@ -1319,9 +1329,9 @@ class iassign {
           $flag_dependency = false;
           }
          } else {
-         $icon = icons::insert ( 'not_post' );
-         $flag_dependency = false;
-         } // if ($dependencysubmissions)
+          $icon = icons::insert ( 'not_post' );
+          $flag_dependency = false;
+          } // if ($dependencysubmissions)
 
         echo '<p>&nbsp;' . $icon . $dependencyiassign->name . '</p>' . "\n";
         } // if ($dependency)
@@ -1333,7 +1343,7 @@ class iassign {
      echo '<strong>' . get_string ( 'message_dependency', 'iassign' ) . '</strong>' . "\n";
      $this->view_iassign = false;
      echo '</tr></table>' . "\n";
-     } else {
+    } else {
      $this->view_iassign = true;
      echo '</td>' . "\n";
      } // if ($flag_dependency == false)
@@ -1369,7 +1379,7 @@ class iassign {
           $repeat = "";
           $last_iassign = "";
          } // switch ($iassign_submission->status)
-        } else {
+       } else {
         echo icons::insert ( 'not_post' ) . '&nbsp;' . get_string ( 'not_post', 'iassign' ) . '&nbsp;' . $comment;
         $repeat = "";
         $last_iassign = "";
@@ -1458,13 +1468,13 @@ class iassign {
       $output .= "</form></center>";
       $output .= $OUTPUT->box_end ();
       echo $output;
-      } else {// if ($iassign_statement->type_iassign == 3)
+     } else { // if ($iassign_statement->type_iassign == 3)
       $output .= $OUTPUT->box_end ();
       echo $output;
       }
      } // if ($this->view_iassign)
     } // if ($this->view_iassign)
-   } else if (isguestuser()) {
+  } else if (isguestuser()) {
    echo($OUTPUT->notification ( get_string ( 'no_permission_iassign', 'iassign' ), 'notifyproblem' ));
    echo '<table width=100% border=0 valign="top">' . "\n";
    echo '<tr><td width=60% valign="top">' . "\n";
@@ -1602,9 +1612,9 @@ class iassign {
         * $student_submissions_comment = $DB->get_record_sql("SELECT COUNT(iassign_submissionid) FROM {$CFG->prefix }ia_assign_submissions_comment WHERE iassign_submissionid = '$student_submissions->id'");
         */
        $params = array ('iassign_submissionid' => $student_submissions->id );
-       $student_submissions_comment = $DB->get_record_sql ( 'SELECT COUNT(iassign_submissionid)
-                           FROM {iassign_submission_comment }
-                           WHERE iassign_submissionid = :iassign_submissionid', $params ); // " - jed/emacs
+       $student_submissions_comment = $DB->get_record_sql (
+        "SELECT COUNT(iassign_submissionid) FROM {iassign_submission_comment }
+         WHERE iassign_submissionid = :iassign_submissionid', $params ); // aspas para jed/emacs: "
 
        if ($student_submissions_comment)
         foreach ( $student_submissions_comment as $tmp )
@@ -1761,7 +1771,7 @@ class iassign {
      if ($tentativas != 0 && $tentativas != null) {
       $url_answer = "" . $CFG->wwwroot . "/mod/iassign/view.php?"."action=download_all_answer&iassign_id=" . $this->iassign->id. "&userid=" . $users_array [$x]->userid. "&id=" . $id;
       echo '  <td  align="center"><a href="' . $url_answer . '">' . icons::insert ( 'download_all_assign' ) . '</a></td>' . "\n";
-      } else {
+     } else {
       echo '  <td  align="center">' . icons::insert ( 'download_all_assign_disabled' ) . '</td>' . "\n";
       }
 
@@ -1990,7 +2000,7 @@ class iassign {
    echo "</table>";
 
    echo $OUTPUT->footer ();
-   } else {
+  } else {
 
    echo '<STYLE TYPE="text/css">
             <!--
@@ -2366,7 +2376,7 @@ class iassign {
     $title = "";
     $this->show_iassign ( $title, $iassign_array_general, $i_general );
     } // if ($iassign_array_general)
-   } else {
+  } else {
    echo $OUTPUT->notification ( get_string ( 'no_activity', 'iassign' ), 'notifysuccess' );
    }
   if (count ( $iassign_list ) > 5 and ! (has_capability ( 'mod/iassign:submitiassign', $this->context, $USER->id ))) {
@@ -2408,13 +2418,11 @@ class iassign {
     // receiver=2 - message to student
     $sum_comment = 0;
     $iassign_submissions = $DB->get_records ( 'iassign_submission', array ('iassign_statementid' => $iassign_current ) );
-    foreach($iassign_submissions as $iassign_submission) {
+    foreach ($iassign_submissions as $iassign_submission) {
      $params = array ('iassign_submissionid' => $iassign_submission->id,'return_status' => '0','receiver' => '1' );
-     $verify_message = $DB->get_record_sql ( 'SELECT COUNT(iassign_submissionid)
-                              FROM {iassign_submission_comment }
-                              WHERE iassign_submissionid = :iassign_submissionid
-                              AND return_status= :return_status
-                              AND receiver= :receiver', $params );
+     $verify_message = $DB->get_record_sql (
+      "SELECT COUNT(iassign_submissionid) FROM {iassign_submission_comment }
+       WHERE iassign_submissionid = :iassign_submissionid AND return_status= :return_status AND receiver= :receiver", $params );
      if ($verify_message)
       foreach ( $verify_message as $tmp )
        $sum_comment += $tmp;
@@ -2487,16 +2495,11 @@ class iassign {
       // receiver=1 - message to teacher
       // receiver=2 - message to student
 
-      /*
-       * $verify_message = $DB->get_record_sql("SELECT COUNT(iassign_submissionid) FROM {$CFG->prefix }ia_assign_submissions_comment WHERE iassign_submissionid = '$iassign_submission->id' and return_status= 0 and receiver=2");
-       */
-
+      // $verify_message = $DB->get_record_sql("SELECT COUNT(iassign_submissionid) FROM {$CFG->prefix }ia_assign_submissions_comment WHERE iassign_submissionid = '$iassign_submission->id' and return_status= 0 and receiver=2");
       $params = array ('iassign_submissionid' => $iassign_submission->id,'return_status' => '0','receiver' => '2' );
-      $verify_message = $DB->get_record_sql ( 'SELECT COUNT(iassign_submissionid)
-                             FROM {iassign_submission_comment }
-                             WHERE iassign_submissionid = :iassign_submissionid
-                             AND return_status= :return_status
-                             AND receiver= :receiver', $params ); // " - jed/emacs
+      $verify_message = $DB->get_record_sql (
+       "SELECT COUNT(iassign_submissionid) FROM {iassign_submission_comment }
+        WHERE iassign_submissionid = :iassign_submissionid AND return_status= :return_status AND receiver= :receiver", $params );
 
       if ($verify_message)
        foreach ( $verify_message as $tmp )
@@ -2535,7 +2538,7 @@ class iassign {
      echo '<p>' . $icon_status . '&nbsp;' . $links . '&nbsp;' . $icon_comment . '</p>' . "\n";
      } // if ($iassign_array[$j]->visible == 1)
     } // for ($j = 0; $j < $i; $j++)
-   } else if (isguestuser()) {
+  } else if (isguestuser()) {
    echo($OUTPUT->notification ( get_string ( 'no_permission_iassign', 'iassign' ), 'notifyproblem' ));
    echo '<table width=100% ><tr>' . "\n";
    echo "<td width=70% align='left'><font color='#0000aa'><strong>" . $title . "</strong></font></td>" . "\n";
@@ -2592,14 +2595,14 @@ class iassign {
     if (has_capability ( 'mod/iassign:editiassign', $context, $tmp->comment_authorid )) {
      $text .= "<tr><td bgcolor='#fee7ae'><b> $user_answer->firstname</b>&nbsp;(" . userdate ( $tmp->timecreated ) . "</br>";
      $text .= "$tmp->comment</td></tr>";
-     } else {
+    } else {
      $text .= "<tr><td bgcolor='#dce7ec'>&raquo;<b> $user_answer->firstname</b>&nbsp;(" . userdate ( $tmp->timecreated ) . "</br>";
      $text .= "$tmp->comment</td></tr>";
      }
     } // foreach ($comments as $tmp)
    }
   return $text;
-   }
+  }
 
  /**
   * Update comment of activity
@@ -2654,16 +2657,13 @@ class iassign {
    if (has_capability ( 'mod/iassign:submitiassign', $this->context, $USER->id ) && !is_siteadmin()) {
     $receiver = 1; // student message to teacher
     $this->action = 'view';
-
     $iassign_statement = $DB->get_record ( "iassign_statement", array ("id" => $iassign_submission->iassign_statementid ) );
     $tousers = get_users_by_capability($this->context, 'mod/iassign:evaluateiassign');
-    } else {
+   } else {
     $receiver = 2; // teacher message to student
     $this->action = 'viewsubmission';
-
     $tousers = array();
     $tousers[] = $DB->get_record ( "user", array ("id" => $iassign_submission->userid ) );
-
     } // if (has_capability('mod/iassign:submitiassign', $this->context, $USER->id))
 
    if (! $iassign_submission) {
@@ -2671,7 +2671,7 @@ class iassign {
 
     $id_submission = $this->new_submission ( $iassign_statement->id, $this->userid_iassign, $receiver );
     $this->iassign_submission_current = $id_submission;
-    } else {
+   } else {
     $id_submission = $iassign_submission->id;
     } // if (!$iassign_submission)
      // $comments = $DB->get_record_sql("SELECT COUNT(iassign_submissionid) FROM {$CFG->prefix }ia_assign_submissions_comment
@@ -3347,25 +3347,25 @@ class ilm {
   // $end_file = $CFG->wwwroot . DIRECTORY_SEPARATOR . 'mod' . DIRECTORY_SEPARATOR . 'iassign' . DIRECTORY_SEPARATOR . 'ilm_security.php?id=' . $id_iLM_security . '&token=' . $token . '&view=' . $view;
   $end_file = $CFG->wwwroot . '/mod/iassign/ilm_security.php?id=' . $id_iLM_security . '&token=' . $token . '&view=' . $view;
   $iassign = "
-        <script type='text/javascript'>
-          //<![CDATA[
-         function resp () {
-           var strAnswer = document.applets[0].getAnswer();
-           var value = document.applets[0].getEvaluation();
-           var comment = document.formEnvio.submission_comment.value;
-           if ((strAnswer==null || strAnswer=='' || strAnswer==-1) && (comment==null || comment=='')) { // undefined
-              alert('" . get_string ( 'activity_empty', 'iassign' ) . "');
-              return false; // sem erro
-               }
-           else {
-              document.formEnvio.MA_POST_Archive.value = strAnswer;
-              document.formEnvio.MA_POST_Value.value = value;
-              document.formEnvio.submit();
-              return true; // com erro
-               }
-            }
-       //]]>
-       </script>"; //
+<script type='text/javascript'>
+ //<![CDATA[
+ function resp () {
+   var strAnswer = document.applets[0].getAnswer();
+   var value = document.applets[0].getEvaluation();
+   var comment = document.formEnvio.submission_comment.value;
+   if ((strAnswer==null || strAnswer=='' || strAnswer==-1) && (comment==null || comment=='')) { // undefined
+      alert('" . get_string ( 'activity_empty', 'iassign' ) . "');
+      return false; // sem erro
+       }
+   else {
+      document.formEnvio.MA_POST_Archive.value = strAnswer;
+      document.formEnvio.MA_POST_Value.value = value;
+      document.formEnvio.submit();
+      return true; // com erro
+       }
+    }
+ //]]>
+</script>"; //
 
   $iassign .= "<center><form name='formEnvio' id='formEnvio' method='post' action='$enderecoPOST' enctype='multipart/form-data'>";
 
@@ -3440,7 +3440,7 @@ class ilm_settings {
    $file_url = array();
    $fs = get_file_storage();
    $files_jar = explode(",", $iassign_ilm->file_jar);
-   foreach($files_jar as $fj) {
+   foreach ($files_jar as $fj) {
     $file = $fs->get_file_by_id($fj);
     if (!$file)
      echo($OUTPUT->notification ( get_string ( 'error_confirms_jar', 'iassign' ), 'notifyproblem' ));
@@ -3596,7 +3596,7 @@ class ilm_settings {
   $filetime = "";
   $fs = get_file_storage();
   $files_jar = explode(",", $file_jar);
-  foreach($files_jar as $fj) {
+  foreach ($files_jar as $fj) {
    $file = $fs->get_file_by_id($fj);
    if ($file)
     $filetime .= chr ( 13 ) . $file->get_filename() . ' (' . userdate($file->get_timemodified()) . ')'.'</br>';
@@ -3613,7 +3613,7 @@ class ilm_settings {
   $is_default = true;
   $fs = get_file_storage();
   $files_jar = explode(",", $file_jar);
-  foreach($files_jar as $fj) {
+  foreach ($files_jar as $fj) {
    $file = $fs->get_file_by_id($fj);
    if ($file)
     $is_default &= ($file->get_itemid() == 0);
@@ -4055,7 +4055,7 @@ class ilm_settings {
   $fs = get_file_storage ();
   $files_id = explode(',',$iassign_ilm->file_jar);
   $files_jar = "";
-  foreach($files_id as $file_id) {
+  foreach ($files_id as $file_id) {
    $file = $fs->get_file_by_id($file_id);
    if (!$file->is_directory()) {
     $zip->add_file_from_string($file->get_filename(), $file->get_content());
@@ -4076,7 +4076,7 @@ class ilm_settings {
   $application_descriptor .= "\t".'<evaluate>'.$iassign_ilm->evaluate.'</evaluate>'."\n";
   if ($iassign_ilm_configs) {
    $application_descriptor .= "\t".'<params>'."\n";
-   foreach($iassign_ilm_configs as $iassign_ilm_config) {
+   foreach ($iassign_ilm_configs as $iassign_ilm_config) {
     $application_descriptor .= "\t\t".'<param>'."\n";
     $application_descriptor .= "\t\t\t".'<type>'.$iassign_ilm_config->param_type.'</type>'."\n";
     $application_descriptor .= "\t\t\t".'<name>'.$iassign_ilm_config->param_name.'</name>'."\n";
@@ -4092,17 +4092,17 @@ class ilm_settings {
   $zip->close();
 
   header("Pragma: public");
-        header("Expires: 0");
-        header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
-        header("Cache-Control: private",false);
-        header("Content-Type: application/zip");
-        header("Content-Disposition: attachment; filename=\"".basename($zip_filename)."\";");
-        header("Content-Transfer-Encoding: binary");
-        header("Content-Length: ".@filesize($zip_filename));
-        set_time_limit(0);
-        @readfile("$zip_filename") or die("File not found.");
-        unlink($zip_filename);
-     exit;
+  header("Expires: 0");
+  header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+  header("Cache-Control: private",false);
+  header("Content-Type: application/zip");
+  header("Content-Disposition: attachment; filename=\"".basename($zip_filename)."\";");
+  header("Content-Transfer-Encoding: binary");
+  header("Content-Length: ".@filesize($zip_filename));
+  set_time_limit(0);
+  @readfile("$zip_filename") or die("File not found.");
+  unlink($zip_filename);
+  exit;
   }
 
  /**
@@ -4190,7 +4190,7 @@ class ilm_settings {
    $fs = get_file_storage ();
    $zip = new zip_packer();
    $files = $fs->get_directory_files($contextuser->id, 'user', 'draft', $itemid, '/');
-   foreach($files as $file) {
+   foreach ($files as $file) {
     if (!$file->is_directory())
      $files_extract = $zip->extract_to_pathname($file, $pathtemp);
     }
@@ -4373,31 +4373,34 @@ class ilm_settings {
   global $PAGE, $OUTPUT, $CFG, $DB;
 
   $code_javascript_ilm = "
-  <script type='text/javascript'>
-   //<![CDATA[
-       function getRadiobutton() {
-        var radioButtons = document.getElementsByTagName('input');
-             var param = '';
-             for (var counter=0; counter < radioButtons.length; counter++) {
-              if (radioButtons[counter].type.toUpperCase()=='RADIO' && radioButtons[counter].checked == true && radioButtons[counter].name == 'selected_ilm')
-                  param = radioButtons[counter].value;
-              }
-             return param;
-           }
-   function move_selected_ilm () {
-        var resp;
-        if (getRadiobutton() != '') {
-         resp=confirm('" . get_string ( 'question_move_iassign', 'iassign' ) . "');
-         if (resp)
-          window.location='$CFG->wwwroot/mod/iassign/settings_ilm.php?action=move_iassign&ilm_id=$ilmid&ilm_parent=$ilm_parent&ilmselected='+getRadiobutton();
-       } else
-       alert('" . get_string ( 'error_ilm_not_selected_to_move', 'iassign' ) . "');
+<script type='text/javascript'>
+ //<![CDATA[
+ function getRadiobutton() {
+  var radioButtons = document.getElementsByTagName('input');
+  var param = '';
+  for (var counter=0; counter < radioButtons.length; counter++) {
+    if (radioButtons[counter].type.toUpperCase()=='RADIO' && radioButtons[counter].checked == true && radioButtons[counter].name == 'selected_ilm')
+      param = radioButtons[counter].value;
     }
-   function cancel_selected_ilm () {
-    window.location='$CFG->wwwroot/admin/settings.php?section=modsettingiassign&action=config&ilm_id=$ilm_parent';
-    }
-  //]]>
-  </script>";
+  return param;
+  }
+
+ function move_selected_ilm () {
+  var resp;
+  if (getRadiobutton() != '') {
+   resp=confirm('" . get_string ( 'question_move_iassign', 'iassign' ) . "');
+   if (resp)
+    window.location='$CFG->wwwroot/mod/iassign/settings_ilm.php?action=move_iassign&ilm_id=$ilmid&ilm_parent=$ilm_parent&ilmselected='+getRadiobutton();
+   }
+  else
+    alert('" . get_string ( 'error_ilm_not_selected_to_move', 'iassign' ) . "');
+  }
+
+ function cancel_selected_ilm () {
+  window.location='$CFG->wwwroot/admin/settings.php?section=modsettingiassign&action=config&ilm_id=$ilm_parent';
+  }
+ //]]>
+</script>";
 
   $str = "";
 
@@ -4537,7 +4540,7 @@ class ilm_settings {
    if (! empty ( $iassign_ilm->file_jar )) {
 
     $options = array("type" => "view");
-    foreach($param_enable as $key => $value) {
+    foreach ($param_enable as $key => $value) {
      $param_options = (!empty($param_value[$key]) ? $param_value[$key] : '0');
      $param_options = (is_array($param_options) ? implode(",", $param_options) : $param_options);
      $options[$key] = $param_options;
@@ -4599,10 +4602,10 @@ class ilm_settings {
       else if ($ilm_config->param_type == 'value') {
        $default = ' <b>('.get_string ( 'param_default', 'iassign' ).' '.$ilm_config->param_value.')</b>';
        $str .= '<td><input type="text" name="value['.$ilm_config->param_name.']" size="5" value="' . $value . '"/>'.$default.'</td>';
-       } else if ($ilm_config->param_type == 'boolean') {
+      } else if ($ilm_config->param_type == 'boolean') {
        $default = ' <b>('.get_string ( 'param_default', 'iassign' ).' '.($ilm_config->param_value == '1' ? get_string('yes'): get_string('no')).')</b>';
        $str .= '<td><input type="checkbox" name="value['.$ilm_config->param_name.']" value="1"'. ($value == '1' ? ' checked' : '') . '/>'.$default.'</td>';
-       } else if ($ilm_config->param_type == 'choice') {
+      } else if ($ilm_config->param_type == 'choice') {
 
        $str .= '<td><select name="value['.$ilm_config->param_name.']">';
        $options = explode(", ", $ilm_config->param_value);
@@ -4614,7 +4617,7 @@ class ilm_settings {
         $str .= '<option value="' . $option . '"'.$selected.'>'.$option.'</option>';
         }
        $str .= '</select>'.$default.'</td>';
-       } else if ($ilm_config->param_type == 'multiple') {
+      } else if ($ilm_config->param_type == 'multiple') {
 
        $value = array();
        if (!empty($param_value))
@@ -4886,52 +4889,51 @@ class ilm_manager {
    $error_files_exists = get_string ( 'error_file_exists', 'iassign' );
 
    $output = "<script type='text/javascript'>
-             //<![CDATA[
-             function submit_MA_Answer () {
-               var docForm = document.formEnvio;
-               var resposta_exerc = new Array(3);
-               var valor_resposta = new Array(3);
-               var sessao = new Array(3);
-               var doc = window.iLM;
-               resposta_exerc[0] = doc.getAnswer();
-               valor_resposta[0] = doc.getEvaluation();
-               docForm.MA_POST_Value.value = valor_resposta[0];
-               docForm.MA_POST_Archive.value = resposta_exerc[0];
-               var files = new Array(" . $files_array . ");
-               var filename=docForm.filename.value+'.'+'$extension';
+ //<![CDATA[
+ function submit_MA_Answer () {
+   var docForm = document.formEnvio;
+   var resposta_exerc = new Array(3);
+   var valor_resposta = new Array(3);
+   var sessao = new Array(3);
+   var doc = window.iLM;
+   resposta_exerc[0] = doc.getAnswer();
+   valor_resposta[0] = doc.getEvaluation();
+   docForm.MA_POST_Value.value = valor_resposta[0];
+   docForm.MA_POST_Archive.value = resposta_exerc[0];
+   var files = new Array(" . $files_array . ");
+   var filename=docForm.filename.value+'.'+'$extension';
 
-               if (resposta_exerc[0] == -1) {
-                 alert('" . get_string ( 'error_null_iassign', 'iassign' ) . "');
-                 return false\n;
-                }
-               else{
-                if (docForm.filename.value=='') {
-                  alert('" . get_string ( 'error_file_null_iassign', 'iassign' ) . "');
-                  return false;
-                 }
-               }
-              for (i=0;i<files.length;i++) {
-                if (files[i]==docForm.filename.value || files[i]==filename) {
-                  alert('" . $error_files_exists . "');
-                  return false;\n
-                 }
-               }
-              docForm.submit();
-              return true;
-             }
-            //]]>
-            </script>";
+   if (resposta_exerc[0] == -1) {
+     alert('" . get_string ( 'error_null_iassign', 'iassign' ) . "');
+     return false\n;
+    }
+   else{
+    if (docForm.filename.value=='') {
+      alert('" . get_string ( 'error_file_null_iassign', 'iassign' ) . "');
+      return false;
+     }
+   }
+  for (i=0;i<files.length;i++) {
+    if (files[i]==docForm.filename.value || files[i]==filename) {
+      alert('" . $error_files_exists . "');
+      return false;\n
+     }
+   }
+  docForm.submit();
+  return true;
+ }
+ //]]>
+ </script>";
 
    $output .= "
             <form name='formEnvio' id='formEnvio' method='post' enctype='multipart/form-data'> ";
    $output .= $OUTPUT->box_start ();
-   $output .= "
-              <table width='100%' cellpadding='20'>
-              <tr><td>" . get_string ( 'label_file_iassign', 'iassign' ) . " <input type='text' name='filename' size=50/>
-                <input type=button value='" . get_string ( 'label_write_iassign', 'iassign' ) . "' title='' onclick='submit_MA_Answer();'/></td>
-              <td><input type=button value='" . get_string ( 'close', 'iassign' ) . "' title='' onclick='javascript:window.location = \"$returnurl\";'/></td>
-              </tr>
-              </table>";
+   $output .= "  <table width='100%' cellpadding='20'>
+    <tr><td>" . get_string ( 'label_file_iassign', 'iassign' ) . " <input type='text' name='filename' size=50/>
+      <input type=button value='" . get_string ( 'label_write_iassign', 'iassign' ) . "' title='' onclick='submit_MA_Answer();'/></td>
+      <td><input type=button value='" . get_string ( 'close', 'iassign' ) . "' title='' onclick='javascript:window.location = \"$returnurl\";'/></td>
+      </tr>
+  </table>";
 
    $output .= "<center>";
    $output .= ilm_settings::applet_ilm($ilmid, array( "type" => "editor_new", "notSEND" => "true"));
@@ -5308,7 +5310,7 @@ class ilm_manager {
   $zip = new zip_archive();
   $zip->open($zip_filename);
   $fs = get_file_storage ();
-  foreach($files_id as $file_id) {
+  foreach ($files_id as $file_id) {
    $file = $fs->get_file_by_id($file_id);
    if (!$file->is_directory())
     $zip->add_file_from_string($file->get_filename(), $file->get_content());
@@ -5466,7 +5468,7 @@ class ilm_manager {
     var param = '';
     for (var counter=0; counter < radioButtons.length; counter++) {
       if (radioButtons[counter].type.toUpperCase()=='RADIO' && radioButtons[counter].checked == true && radioButtons[counter].name == 'selected_dir')
-	 param = radioButtons[counter].value;
+         param = radioButtons[counter].value;
          }
       return param;
       }
@@ -5650,172 +5652,173 @@ class ilm_manager {
 
   // TODO Rever o preview pois sÃ³ deixar ver uma vez.
   $code_javascript_ilm = "
-    <script type='text/javascript'>
-    //<![CDATA[
-    function preview_ilm (fileid) {
-      var preview_ilm=window.open('$CFG->wwwroot/mod/iassign/ilm_manager.php?from=$this->from&id=$this->id&action=preview&fileid='+fileid,'','menubar=0,location=0,scrollbars,status,resizable,width=900 height=700');
-     }
+ <script type='text/javascript'>
+  //<![CDATA[
+  function preview_ilm (fileid) {
+   var preview_ilm=window.open('$CFG->wwwroot/mod/iassign/ilm_manager.php?from=$this->from&id=$this->id&action=preview&fileid='+fileid,'','menubar=0,location=0,scrollbars,status,resizable,width=900 height=700');
+   }
 
-    function update_ilm(ilmid, fileid) {
-       window.location='$CFG->wwwroot/mod/iassign/ilm_manager.php?from=$this->from&id=$this->id&action=update&ilmid='+ilmid+'&dirid=$dirid&fileid='+fileid;
-     }
+  function update_ilm (ilmid, fileid) {
+    window.location='$CFG->wwwroot/mod/iassign/ilm_manager.php?from=$this->from&id=$this->id&action=update&ilmid='+ilmid+'&dirid=$dirid&fileid='+fileid;
+    }
 
-    function delete_ilm (ilmid, fileid) {
-      var resp;
-      resp=confirm('" . get_string ( 'delete_file', 'iassign' ) . "');
-      if (resp) {
-         window.location='$CFG->wwwroot/mod/iassign/ilm_manager.php?from=$this->from&id=$this->id&action=delete&ilmid='+ilmid+'&dirid=$dirid&fileid='+fileid;
-       }
+  function delete_ilm (ilmid, fileid) {
+   var resp;
+   resp=confirm('" . get_string ( 'delete_file', 'iassign' ) . "');
+   if (resp) {
+     window.location='$CFG->wwwroot/mod/iassign/ilm_manager.php?from=$this->from&id=$this->id&action=delete&ilmid='+ilmid+'&dirid=$dirid&fileid='+fileid;
      }
+   }
 
-    function delete_selected_ilm () {
-      var resp;
-      var param = getCheckbox();
-      if (param.join() != '') {
-       resp=confirm('" . get_string ( 'delete_files', 'iassign' ) . "');
-       if (resp)
-          window.location='$CFG->wwwroot/mod/iassign/ilm_manager.php?from=$this->from&id=$this->id&action=selected_delete&dirid=$dirid&files_id='+param.join();
-     } else
-     alert('" . get_string ( 'error_file_not_selected_to_delete', 'iassign' ) . "');
-     }
+  function delete_selected_ilm () {
+   var resp;
+   var param = getCheckbox();
+   if (param.join() != '') {
+    resp=confirm('" . get_string ( 'delete_files', 'iassign' ) . "');
+    if (resp)
+      window.location='$CFG->wwwroot/mod/iassign/ilm_manager.php?from=$this->from&id=$this->id&action=selected_delete&dirid=$dirid&files_id='+param.join();
+    }
+   else
+    alert('" . get_string ( 'error_file_not_selected_to_delete', 'iassign' ) . "');
+   }
 
-    function add_ilm_iassign (ilmid, filename, fileid) {
-      window.location='$CFG->wwwroot/mod/iassign/ilm_manager.php?from=$this->from&id=$this->id&action=addilm&ilmid='+ilmid+'&fileid='+fileid+'&filename='+filename;
+  function add_ilm_iassign (ilmid, filename, fileid) {
+   window.location='$CFG->wwwroot/mod/iassign/ilm_manager.php?from=$this->from&id=$this->id&action=addilm&ilmid='+ilmid+'&fileid='+fileid+'&filename='+filename;
+   }
+
+  function duplicate_ilm (ilmid, filename, fileid) {
+   var filenamecopy;
+   var i;
+   var files = new Array($files_array);
+   do {
+      filenamecopy = prompt ('" . get_string ( 'duplicate_file', 'iassign' ) . "',filename);
+   } while (filenamecopy == '');
+   if (filenamecopy == null)
+    return false;\n
+   else {
+    for (i=0;i<files.length;i++) {
+     if (files[i]==filenamecopy) {
+      alert('$error_files_exists');
+      return false;\n
+      }
      }
-    function duplicate_ilm (ilmid, filename, fileid) {
-      var filenamecopy;
-      var i;
-      var files = new Array($files_array);
-      do {
-         filenamecopy = prompt ('" . get_string ( 'duplicate_file', 'iassign' ) . "',filename);
-       } while (filenamecopy == '');
-      if (filenamecopy == null)
+    window.location='$CFG->wwwroot/mod/iassign/ilm_manager.php?from=$this->from&id=$this->id&action=duplicate&ilmid='+ilmid+'&dirid=$dirid&fileid='+fileid+'&filename='+filenamecopy;
+    }
+   }
+
+  function rename_ilm (ilmid, filename, fileid) {
+   var filenamecopy;
+   var i;
+   var files = new Array($files_array);
+   do {
+      filenamecopy = prompt ('" . get_string ( 'rename_file', 'iassign' ) . "',filename);
+   } while (filenamecopy == '');
+   if (filenamecopy == null)
+    return false;\n
+   else {
+    for (i=0;i<files.length;i++) {
+      if (files[i]==filenamecopy) {
+        alert('$error_files_exists');
         return false;\n
-      else {
-        for (i=0;i<files.length;i++) {
-            if (files[i]==filenamecopy) {
-              alert('$error_files_exists');
-              return false;\n
-             }
-         }
-        window.location='$CFG->wwwroot/mod/iassign/ilm_manager.php?from=$this->from&id=$this->id&action=duplicate&ilmid='+ilmid+'&dirid=$dirid&fileid='+fileid+'&filename='+filenamecopy;
-       }
-
+        }
+      }
+     window.location='$CFG->wwwroot/mod/iassign/ilm_manager.php?from=$this->from&id=$this->id&action=rename&ilmid='+ilmid+'&dirid=$dirid&fileid='+fileid+'&filename='+filenamecopy;
      }
+   }
 
-    function rename_ilm (ilmid, filename, fileid) {
-      var filenamecopy;
-      var i;
-      var files = new Array($files_array);
-      do {
-         filenamecopy = prompt ('" . get_string ( 'rename_file', 'iassign' ) . "',filename);
-       } while (filenamecopy == '');
-      if (filenamecopy == null)
-        return false;\n
-      else {
-        for (i=0;i<files.length;i++) {
-            if (files[i]==filenamecopy) {
-              alert('$error_files_exists');
-              return false;\n
-             }
-         }
-        window.location='$CFG->wwwroot/mod/iassign/ilm_manager.php?from=$this->from&id=$this->id&action=rename&ilmid='+ilmid+'&dirid=$dirid&fileid='+fileid+'&filename='+filenamecopy;
-       }
-
-     }
-
-    function export_files_ilm() {
-       var param = getCheckbox();
+  function export_files_ilm () {
+   var param = getCheckbox();
    if (param.join() != '')
-        window.location='$CFG->wwwroot/mod/iassign/ilm_manager.php?from=$this->from&id=$this->id&action=export&dirid=$dirid&files_id='+param.join();
-       else
-        alert('" . get_string ( 'error_file_not_selected_to_export', 'iassign' ) . "');
-       }
+    window.location='$CFG->wwwroot/mod/iassign/ilm_manager.php?from=$this->from&id=$this->id&action=export&dirid=$dirid&files_id='+param.join();
+   else
+    alert('" . get_string ( 'error_file_not_selected_to_export', 'iassign' ) . "');
+   }
 
-      function select_all_ilm() {
-       var checkBoxes = document.getElementsByTagName('input');
-       var selectAll = document.getElementById('select_all');
-       for (var counter=0; counter < checkBoxes.length; counter++) {
-             if (checkBoxes[counter].type.toUpperCase()=='CHECKBOX' && checkBoxes[counter].name == 'selected_file')
-              checkBoxes[counter].checked = selectAll.checked;
-             }
-       }
-      function getCheckbox() {
-       var checkBoxes = document.getElementsByTagName('input');
-            var param = new Array();
-            for (var counter=0; counter < checkBoxes.length; counter++) {
-             if (checkBoxes[counter].type.toUpperCase()=='CHECKBOX' && checkBoxes[counter].checked == true && checkBoxes[counter].name == 'selected_file')
-                 param.push(checkBoxes[counter].value);
-             }
-            return param;
-          }
-  
-      function new_dir_ilm() {
-       var dirname = '';
-       var i;
-       var dirs = new Array($dirs_array);
-       do {
-    var dirname = prompt ('" . get_string ( 'question_new_dir', 'iassign' ) . "', '');
-    }  while (dirname == '');
-       if (dirname == null)
-          return false;\n
-       else {
-        for (i=0;i<dirs.length;i++) {
-              if (dirs[i]==dirname) {
-                alert('$error_dir_exists');
-                return false;\n
-               }
-              }
-             window.location='$CFG->wwwroot/mod/iassign/ilm_manager.php?from=$this->from&id=$this->id&action=new_dir&ilmid=$ilmid&dirid=$dirid&dirname='+dirname;
-        }
-       }
-      function delete_dir_ilm (ilmid, dirid) {
-       var resp;
-       resp=confirm('" . get_string ( 'question_delete_dir', 'iassign' ) . "');
-       if (resp) {
-          window.location='$CFG->wwwroot/mod/iassign/ilm_manager.php?from=$this->from&id=$this->id&action=delete_dir&ilmid='+ilmid+'&dirid='+dirid;
-        }
-       }
-      function rename_dir_ilm (ilmid, dirname, dirid) {
-       var dirnamecopy;
-       var i;
-       var dirs = new Array($dirs_array);
-       do {
-          dirnamecopy = prompt ('" . get_string ( 'question_rename_dir', 'iassign' ) . "',dirname);
-        } while (dirnamecopy == '');
-       if (dirnamecopy == null)
-          return false;\n
-       else {
-         for (i=0;i<dirs.length;i++) {
-            if (dirs[i]==dirnamecopy) {
-              alert('$error_dir_exists');
-              return false;\n
-             }
-          }
-         window.location='$CFG->wwwroot/mod/iassign/ilm_manager.php?from=$this->from&id=$this->id&action=rename_dir&ilmid='+ilmid+'&dirid='+dirid+'&dirname='+dirnamecopy;
-       }
-
+  function select_all_ilm () {
+   var checkBoxes = document.getElementsByTagName('input');
+   var selectAll = document.getElementById('select_all');
+   for (var counter=0; counter < checkBoxes.length; counter++) {
+     if (checkBoxes[counter].type.toUpperCase()=='CHECKBOX' && checkBoxes[counter].name == 'selected_file')
+       checkBoxes[counter].checked = selectAll.checked;
      }
+   }
 
-    function move_selected_ilm (ilmid) {
-       var param = getCheckbox();
-       if (param.join() != '')
-          window.location='$CFG->wwwroot/mod/iassign/ilm_manager.php?from=$this->from&id=$this->id&action=selected_move&ilmid='+ilmid+'&dirid=$dirid&files_id='+param.join();
-    else
-      alert('" . get_string ( 'error_file_not_selected_to_move', 'iassign' ) . "');
+  function getCheckbox() {
+   var checkBoxes = document.getElementsByTagName('input');
+   var param = new Array();
+   for (var counter=0; counter < checkBoxes.length; counter++) {
+     if (checkBoxes[counter].type.toUpperCase()=='CHECKBOX' && checkBoxes[counter].checked == true && checkBoxes[counter].name == 'selected_file')
+      param.push(checkBoxes[counter].value);
+      }
+   return param;
+   }
+  
+  function new_dir_ilm() {
+   var dirname = '';
+   var i;
+   var dirs = new Array($dirs_array);
+   do {
+    var dirname = prompt ('" . get_string ( 'question_new_dir', 'iassign' ) . "', '');
+   }  while (dirname == '');
+   if (dirname == null)
+     return false;\n
+   else {
+    for (i=0;i<dirs.length;i++) {
+      if (dirs[i]==dirname) {
+        alert('$error_dir_exists');
+        return false;\n
+        }
+      }
+     window.location='$CFG->wwwroot/mod/iassign/ilm_manager.php?from=$this->from&id=$this->id&action=new_dir&ilmid=$ilmid&dirid=$dirid&dirname='+dirname;
+     }
+    }
 
-       }
+  function delete_dir_ilm (ilmid, dirid) {
+   var resp;
+   resp=confirm('" . get_string ( 'question_delete_dir', 'iassign' ) . "');
+   if (resp) {
+     window.location='$CFG->wwwroot/mod/iassign/ilm_manager.php?from=$this->from&id=$this->id&action=delete_dir&ilmid='+ilmid+'&dirid='+dirid;
+     }
+   }
+
+  function rename_dir_ilm (ilmid, dirname, dirid) {
+   var dirnamecopy;
+   var i;
+   var dirs = new Array($dirs_array);
+   do {
+    dirnamecopy = prompt ('" . get_string ( 'question_rename_dir', 'iassign' ) . "',dirname);
+   } while (dirnamecopy == '');
+   if (dirnamecopy == null)
+    return false;\n
+   else {
+    for (i=0;i<dirs.length;i++) {
+      if (dirs[i]==dirnamecopy) {
+      alert('$error_dir_exists');
+      return false;\n
+      }
+    }
+   window.location='$CFG->wwwroot/mod/iassign/ilm_manager.php?from=$this->from&id=$this->id&action=rename_dir&ilmid='+ilmid+'&dirid='+dirid+'&dirname='+dirnamecopy;
+   }
+  }
+
+  function move_selected_ilm (ilmid) {
+   var param = getCheckbox();
+   if (param.join() != '')
+    window.location='$CFG->wwwroot/mod/iassign/ilm_manager.php?from=$this->from&id=$this->id&action=selected_move&ilmid='+ilmid+'&dirid=$dirid&files_id='+param.join();
+   else
+    alert('" . get_string ( 'error_file_not_selected_to_move', 'iassign' ) . "');
+   }
 
   function recover_files_ilm () {
-       var resp;
-       resp=confirm('" . get_string ( 'question_recover_files_ilm', 'iassign' ) . "');
-       if (resp) {
-          window.location='$CFG->wwwroot/mod/iassign/ilm_manager.php?from=$this->from&id=$this->id&action=recover&ilmid=$ilmid&dirid=$dirid';
-        }
-       }
+   var resp;
+   resp=confirm('" . get_string ( 'question_recover_files_ilm', 'iassign' ) . "');
+   if (resp) {
+     window.location='$CFG->wwwroot/mod/iassign/ilm_manager.php?from=$this->from&id=$this->id&action=recover&ilmid=$ilmid&dirid=$dirid';
+     }
+   }
 
-    //]]>
-    </script>";
+  //]]>
+  </script>";
 
   $output = "";
   $select_all = "";
@@ -5823,8 +5826,9 @@ class ilm_manager {
 
   $extensions_allow = array();
   $iassign_ilm = $DB->get_records ( 'iassign_ilm', array ("enable" => 1 ) );
-  foreach ( $iassign_ilm as $value )
+  foreach ( $iassign_ilm as $value ) {
    $extensions_allow = array_merge($extensions_allow, explode(",", $value->extension));
+   }
 
   foreach ( $files_course as $value ) {
 
@@ -5834,7 +5838,8 @@ class ilm_manager {
    $pathname = $pathname[count($pathname)-1];
    $fileid = $value->get_id ();
    $tmp = explode ( ".", $filename );
-                        $filetype = $tmp[1];
+
+   $filetype = $tmp[1];
    $author = $value->get_author ();
    $timemodified = date ("d/m/Y H:i:s", $value->get_timemodified () );
    $timecreated = date ("d/m/Y H:i:s", $value->get_timecreated () );
@@ -5901,19 +5906,19 @@ class ilm_manager {
      <td><center>$author</center></td>
      <td><center>$timecreated</center></td>
      <td><center>$timemodified</center></td></tr>";
-     } else if ($this->from == 'iassign') {
+    } else if ($this->from == 'iassign') {
      $output .= "<tr><td>$check_select$link_rename$link_delete$link_duplicate$link_edit$link_filter$link_add_ilm_iassign</td>
         <td><a href='$fileurl' title='".get_string ( 'download_file', 'iassign' )."$filename'>$filename</a></td>
         <td><center>$author</center></td>
         <td><center>$timecreated</center></td>
         <td><center>$timemodified</center></td></tr>";
-     } else if ($this->from == 'block') {
+    } else if ($this->from == 'block') {
      $output .= "<tr><td>$check_select$link_rename$link_delete$link_duplicate$link_edit$link_filter</td>
      <td><a href='$fileurl' title='".get_string ( 'download_file', 'iassign' )."$filename'>$filename</a></td>
      <td><center>$author</center></td>
      <td><center>$timecreated</center></td>
      <td><center>$timemodified</center></td></tr>";
-     } else if ($this->from == 'tinymce') {
+    } else if ($this->from == 'tinymce') {
      $output .= "<tr><td>$check_select$link_rename$link_delete$link_duplicate$link_edit$link_filter$link_add_ilm_tinymce</td>
      <td><a href='$fileurl' title='".get_string ( 'download_file', 'iassign' )."$filename'>$filename</a></td>
           <td><center>$author</center></td>
@@ -5925,7 +5930,7 @@ class ilm_manager {
   $basename = explode("/", substr($dir_base, 0, strlen($dir_base)-1));
   $dir_base = "";
   $header = "";
-  foreach($basename as $value) {
+  foreach ($basename as $value) {
    $dir_base .= "$value/";
    $dir_id = $fs->get_file($context->id, 'mod_iassign', 'activity', 0, $dir_base, '.');
    if ($dir_id) {
@@ -5964,7 +5969,7 @@ class ilm_manager {
   $html .= "</form>";
   echo $code_javascript_ilm;
   echo $html;
-   }
+  }
  }
 
 /**
@@ -5975,7 +5980,7 @@ class icons {
   global $CFG;
   $string = '<img src="' . $CFG->wwwroot . '/mod/iassign/icon/' . $icon . '.gif" title="' . get_string ( $icon, 'iassign' ) . '" alt="' . get_string ( $icon, 'iassign' ) . '"/>';
   return $string;
-   }
+  }
  }
 
 /**
@@ -6022,10 +6027,10 @@ class utils {
   */
  static function version_filename($filename) {
   $array_filename = explode('.', $filename);
-        if (count($array_filename) > 1)
-         $filename = $array_filename[0] . '-' . date("Ymd-His") . '.' . $array_filename[1];
-        else
-         $filename = $array_filename[0] . '-' . date("Ymd-His");
+  if (count($array_filename) > 1)
+   $filename = $array_filename[0] . '-' . date("Ymd-His") . '.' . $array_filename[1];
+  else
+   $filename = $array_filename[0] . '-' . date("Ymd-His");
   return $filename;
   }
 
@@ -6092,7 +6097,9 @@ class language {
 /**
  * Class with log functions for plugin manage.
  */
-class log {
+//?? na versa velha '4.1 2013/12/12' esta 'class iassign_log'
+// class log
+class iassign_log {
   /**
    * Function for insert log event.
    * @param string $action Code action of event.
@@ -6123,5 +6130,4 @@ class log {
     print_error ( 'error_add_log', 'iassign' );
   }
 
- } // class log
-
+ } // class iassign_log
