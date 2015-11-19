@@ -60,28 +60,13 @@
  */
 
 /**
- * Code fragment to define the version of iAssign
- * This fragment is called by moodle_needs_upgrading() and /admin/index.php.
- * 
- * @author Patricia Alves Rodrigues
- * @author Leônidas O. Brandão
- * @version v 1.0 2012/10/16
- * @package mod_iassign_version
- * @since 2010/09/27
- * @copyright iMatica (<a href="http://www.matematica.br">iMath</a>) - Computer Science Dep. of IME-USP (Brazil)
- * 
- * <b>License</b> 
- *  - http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *  
- */
-/**
  * Moodle core defines constant MOODLE_INTERNAL which shall be used to make sure that the script is included and not called directly.
  */
 defined('MOODLE_INTERNAL') || die();
 
-$module->component = 'mod_iassign'; // Full name of the plugin (used for diagnostics)
-$module->release = '2.1.87 (Build: 2014070100)';	// Human-readable version name
-$module->version = 2014070100;    // The current module version (Date: YYYYMMDDXX)
-$module->requires = 2012112900;    // Requires this Moodle version 2012120305.00
-$module->maturity = MATURITY_STABLE;	// How stable the plugin is: MATURITY_ALPHA, MATURITY_BETA, MATURITY_RC, MATURITY_STABLE (Moodle 2.0 and above)
-$module->cron = 60;
+$plugin->component = 'mod_iassign'; // Full name of the plugin (used for diagnostics)
+$plugin->release = '2.1.87 (Build: 2014070100)';	// Human-readable version name
+$plugin->version = 2014070100;    // The current module version (Date: YYYYMMDDXX)
+$plugin->requires = 2012112900;    // Requires this Moodle version 2012120305.00
+$plugin->maturity = MATURITY_STABLE;	// How stable the plugin is: MATURITY_ALPHA, MATURITY_BETA, MATURITY_RC, MATURITY_STABLE (Moodle 2.0 and above)
+$plugin->cron = 60;
