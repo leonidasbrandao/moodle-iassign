@@ -101,7 +101,7 @@ if ($action == 'view') {
 		foreach ( $iassign_ilms as $ilm ) {
 			
 			$url_config = new moodle_url ( '/admin/settings.php', array ('section' => 'modsettingiassign','action' => 'config','ilm_id' => $ilm->id ) );
-			$link_config = $OUTPUT->action_link ( $url_config, iassign_icons::insert ( 'config_ilm' ) );
+			$link_config = $OUTPUT->action_link ( $url_config, icons::insert ( 'config_ilm' ) );
 			
 			$ilm_count = 1;
 			$ilm_version = 0;
@@ -133,12 +133,12 @@ if ($action == 'view') {
 				$upgrade_version = floatval(preg_replace('/[^0-9]+/', '', $upgrade_xml->version));
 				if($ilm_version < $upgrade_version) {
 					$url_upgrade = new moodle_url ( '/admin/settings.php', array ('section' => 'modsettingiassign','action' => 'confirm_upgrade','ilm_id' => $ilm->id ) );
-					$link_upgrade = $OUTPUT->action_link ( $url_upgrade, iassign_icons::insert ( 'upgrade_ilm', $upgrade_xml->version ) );
+					$link_upgrade = $OUTPUT->action_link ( $url_upgrade, icons::insert ( 'upgrade_ilm', $upgrade_xml->version ) );
 				}
 			}
 			
 			$str .= '<tr>';
-			$str .= '<td class="header c1" width=75%><strong>' . $ilm->name . '<br>' . iassign_language::get_description_lang(current_language(), $ilm->description) . '</strong></td>' . chr ( 13 );
+			$str .= '<td class="header c1" width=75%><strong>' . $ilm->name . '<br>' . language::get_description_lang(current_language(), $ilm->description) . '</strong></td>' . chr ( 13 );
 			$str .= '<td class="header c1" width=10% ><strong>' . get_string ( 'versions_ilm', 'iassign' ) . ':</strong>&nbsp;' . $ilm_count . '</td>' . chr ( 13 );
 			$str .= '<td class="header c1" width=10% ><strong>' . get_string ( 'activities', 'iassign' ) . ':</strong>&nbsp;' . $iassign_count . '</td>' . chr ( 13 );
 			$str .= '<td class="header c1" width=5% align=center valign=bottom>' . $link_upgrade .'&nbsp;&nbsp;'. $link_config. '</td>' . chr ( 13 );
@@ -212,21 +212,21 @@ if ($action == 'view') {
 			if(count($iassign_ilm_parent) == 1)
 				$link_default = "";
 			else if($ilm_parent->parent == 0) {
-				$link_default = iassign_icons::insert ( 'default_ilm' );
+				$link_default = icons::insert ( 'default_ilm' );
 				$ilm_parent->enable = -1;
 			} else
-				$link_default = $OUTPUT->action_link ( $url_default, iassign_icons::insert ( 'default_ilm_disabled' ));
+				$link_default = $OUTPUT->action_link ( $url_default, icons::insert ( 'default_ilm_disabled' ));
 			
 			//if ($ilm_parent->file_jar != $ilm_parent->id) {
 				$url_view = new moodle_url ( '/mod/iassign/settings_ilm.php', array ('action' => 'view','ilm_id' => $ilm_parent->id ,'from' => 'admin' ) );
 				$action_view = new popup_action ( 'click', $url_view, 'iplookup', array ('title' => get_string ( 'view_ilm', 'iassign' ),'width' => 1200,'height' => 650 ) );
-				$link_view = $OUTPUT->action_link ( $url_view, iassign_icons::insert ( 'view_ilm' ), $action_view );
+				$link_view = $OUTPUT->action_link ( $url_view, icons::insert ( 'view_ilm' ), $action_view );
 			//} else {
 				//$link_view = '';
 			//}
 			$url_edit = new moodle_url ( '/mod/iassign/settings_ilm.php', array ('action' => 'edit','ilm_id' => $ilm_parent->id ) );
 			$action_edit = new popup_action ( 'click', $url_edit, 'iplookup', array ('title' => get_string ( 'edit_ilm', 'iassign' ),'width' => 900,'height' => 650 ) );
-			$link_edit = $OUTPUT->action_link ( $url_edit, iassign_icons::insert ( 'edit_ilm' ), $action_edit );
+			$link_edit = $OUTPUT->action_link ( $url_edit, icons::insert ( 'edit_ilm' ), $action_edit );
 			
 			$url_visible = new moodle_url ( '/admin/settings.php', array ('section' => 'modsettingiassign','action' => 'visible','ilm_id' => $ilm_parent->id,'status' => $ilm_parent->enable, 'ilm_id_parent' => $ilm->id ) );
 			
@@ -236,28 +236,28 @@ if ($action == 'view') {
 				$total = count ( $iassign_statement );
 			
 			if ($ilm_parent->enable == 0 && $total == 0) {
-				$link_visible = $OUTPUT->action_link ( $url_visible, iassign_icons::insert ( 'show_ilm' ) );
+				$link_visible = $OUTPUT->action_link ( $url_visible, icons::insert ( 'show_ilm' ) );
 			} elseif ($ilm_parent->enable == 1 && $total == 0) {
-				$link_visible = $OUTPUT->action_link ( $url_visible, iassign_icons::insert ( 'hide_ilm' ) );
+				$link_visible = $OUTPUT->action_link ( $url_visible, icons::insert ( 'hide_ilm' ) );
 			} else {
-				$link_visible = '&nbsp;' . iassign_icons::insert ( 'unlock' );
+				$link_visible = '&nbsp;' . icons::insert ( 'unlock' );
 			}
 			
 			$url_copy = new moodle_url ( '/mod/iassign/settings_ilm.php', array ('action' => 'copy','ilm_id' => $ilm_parent->id ) );
 			$action_copy = new popup_action ( 'click', $url_copy, 'iplookup', array ('title' => get_string ( 'copy_ilm', 'iassign' ),'width' => 900,'height' => 650 ) );
-			$link_copy = $OUTPUT->action_link ( $url_copy, iassign_icons::insert ( 'copy_ilm' ), $action_copy );
+			$link_copy = $OUTPUT->action_link ( $url_copy, icons::insert ( 'copy_ilm' ), $action_copy );
 			
 			if($total == 0 && ($ilm_parent->parent != 0 || count($iassign_ilm_parent) == 1) && !ilm_settings::applet_default($ilm_parent->file_jar))
 			{
 				$url_delete = new moodle_url ( '/mod/iassign/settings_ilm.php', array ('action' => 'confirm_delete_ilm','ilm_id' => $ilm_parent->id,'ilm_parent' => $ilm->id ));
-				$link_delete = $OUTPUT->action_link ( $url_delete, iassign_icons::insert ( 'delete_ilm' ));
+				$link_delete = $OUTPUT->action_link ( $url_delete, icons::insert ( 'delete_ilm' ));
 			} else if(ilm_settings::applet_default($ilm_parent->file_jar))
 				$link_delete = "";
 			else
-				$link_delete = iassign_icons::insert ( 'delete_ilm_disable' );
+				$link_delete = icons::insert ( 'delete_ilm_disable' );
 			
 			$url_export = new moodle_url ( '/admin/settings.php', array ('section' => 'modsettingiassign', 'action' => 'export', 'ilm_id' => $ilm_parent->id, 'ilm_id_parent' => $ilm->id ));
-			$link_export = $OUTPUT->action_link ( $url_export, iassign_icons::insert ( 'export_ilm' ));
+			$link_export = $OUTPUT->action_link ( $url_export, icons::insert ( 'export_ilm' ));
 			
 			$str .= '<tr><td colspan=3>';
 			$str .= '<table width="100%">';
@@ -330,7 +330,7 @@ if ($action == 'view') {
 			
 			$url_add_param = new moodle_url ( '/mod/iassign/settings_params.php', array ('action' => 'add', 'ilm_id' => $ilm_id ) );
 			$action_add_param = new popup_action ( 'click', $url_add_param, 'popup', array ('width' => 900,'height' => 650 ) );
-			$link_add_param = $OUTPUT->action_link ( $url_add_param, iassign_icons::insert ( 'add_param' ), $action_add_param);
+			$link_add_param = $OUTPUT->action_link ( $url_add_param, icons::insert ( 'add_param' ), $action_add_param);
 			
 			$str .= '<table width="100%">' . chr ( 13 );
 			$str .= '<tr>' . chr ( 13 );
@@ -349,21 +349,21 @@ if ($action == 'view') {
 				
 				$url_edit_param = new moodle_url ( '/mod/iassign/settings_params.php', array ('action' => 'edit','ilm_param_id' => $ilm_config->id ) );
 				$action_edit_param = new popup_action ( 'click', $url_edit_param, 'iplookup', array ('title' => get_string ( 'edit_param', 'iassign' ),'width' => 900,'height' => 650 ) );
-				$link_edit_param = $OUTPUT->action_link ( $url_edit_param, iassign_icons::insert ( 'edit_param' ), $action_edit_param );
+				$link_edit_param = $OUTPUT->action_link ( $url_edit_param, icons::insert ( 'edit_param' ), $action_edit_param );
 				
 				$url_visible_param = new moodle_url ( '/admin/settings.php', array ('section' => 'modsettingiassign','action' => 'visible_param','ilm_id' => $ilm_parent->id,'status' => $ilm_config->visible, 'ilm_param_id' => $ilm_config->id ) );
 				if ($ilm_config->visible == 0) {
-					$link_visible_param = $OUTPUT->action_link ( $url_visible_param, iassign_icons::insert ( 'show_param' ) );
+					$link_visible_param = $OUTPUT->action_link ( $url_visible_param, icons::insert ( 'show_param' ) );
 				} elseif ($ilm_config->visible == 1) {
-					$link_visible_param = $OUTPUT->action_link ( $url_visible_param, iassign_icons::insert ( 'hide_param' ) );
+					$link_visible_param = $OUTPUT->action_link ( $url_visible_param, icons::insert ( 'hide_param' ) );
 				}
 				
 				$url_copy_param = new moodle_url ( '/mod/iassign/settings_params.php', array ('action' => 'copy','ilm_param_id' => $ilm_config->id ) );
 				$action_copy_param = new popup_action ( 'click', $url_copy_param, 'iplookup', array ('title' => get_string ( 'copy_param', 'iassign' ),'width' => 900,'height' => 650 ) );
-				$link_copy_param = $OUTPUT->action_link ( $url_copy_param, iassign_icons::insert ( 'copy_param' ), $action_copy_param );
+				$link_copy_param = $OUTPUT->action_link ( $url_copy_param, icons::insert ( 'copy_param' ), $action_copy_param );
 				
 				$url_delete_param = new moodle_url ( '/mod/iassign/settings_params.php', array ('action' => 'delete','ilm_param_id' => $ilm_config->id,'ilm_id' => $ilm_parent->id ));
-				$link_delete_param = $OUTPUT->action_link ( $url_delete_param, iassign_icons::insert ( 'delete_param' ));
+				$link_delete_param = $OUTPUT->action_link ( $url_delete_param, icons::insert ( 'delete_param' ));
 				
 				$str .= '<tr>' . chr ( 13 );
 				$str .= '<td>' . $ilm_config->param_name . '</td>';

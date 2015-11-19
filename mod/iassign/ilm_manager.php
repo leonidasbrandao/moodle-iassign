@@ -185,13 +185,13 @@ if (has_capability('mod/iassign:editiassign', $context, $USER->id)) {
 	
 	            if ($files_course) {
 	                foreach ($files_course as $value) {
-	                    if ($value->get_filename() == iassign_utils::format_filename($newfilename))
-	                    	$filename = iassign_utils::version_filename($value->get_filename());
+	                    if ($value->get_filename() == utils::format_filename($newfilename))
+	                    	$filename = utils::version_filename($value->get_filename());
 	                }
 	            }
 	            $extensions = explode(",", $iassign_ilm->extension);
 	            if(in_array($extension[1], $extensions))
-            		$file = $mform->save_stored_file('file', $context->id, 'mod_iassign', 'activity', 0, $dir_base, iassign_utils::format_filename($filename), 0, $USER->id);
+            		$file = $mform->save_stored_file('file', $context->id, 'mod_iassign', 'activity', 0, $dir_base, utils::format_filename($filename), 0, $USER->id);
 	            else 
 	            	$url .= "&error=incompatible_extension_file";
         	} else {
@@ -205,8 +205,8 @@ if (has_capability('mod/iassign:editiassign', $context, $USER->id)) {
 	        	/* $rename_files = array();
 	        	foreach($zip_files as $zip_file) {
 	        		foreach($files as $file) {
-	        			if(iassign_utils::format_filename($zip_file->original_pathname) == $file->get_filename())
-	        				$rename_files = array_merge($rename_files, array(iassign_utils::version_filename(iassign_utils::format_filename($zip_file->original_pathname)) => iassign_utils::format_filename($zip_file->original_pathname)));
+	        			if(utils::format_filename($zip_file->original_pathname) == $file->get_filename())
+	        				$rename_files = array_merge($rename_files, array(utils::version_filename(utils::format_filename($zip_file->original_pathname)) => utils::format_filename($zip_file->original_pathname)));
 	        		}
 	        	
 	        	} */
@@ -218,8 +218,8 @@ if (has_capability('mod/iassign:editiassign', $context, $USER->id)) {
 	        			$file->set_author($USER->firstname.' '.$USER->lastname);
 	        			if($new_name = array_search($file->get_filename(), $rename_files))
 	        				$file->rename($dir_base, $new_name);
-	        			else if($file->get_filename() != '.' && $file->get_filename() != iassign_utils::format_filename($file->get_filename()))
-	        				$file->rename($dir_base, iassign_utils::format_filename($file->get_filename()));
+	        			else if($file->get_filename() != '.' && $file->get_filename() != utils::format_filename($file->get_filename()))
+	        				$file->rename($dir_base, utils::format_filename($file->get_filename()));
 	        		}
 	        	} */
 	        	unlink($zip_filename);

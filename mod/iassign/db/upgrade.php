@@ -163,7 +163,7 @@ function xmldb_iassign_upgrade($oldversion) {
 	else
 		$pluginman = core_plugin_manager::instance();
     $plugins = $pluginman->get_plugins();
-    iassign_log::add_log('upgrade', 'version: '.$plugins['mod']['iassign']->versiondisk);
+    log::add_log('upgrade', 'version: '.$plugins['mod']['iassign']->versiondisk);
     // log event -----------------------------------------------------
     
     return true;

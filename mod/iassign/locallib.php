@@ -3487,7 +3487,7 @@ class ilm_settings {
        $paramsStr.= "&MA_PARAM_notSEND=".urlencode($options['notSEND']);
        $paramsStr.= "&MA_PARAM_addresPOST=".urlencode($options['addresPOST']);
        $paramsStr.= "&MA_PARAM_Proposition=".urlencode($options['Proposition']);
-       $paramsStr.= "&MA_POST_ArchiveTeacher=true");
+       $paramsStr.= "&MA_POST_ArchiveTeacher=true";
        $paramsStr.= "&iLM_PARAM_Authoring=true";
 
        if ($options['special_param'] == 1) {

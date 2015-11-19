@@ -46,7 +46,7 @@ function xmldb_iassign_install() {
 					array('iTangram2', 'http://www.matematica.br/itangram', '0.4.3', '{"en":"The Objective of the game is to reproduce the form of the model using all 7 pieces of iTangram.","pt_br":"O Objetivo do jogo é reproduzir a forma do modelo usando todas as 7 peças do iTangram."}', 'itg2', 'iTangram2.jar', 'ilm.line.itangram2.Tangram', 800, 600, 1, time(), $USER->id, time(), 1)
 			),
 			array_combine(	array('name', 'url', 'version', 'description', 'extension', 'file_jar', 'file_class', 'width', 'height', 'enable','timemodified', 'author', 'timecreated', 'evaluate'),
-					array('Risko', 'http://risko.pcc.usp.br/', '2.2.23', '{"en":"Interactive computational tool for teaching geometry.","pt_br":"Ferramenta computacional interativa para o ensino de geometria."}', 'rsk', 'Risko.jar', 'RiskoApplet.class', 800, 600, 1, time(), $USER->id, time(), 0)
+					array('Risko', 'http://risko.pcc.usp.br/applets/marco13', '2.2.23', '{"en":"Interactive computational tool for teaching geometry.","pt_br":"Ferramenta computacional interativa para o ensino de geometria."}', 'rsk', 'Risko.jar', 'RiskoApplet.class', 800, 600, 1, time(), $USER->id, time(), 0)
 			)
 	);
 
@@ -81,9 +81,9 @@ function xmldb_iassign_install() {
 						'component' => 'mod_iassign',     // usually = table name
 						'filearea' => 'ilm',     // usually = table name
 						'itemid' => 0, 
-						'filepath' => '/iassign/ilm/'.iassign_utils::format_pathname($name_ilm).'/'.iassign_utils::format_pathname($version_ilm).'/',           // any path beginning and ending in /
+						'filepath' => '/iassign/ilm/'.utils::format_pathname($name_ilm).'/'.utils::format_pathname($version_ilm).'/',           // any path beginning and ending in /
 						'filename' => $filename); // any filename
-				$file_ilm = $fs->create_file_from_string($file_ilm, file_get_contents($ilm_path.$filename));
+				$file_ilm = @$fs->create_file_from_string($file_ilm, file_get_contents($ilm_path.$filename));
 
 				if($file_ilm)
 					$is_delete &= @unlink($ilm_path.$filename);
@@ -110,7 +110,7 @@ function xmldb_iassign_install() {
 	else
 		$pluginman = core_plugin_manager::instance();
 	$plugins = $pluginman->get_plugins();
-	iassign_log::add_log('install', 'version: '.$plugins['mod']['iassign']->versiondb);
+	log::add_log('install', 'version: '.$plugins['mod']['iassign']->versiondb);
 	// log event -----------------------------------------------------
 
 }
